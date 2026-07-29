@@ -1,6 +1,6 @@
 'use client';
 import React, { useState, useCallback } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { Check, X, Plus, Trash2, Scale, ArrowRight } from 'lucide-react';
 import { Button } from '@/components/atoms/Button';
 import { Badge } from '@/components/atoms/index';
@@ -22,7 +22,9 @@ interface CompareRow {
 const COMPARE_ROWS: CompareRow[] = [
   {
     label: 'Price',
-    getValue: (p) => <span className="font-bold text-lg">{formatCurrency(p.price, p.currency)}</span>,
+    getValue: (p) => (
+      <span className="text-lg font-bold">{formatCurrency(p.price, p.currency)}</span>
+    ),
     highlight: true,
   },
   {
@@ -49,16 +51,20 @@ const COMPARE_ROWS: CompareRow[] = [
   {
     label: 'Popular',
     getValue: (p) =>
-      p.isPopular
-        ? <Check className="h-4 w-4 text-green-500 mx-auto" aria-label="Yes" />
-        : <X     className="h-4 w-4 text-muted-foreground mx-auto" aria-label="No" />,
+      p.isPopular ? (
+        <Check className="mx-auto h-4 w-4 text-green-500" aria-label="Yes" />
+      ) : (
+        <X className="mx-auto h-4 w-4 text-muted-foreground" aria-label="No" />
+      ),
   },
   {
     label: 'Best Value',
     getValue: (p) =>
-      p.isBestValue
-        ? <Check className="h-4 w-4 text-green-500 mx-auto" aria-label="Yes" />
-        : <X     className="h-4 w-4 text-muted-foreground mx-auto" aria-label="No" />,
+      p.isBestValue ? (
+        <Check className="mx-auto h-4 w-4 text-green-500" aria-label="Yes" />
+      ) : (
+        <X className="mx-auto h-4 w-4 text-muted-foreground" aria-label="No" />
+      ),
   },
 ];
 
@@ -67,7 +73,7 @@ export function PlanComparison() {
   const { setItem } = useCartStore();
   const { data: plansData, isLoading } = usePlans();
   const [selected, setSelected] = useState<Plan[]>([]);
-  const [search,   setSearch]   = useState('');
+  const [search, setSearch] = useState('');
 
   const plans = plansData?.data ?? [];
 
@@ -76,7 +82,7 @@ export function PlanComparison() {
       !selected.find((s) => s.id === p.id) &&
       (search === '' ||
         p.name.toLowerCase().includes(search.toLowerCase()) ||
-        p.country.name.toLowerCase().includes(search.toLowerCase()))
+        p.country.name.toLowerCase().includes(search.toLowerCase())),
   );
 
   const addPlan = useCallback(
@@ -84,7 +90,7 @@ export function PlanComparison() {
       if (selected.length >= MAX_COMPARE) return;
       setSelected((prev) => [...prev, plan]);
     },
-    [selected.length]
+    [selected.length],
   );
 
   const removePlan = useCallback((id: string) => {
@@ -93,21 +99,20 @@ export function PlanComparison() {
 
   const handleSelect = (plan: Plan) => {
     setItem({
-      planId:      plan.id,
-      planName:    plan.name,
-      price:       plan.price,
-      currency:    plan.currency,
-      data:        plan.data,
-      validity:    plan.validity,
+      planId: plan.id,
+      planName: plan.name,
+      price: plan.price,
+      currency: plan.currency,
+      data: plan.data,
+      validity: plan.validity,
       countryName: plan.country.name,
     });
     router.push(ROUTES.CHECKOUT);
   };
 
   // Cheapest price per GB for highlighting
-  const bestPricePerGB = selected.length > 1
-    ? Math.min(...selected.map((p) => p.price / (p.data || 1)))
-    : null;
+  const bestPricePerGB =
+    selected.length > 1 ? Math.min(...selected.map((p) => p.price / (p.data || 1))) : null;
 
   return (
     <div className="space-y-6">
@@ -123,8 +128,9 @@ export function PlanComparison() {
       {/* Plan picker */}
       {selected.length < MAX_COMPARE && (
         <div className="rounded-xl border bg-card p-4">
-          <p className="text-sm font-medium mb-3">
-            Add a plan to compare ({MAX_COMPARE - selected.length} slot{MAX_COMPARE - selected.length !== 1 ? 's' : ''} remaining)
+          <p className="mb-3 text-sm font-medium">
+            Add a plan to compare ({MAX_COMPARE - selected.length} slot
+            {MAX_COMPARE - selected.length !== 1 ? 's' : ''} remaining)
           </p>
           <input
             type="search"
@@ -132,27 +138,28 @@ export function PlanComparison() {
             onChange={(e) => setSearch(e.target.value)}
             placeholder="Search plans…"
             aria-label="Search plans to compare"
-            className="h-9 w-full rounded-md border bg-background px-3 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring mb-3"
+            className="mb-3 h-9 w-full rounded-md border bg-background px-3 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
           />
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 max-h-52 overflow-y-auto pr-1">
+          <div className="grid max-h-52 grid-cols-1 gap-2 overflow-y-auto pr-1 sm:grid-cols-2">
             {isLoading
               ? Array.from({ length: 4 }).map((_, i) => (
-                  <div key={i} className="h-14 rounded-lg bg-muted animate-pulse" />
+                  <div key={i} className="h-14 animate-pulse rounded-lg bg-muted" />
                 ))
               : filteredPlans.slice(0, 10).map((plan) => (
                   <button
                     key={plan.id}
                     onClick={() => addPlan(plan)}
-                    className="flex items-center justify-between rounded-lg border bg-background p-3 text-left hover:border-primary hover:bg-primary/5 transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                    className="flex items-center justify-between rounded-lg border bg-background p-3 text-left transition-all hover:border-primary hover:bg-primary/5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                     aria-label={`Add ${plan.name} to comparison`}
                   >
                     <div className="min-w-0">
-                      <p className="text-sm font-medium truncate">{plan.name}</p>
+                      <p className="truncate text-sm font-medium">{plan.name}</p>
                       <p className="text-xs text-muted-foreground">
-                        {plan.country.flag} {plan.country.name} · {formatDataGB(plan.data)} · {formatCurrency(plan.price, plan.currency)}
+                        {plan.country.flag} {plan.country.name} · {formatDataGB(plan.data)} ·{' '}
+                        {formatCurrency(plan.price, plan.currency)}
                       </p>
                     </div>
-                    <Plus className="h-4 w-4 text-primary flex-shrink-0 ml-2" aria-hidden="true" />
+                    <Plus className="ml-2 h-4 w-4 flex-shrink-0 text-primary" aria-hidden="true" />
                   </button>
                 ))}
           </div>
@@ -164,7 +171,7 @@ export function PlanComparison() {
         <motion.div
           initial={{ opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
-          className="rounded-xl border bg-card overflow-hidden"
+          className="overflow-hidden rounded-xl border bg-card"
         >
           <div className="overflow-x-auto">
             <table className="w-full" aria-label="Plan comparison table">
@@ -175,22 +182,36 @@ export function PlanComparison() {
               {/* Plan headers */}
               <thead>
                 <tr className="border-b">
-                  <th scope="col" className="px-4 py-4 text-left text-xs font-semibold text-muted-foreground w-32">
+                  <th
+                    scope="col"
+                    className="w-32 px-4 py-4 text-left text-xs font-semibold text-muted-foreground"
+                  >
                     Feature
                   </th>
                   {selected.map((plan) => (
-                    <th key={plan.id} scope="col" className="px-4 py-4 text-center min-w-44">
+                    <th key={plan.id} scope="col" className="min-w-44 px-4 py-4 text-center">
                       <div className="flex flex-col items-center gap-2">
                         <span className="text-2xl" role="img" aria-label={plan.country.name}>
                           {plan.country.flag}
                         </span>
                         <p className="text-sm font-semibold">{plan.name}</p>
-                        <div className="flex gap-1 flex-wrap justify-center">
-                          {plan.isPopular   && <Badge variant="default"  className="text-xs">Popular</Badge>}
-                          {plan.isBestValue && <Badge variant="success"  className="text-xs">Best Value</Badge>}
-                          {bestPricePerGB !== null && (plan.price / (plan.data || 1)) === bestPricePerGB && (
-                            <Badge variant="info" className="text-xs">Cheapest/GB</Badge>
+                        <div className="flex flex-wrap justify-center gap-1">
+                          {plan.isPopular && (
+                            <Badge variant="default" className="text-xs">
+                              Popular
+                            </Badge>
                           )}
+                          {plan.isBestValue && (
+                            <Badge variant="success" className="text-xs">
+                              Best Value
+                            </Badge>
+                          )}
+                          {bestPricePerGB !== null &&
+                            plan.price / (plan.data || 1) === bestPricePerGB && (
+                              <Badge variant="info" className="text-xs">
+                                Cheapest/GB
+                              </Badge>
+                            )}
                         </div>
                         <Button
                           size="sm"
@@ -207,9 +228,9 @@ export function PlanComparison() {
                   ))}
                   {/* Empty slots */}
                   {Array.from({ length: MAX_COMPARE - selected.length }).map((_, i) => (
-                    <th key={`empty-${i}`} scope="col" className="px-4 py-4 text-center min-w-44">
+                    <th key={`empty-${i}`} scope="col" className="min-w-44 px-4 py-4 text-center">
                       <div className="flex flex-col items-center gap-2 opacity-40">
-                        <div className="h-8 w-8 rounded-full border-2 border-dashed flex items-center justify-center">
+                        <div className="flex h-8 w-8 items-center justify-center rounded-full border-2 border-dashed">
                           <Plus className="h-4 w-4" aria-hidden="true" />
                         </div>
                         <p className="text-xs text-muted-foreground">Add a plan</p>
@@ -227,19 +248,24 @@ export function PlanComparison() {
                     className={cn(
                       'border-b last:border-0',
                       idx % 2 === 0 ? 'bg-background' : 'bg-muted/20',
-                      row.highlight && 'bg-primary/5'
+                      row.highlight && 'bg-primary/5',
                     )}
                   >
                     <td className="px-4 py-3 text-xs font-semibold text-muted-foreground">
                       {row.label}
                     </td>
                     {selected.map((plan) => (
-                      <td key={plan.id} className="px-4 py-3 text-sm text-center">
+                      <td key={plan.id} className="px-4 py-3 text-center text-sm">
                         {row.getValue(plan)}
                       </td>
                     ))}
                     {Array.from({ length: MAX_COMPARE - selected.length }).map((_, i) => (
-                      <td key={`empty-${i}`} className="px-4 py-3 text-center text-muted-foreground/30">—</td>
+                      <td
+                        key={`empty-${i}`}
+                        className="px-4 py-3 text-center text-muted-foreground/30"
+                      >
+                        —
+                      </td>
                     ))}
                   </tr>
                 ))}
@@ -273,8 +299,10 @@ export function PlanComparison() {
       {selected.length === 0 && (
         <div className="rounded-xl border-2 border-dashed py-16 text-center">
           <Scale className="mx-auto mb-3 h-10 w-10 text-muted-foreground" aria-hidden="true" />
-          <p className="font-semibold mb-1">No plans selected</p>
-          <p className="text-sm text-muted-foreground">Add up to {MAX_COMPARE} plans above to compare them side by side.</p>
+          <p className="mb-1 font-semibold">No plans selected</p>
+          <p className="text-sm text-muted-foreground">
+            Add up to {MAX_COMPARE} plans above to compare them side by side.
+          </p>
         </div>
       )}
     </div>

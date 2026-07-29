@@ -1,0 +1,9 @@
+Contact: mailto:security@esimplatform.com
+Contact: https://esimplatform.com/security
+Expires: 2026-12-31T23:59:59.000Z
+Encryption: https://esimplatform.com/pgp-key.txt
+Acknowledgments: https://esimplatform.com/security/hall-of-fame
+Policy: https://esimplatform.com/security/policy
+Hiring: https://esimplatform.com/careers
+Canonical: https://esimplatform.com/.well-known/security.txt
+Preferred-Languages: en

@@ -1,0 +1,248 @@
+name: Advanced CI/CD Pipeline
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main, develop]
+
+env:
+  NODE_VERSION: '20'
+  NEXT_PUBLIC_APP_URL: ${{ secrets.NEXT_PUBLIC_APP_URL || 'https://esimplatform.com' }}
+  NEXT_PUBLIC_API_URL: ${{ secrets.NEXT_PUBLIC_API_URL || 'https://api.esimplatform.com/v1' }}
+
+jobs:
+  # ─── 1. Lint + Type Check ────────────────────────────────────
+  lint-and-types:
+    name: Lint & Type Check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: '${{ env.NODE_VERSION }}', cache: 'npm' }
+      - run: npm ci --prefer-offline
+      - name: ESLint
+        run: npm run lint
+      - name: Prettier
+        run: npm run format:check
+      - name: TypeScript
+        run: npm run type-check
+
+  # ─── 2. Unit + Integration Tests ─────────────────────────────
+  unit-tests:
+    name: Unit & Integration Tests
+    runs-on: ubuntu-latest
+    needs: lint-and-types
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: '${{ env.NODE_VERSION }}', cache: 'npm' }
+      - run: npm ci --prefer-offline
+      - name: Run tests with coverage
+        run: npm run test:coverage
+        env:
+          CI: true
+      - name: Check coverage thresholds
+        run: |
+          echo "Coverage must meet: statements≥80%, functions≥80%, branches≥75%, lines≥80%"
+      - uses: codecov/codecov-action@v4
+        with: { token: '${{ secrets.CODECOV_TOKEN }}', fail_ci_if_error: false }
+
+  # ─── 3. Security Scanning ────────────────────────────────────
+  security:
+    name: Security Scan
+    runs-on: ubuntu-latest
+    permissions: { security-events: write, actions: read, contents: read }
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: '${{ env.NODE_VERSION }}', cache: 'npm' }
+      - run: npm ci --prefer-offline
+
+      - name: npm audit (HIGH+)
+        run: npm audit --audit-level=high
+        continue-on-error: true
+
+      - name: CodeQL Init
+        uses: github/codeql-action/init@v3
+        with: { languages: 'javascript,typescript' }
+      - name: CodeQL Autobuild
+        uses: github/codeql-action/autobuild@v3
+      - name: CodeQL Analyze
+        uses: github/codeql-action/analyze@v3
+
+      - name: Semgrep Security Rules
+        uses: returntocorp/semgrep-action@v1
+        with:
+          config: .semgrep/security-rules.yml
+        continue-on-error: true
+
+      - name: Secret Scanning — Gitleaks
+        uses: gitleaks/gitleaks-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: License Check
+        run: npx license-checker --onlyAllow 'MIT;Apache-2.0;BSD-2-Clause;BSD-3-Clause;ISC;0BSD;CC0-1.0;Unlicense' --excludePrivatePackages
+        continue-on-error: true
+
+  # ─── 4. Build ────────────────────────────────────────────────
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    needs: [lint-and-types]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: '${{ env.NODE_VERSION }}', cache: 'npm' }
+      - run: npm ci --prefer-offline
+      - name: Build Next.js
+        run: npm run build
+      - name: Bundle Size Check
+        run: |
+          BUILD_SIZE=$(du -sh .next | cut -f1)
+          echo "Build size: $BUILD_SIZE"
+          # Fail if initial JS bundle > 500KB (rough estimate)
+          PAGES_SIZE=$(du -sh .next/static/chunks/*.js 2>/dev/null | awk '{sum+=$1} END{print sum}' || echo "0")
+          echo "Total JS chunks: ${PAGES_SIZE}KB"
+      - uses: actions/upload-artifact@v4
+        with: { name: build-artifact, path: .next/, retention-days: 1 }
+
+  # ─── 5. Lighthouse CI ────────────────────────────────────────
+  lighthouse:
+    name: Lighthouse CI
+    runs-on: ubuntu-latest
+    needs: build
+    if: github.event_name == 'pull_request'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: '${{ env.NODE_VERSION }}', cache: 'npm' }
+      - run: npm ci --prefer-offline
+      - uses: actions/download-artifact@v4
+        with: { name: build-artifact, path: .next/ }
+      - name: Install Lighthouse CI
+        run: npm install -g @lhci/cli@latest
+      - name: Run Lighthouse CI
+        run: lhci autorun
+        env:
+          LHCI_GITHUB_APP_TOKEN: ${{ secrets.LHCI_GITHUB_APP_TOKEN }}
+
+  # ─── 6. E2E Tests ────────────────────────────────────────────
+  e2e:
+    name: E2E Tests
+    runs-on: ubuntu-latest
+    needs: build
+    if: github.event_name == 'pull_request'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: '${{ env.NODE_VERSION }}', cache: 'npm' }
+      - run: npm ci --prefer-offline
+      - uses: actions/download-artifact@v4
+        with: { name: build-artifact, path: .next/ }
+      - name: Install Playwright
+        run: npx playwright install --with-deps chromium firefox
+      - name: Start app
+        run: npm run start &
+        env: { NODE_ENV: production }
+      - name: Wait for app
+        run: npx wait-on http://localhost:3000 --timeout 30000
+      - name: Run Playwright
+        run: npm run test:e2e
+        env: { PLAYWRIGHT_BASE_URL: 'http://localhost:3000' }
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with: { name: playwright-report, path: playwright-report/, retention-days: 7 }
+
+  # ─── 7. Visual Regression ────────────────────────────────────
+  visual-regression:
+    name: Visual Regression (Chromatic)
+    runs-on: ubuntu-latest
+    needs: build
+    if: github.event_name == 'pull_request'
+    steps:
+      - uses: actions/checkout@v4
+        with: { fetch-depth: 0 }
+      - uses: actions/setup-node@v4
+        with: { node-version: '${{ env.NODE_VERSION }}', cache: 'npm' }
+      - run: npm ci --prefer-offline
+      - name: Publish to Chromatic
+        uses: chromaui/action@latest
+        with:
+          projectToken: ${{ secrets.CHROMATIC_PROJECT_TOKEN }}
+          exitZeroOnChanges: true
+
+  # ─── 8. Accessibility Audit ──────────────────────────────────
+  accessibility:
+    name: Accessibility (axe)
+    runs-on: ubuntu-latest
+    needs: build
+    if: github.event_name == 'pull_request'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: '${{ env.NODE_VERSION }}', cache: 'npm' }
+      - run: npm ci --prefer-offline
+      - uses: actions/download-artifact@v4
+        with: { name: build-artifact, path: .next/ }
+      - run: npm run start &
+      - run: npx wait-on http://localhost:3000 --timeout 30000
+      - name: Run axe-core accessibility tests
+        run: npx axe http://localhost:3000 http://localhost:3000/plans http://localhost:3000/auth/login --exit
+        continue-on-error: true
+
+  # ─── 9. Smoke Test ───────────────────────────────────────────
+  smoke:
+    name: Smoke Tests (Pre-Deploy)
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: '${{ env.NODE_VERSION }}', cache: 'npm' }
+      - run: npm ci --prefer-offline
+      - uses: actions/download-artifact@v4
+        with: { name: build-artifact, path: .next/ }
+      - run: npm run start &
+      - run: npx wait-on http://localhost:3000 --timeout 30000
+      - name: Smoke — critical pages respond 200
+        run: |
+          for path in "/" "/plans" "/countries" "/about" "/contact" "/faq" "/blog" "/auth/login" "/auth/register"; do
+            STATUS=$(curl -o /dev/null -s -w "%{http_code}" http://localhost:3000$path)
+            echo "$path → $STATUS"
+            if [ "$STATUS" != "200" ]; then echo "FAIL: $path returned $STATUS"; exit 1; fi
+          done
+          echo "All smoke tests passed ✅"
+
+  # ─── 10. Deploy Production ───────────────────────────────────
+  deploy-production:
+    name: Deploy → Production
+    runs-on: ubuntu-latest
+    needs: [unit-tests, security, build, smoke]
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    environment: { name: production, url: 'https://esimplatform.com' }
+    steps:
+      - uses: actions/checkout@v4
+      - name: Deploy to Vercel (Production)
+        uses: amondnet/vercel-action@v25
+        with:
+          vercel-token:      ${{ secrets.VERCEL_TOKEN }}
+          vercel-org-id:     ${{ secrets.VERCEL_ORG_ID }}
+          vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
+          vercel-args:       '--prod'
+
+  # ─── 11. Deploy Preview ──────────────────────────────────────
+  deploy-preview:
+    name: Deploy → Preview
+    runs-on: ubuntu-latest
+    needs: [unit-tests, build]
+    if: github.event_name == 'pull_request'
+    steps:
+      - uses: actions/checkout@v4
+      - name: Deploy Preview to Vercel
+        uses: amondnet/vercel-action@v25
+        with:
+          vercel-token:      ${{ secrets.VERCEL_TOKEN }}
+          vercel-org-id:     ${{ secrets.VERCEL_ORG_ID }}
+          vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}

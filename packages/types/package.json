@@ -1,0 +1,16 @@
+{
+  "name": "@esim/types",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Shared TypeScript types for eSIM Platform microfrontends",
+  "main": "./src/index.ts",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "type-check": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "typescript": "^5.3.0"
+  }
+}

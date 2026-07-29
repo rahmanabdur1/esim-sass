@@ -1,0 +1,22 @@
+{
+  "name": "@esim/api-client",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Shared API client and hooks for eSIM Platform microfrontends",
+  "main": "./src/index.ts",
+  "exports": {
+    ".": "./src/index.ts",
+    "./hooks": "./src/hooks/index.ts",
+    "./services": "./src/services/index.ts"
+  },
+  "scripts": {
+    "type-check": "tsc --noEmit"
+  },
+  "peerDependencies": {
+    "@tanstack/react-query": "^5.0.0",
+    "axios": "^1.6.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.3.0"
+  }
+}

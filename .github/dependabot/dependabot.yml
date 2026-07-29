@@ -1,0 +1,56 @@
+version: 2
+
+updates:
+  # NPM dependencies
+  - package-ecosystem: "npm"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "09:00"
+      timezone: "UTC"
+    open-pull-requests-limit: 10
+    labels:
+      - "dependencies"
+      - "security"
+    commit-message:
+      prefix: "chore(deps)"
+      prefix-development: "chore(dev-deps)"
+    groups:
+      react-ecosystem:
+        patterns:
+          - "react"
+          - "react-dom"
+          - "@types/react*"
+      nextjs-ecosystem:
+        patterns:
+          - "next"
+          - "@next/*"
+      testing:
+        patterns:
+          - "jest*"
+          - "@testing-library/*"
+          - "playwright*"
+          - "@playwright/*"
+      tanstack:
+        patterns:
+          - "@tanstack/*"
+    ignore:
+      # Pin major versions manually
+      - dependency-name: "next"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "react"
+        update-types: ["version-update:semver-major"]
+    reviewers:
+      - "security-team"
+    assignees:
+      - "lead-developer"
+
+  # GitHub Actions
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    labels:
+      - "github-actions"
+      - "dependencies"

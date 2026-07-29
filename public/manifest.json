@@ -1,0 +1,44 @@
+{
+  "name":             "eSIM Platform",
+  "short_name":       "eSIM",
+  "description":      "Stay connected worldwide with instant eSIM solutions",
+  "start_url":        "/",
+  "display":          "standalone",
+  "background_color": "#0f172a",
+  "theme_color":      "#3b82f6",
+  "orientation":      "portrait-primary",
+  "lang":             "en",
+  "scope":            "/",
+  "icons": [
+  ],
+  "shortcuts": [
+    {
+      "name":       "Buy eSIM Plan",
+      "url":        "/dashboard/buy-plan",
+      "icons":      [{ "src": "/icons/icon-96x96.png", "sizes": "96x96" }]
+    },
+    {
+      "name":       "My eSIMs",
+      "url":        "/dashboard/my-esims",
+      "icons":      [{ "src": "/icons/icon-96x96.png", "sizes": "96x96" }]
+    }
+  ],
+  "categories":       ["travel", "utilities", "productivity"],
+  "screenshots": [
+    {
+      "src":          "/screenshots/mobile-home.png",
+      "type":         "image/png",
+      "sizes":        "390x844",
+      "form_factor":  "narrow",
+      "label":        "eSIM Platform Home"
+    },
+    {
+      "src":          "/screenshots/desktop-dashboard.png",
+      "type":         "image/png",
+      "sizes":        "1440x900",
+      "form_factor":  "wide",
+      "label":        "eSIM Dashboard"
+    }
+  ],
+  "prefer_related_applications": false
+}

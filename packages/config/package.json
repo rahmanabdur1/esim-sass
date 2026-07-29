@@ -1,0 +1,13 @@
+{
+  "name": "@esim/config",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Shared configuration files for eSIM Platform microfrontends",
+  "main": "./index.js",
+  "exports": {
+    "./eslint": "./eslint.js",
+    "./typescript": "./typescript.json",
+    "./tailwind": "./tailwind.js",
+    "./prettier": "./prettier.js"
+  }
+}

@@ -1,0 +1,26 @@
+{
+  "name": "@esim/shell",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Shell/host application — orchestrates all microfrontends",
+  "scripts": {
+    "dev":        "next dev --turbo --port 3000",
+    "build":      "next build",
+    "start":      "next start",
+    "lint":       "next lint",
+    "type-check": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@esim/ui":         "workspace:*",
+    "@esim/utils":      "workspace:*",
+    "@esim/types":      "workspace:*",
+    "@esim/api-client": "workspace:*",
+    "next":             "^15.0.0",
+    "react":            "^19.0.0",
+    "react-dom":        "^19.0.0"
+  },
+  "devDependencies": {
+    "@esim/config":     "workspace:*",
+    "typescript":       "^5.3.0"
+  }
+}

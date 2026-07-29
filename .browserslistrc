@@ -1,0 +1,17 @@
+# Supported browsers — aligns with Next.js SWC transpilation targets
+# These browsers cover 95%+ of global usage
+
+[production]
+Chrome >= 90
+Firefox >= 88
+Safari >= 14
+Edge >= 90
+Opera >= 76
+Samsung >= 14
+not dead
+not op_mini all
+
+[development]
+last 2 Chrome versions
+last 2 Firefox versions
+last 2 Safari versions

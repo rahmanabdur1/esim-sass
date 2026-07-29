@@ -1,0 +1,307 @@
+import type {
+  User, Plan, Country, ESIM, Order, Notification,
+  SupportTicket, PaymentMethod, AnalyticsData,
+  ReferralData, RewardData, BlogPost,
+} from '@/types';
+
+// ── Users ─────────────────────────────────────────────────────
+export const MOCK_USER: User = {
+  id:            'user-001',
+  name:          'Alex Johnson',
+  email:         'alex@example.com',
+  emailVerified: true,
+  phone:         '+1 555 234 5678',
+  avatar:        '',
+  role:          'user',
+  createdAt:     '2024-06-15T09:00:00Z',
+  updatedAt:     '2025-01-10T14:30:00Z',
+};
+
+// ── Countries ─────────────────────────────────────────────────
+export const MOCK_COUNTRIES: Country[] = [
+  { id: 'jp', name: 'Japan',          code: 'JP', flag: '🇯🇵', region: 'Asia',        continent: 'Asia',    networks: ['NTT Docomo', 'SoftBank', 'au KDDI'], coverageQuality: 'excellent' },
+  { id: 'us', name: 'United States',  code: 'US', flag: '🇺🇸', region: 'Americas',    continent: 'Americas',networks: ['T-Mobile', 'AT&T', 'Verizon'],       coverageQuality: 'excellent' },
+  { id: 'gb', name: 'United Kingdom', code: 'GB', flag: '🇬🇧', region: 'Europe',      continent: 'Europe',  networks: ['EE', 'Vodafone UK', 'Three'],         coverageQuality: 'excellent' },
+  { id: 'fr', name: 'France',         code: 'FR', flag: '🇫🇷', region: 'Europe',      continent: 'Europe',  networks: ['Orange', 'SFR', 'Bouygues'],          coverageQuality: 'excellent' },
+  { id: 'de', name: 'Germany',        code: 'DE', flag: '🇩🇪', region: 'Europe',      continent: 'Europe',  networks: ['Deutsche Telekom', 'Vodafone DE'],    coverageQuality: 'excellent' },
+  { id: 'au', name: 'Australia',      code: 'AU', flag: '🇦🇺', region: 'Oceania',     continent: 'Oceania', networks: ['Telstra', 'Optus'],                  coverageQuality: 'good'      },
+  { id: 'sg', name: 'Singapore',      code: 'SG', flag: '🇸🇬', region: 'Asia',        continent: 'Asia',    networks: ['Singtel', 'StarHub', 'M1'],           coverageQuality: 'excellent' },
+  { id: 'kr', name: 'South Korea',    code: 'KR', flag: '🇰🇷', region: 'Asia',        continent: 'Asia',    networks: ['SK Telecom', 'KT', 'LG U+'],          coverageQuality: 'excellent' },
+  { id: 'th', name: 'Thailand',       code: 'TH', flag: '🇹🇭', region: 'Asia',        continent: 'Asia',    networks: ['AIS', 'DTAC', 'True Move'],           coverageQuality: 'good'      },
+  { id: 'it', name: 'Italy',          code: 'IT', flag: '🇮🇹', region: 'Europe',      continent: 'Europe',  networks: ['TIM', 'Vodafone IT', 'WindTre'],      coverageQuality: 'good'      },
+  { id: 'es', name: 'Spain',          code: 'ES', flag: '🇪🇸', region: 'Europe',      continent: 'Europe',  networks: ['Movistar', 'Vodafone ES', 'Orange ES'],coverageQuality:'good'      },
+  { id: 'ca', name: 'Canada',         code: 'CA', flag: '🇨🇦', region: 'Americas',    continent: 'Americas',networks: ['Bell', 'Rogers', 'Telus'],            coverageQuality: 'excellent' },
+  { id: 'br', name: 'Brazil',         code: 'BR', flag: '🇧🇷', region: 'Americas',    continent: 'Americas',networks: ['Vivo', 'Claro', 'TIM BR'],            coverageQuality: 'good'      },
+  { id: 'in', name: 'India',          code: 'IN', flag: '🇮🇳', region: 'Asia',        continent: 'Asia',    networks: ['Jio', 'Airtel', 'Vi'],               coverageQuality: 'good'      },
+  { id: 'ae', name: 'UAE',            code: 'AE', flag: '🇦🇪', region: 'Middle East', continent: 'Asia',    networks: ['Etisalat', 'du'],                     coverageQuality: 'good'      },
+  { id: 'nz', name: 'New Zealand',    code: 'NZ', flag: '🇳🇿', region: 'Oceania',     continent: 'Oceania', networks: ['Spark', 'One NZ'],                    coverageQuality: 'good'      },
+  { id: 'mx', name: 'Mexico',         code: 'MX', flag: '🇲🇽', region: 'Americas',    continent: 'Americas',networks: ['Telcel', 'AT&T MX'],                  coverageQuality: 'good'      },
+  { id: 'za', name: 'South Africa',   code: 'ZA', flag: '🇿🇦', region: 'Africa',      continent: 'Africa',  networks: ['Vodacom', 'MTN'],                     coverageQuality: 'fair'      },
+];
+
+// ── Plans ─────────────────────────────────────────────────────
+const makePlan = (
+  id: string, name: string, country: Country,
+  data: number, validity: number, price: number,
+  network: string, isPopular = false, isBestValue = false,
+  features: string[] = []
+): Plan => ({
+  id, name, data, validity, price, currency: 'USD', network,
+  coverage: [country.code], isPopular, isBestValue, country,
+  features: features.length ? features : ['4G/LTE', 'Instant activation', '24/7 support'],
+});
+
+const JP = MOCK_COUNTRIES[0]!;
+const US = MOCK_COUNTRIES[1]!;
+const GB = MOCK_COUNTRIES[2]!;
+const FR = MOCK_COUNTRIES[3]!;
+const DE = MOCK_COUNTRIES[4]!;
+const AU = MOCK_COUNTRIES[5]!;
+const SG = MOCK_COUNTRIES[6]!;
+const KR = MOCK_COUNTRIES[7]!;
+const TH = MOCK_COUNTRIES[8]!;
+const IT = MOCK_COUNTRIES[9]!;
+
+export const MOCK_PLANS: Plan[] = [
+  makePlan('plan-jp-1', 'Japan Starter',    JP, 3,  7,  4.99,  'NTT Docomo',        false, false, ['4G/LTE', 'Instant activation']),
+  makePlan('plan-jp-2', 'Japan Explorer',   JP, 10, 30, 8.99,  'NTT Docomo',        true,  false, ['4G/LTE', 'Tethering allowed', 'No throttling', '24/7 support']),
+  makePlan('plan-jp-3', 'Japan Unlimited',  JP, 20, 30, 15.99, 'SoftBank',          false, true,  ['4G/LTE', 'Tethering', 'No throttling', 'Priority network']),
+  makePlan('plan-us-1', 'USA Basic',        US, 5,  14, 6.99,  'T-Mobile',          false, false, ['4G/LTE', 'Instant activation']),
+  makePlan('plan-us-2', 'USA Standard',     US, 15, 30, 12.99, 'T-Mobile',          true,  false, ['4G/LTE', '5G where available', 'Tethering', '24/7 support']),
+  makePlan('plan-us-3', 'USA Plus',         US, 30, 30, 19.99, 'AT&T',              false, true,  ['5G capable', 'Tethering', 'No throttling', 'Priority data']),
+  makePlan('plan-gb-1', 'UK Explorer',      GB, 5,  30, 5.99,  'EE',                false, false, ['4G/LTE', 'Instant activation']),
+  makePlan('plan-gb-2', 'UK Traveller',     GB, 15, 30, 9.99,  'EE',                true,  false, ['4G/LTE', 'Tethering', '24/7 support']),
+  makePlan('plan-eu-1', 'Europe 5GB',      FR, 5,  30, 7.99,  'Orange',            false, false, ['4G/LTE', '30+ countries covered']),
+  makePlan('plan-eu-2', 'Europe Explorer',  DE, 15, 30, 14.99, 'Deutsche Telekom',   true,  false, ['4G/LTE', '40+ countries', 'Tethering', '24/7 support']),
+  makePlan('plan-au-1', 'Australia Basic',  AU, 3,  14, 5.99,  'Telstra',           false, false, ['4G/LTE', 'Instant activation']),
+  makePlan('plan-au-2', 'Australia Plus',   AU, 10, 30, 10.99, 'Telstra',           false, true,  ['4G/LTE', 'Tethering', '24/7 support']),
+  makePlan('plan-sg-1', 'Singapore Pro',    SG, 8,  30, 9.99,  'Singtel',           false, false, ['4G/LTE', '5G capable', 'Instant activation']),
+  makePlan('plan-kr-1', 'Korea Unlimited',  KR, 15, 30, 11.99, 'SK Telecom',        true,  false, ['5G capable', 'Tethering', 'No throttling']),
+  makePlan('plan-th-1', 'Thailand Starter', TH, 5,  15, 3.99,  'AIS',               false, false, ['4G/LTE', 'Instant activation']),
+  makePlan('plan-th-2', 'Thailand Pro',     TH, 15, 30, 8.99,  'AIS',               false, true,  ['4G/LTE', 'Tethering', '24/7 support']),
+  makePlan('plan-it-1', 'Italy Explorer',   IT, 5,  30, 6.99,  'TIM',               false, false, ['4G/LTE', 'Instant activation']),
+];
+
+// ── ESIMs ─────────────────────────────────────────────────────
+export const MOCK_ESIMS: ESIM[] = [
+  {
+    id: 'esim-001', iccid: '8901260000000000001',
+    label: 'Japan Business Trip', status: 'active',
+    dataTotal: 10, dataUsed: 4.2, dataRemaining: 5.8,
+    validFrom: '2025-01-01', validTo: '2025-01-31',
+    country: JP, plan: MOCK_PLANS[1]!,
+    qrCode: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChwGA60e6kgAAAABJRU5ErkJggg==',
+    network: 'NTT Docomo',
+    activationCode: 'LPA:1$rsp.truphone.com$QR-G-5C-1TS-1M49H',
+    createdAt: '2024-12-28T10:00:00Z',
+  },
+  {
+    id: 'esim-002', iccid: '8901260000000000002',
+    label: 'USA Conference', status: 'active',
+    dataTotal: 15, dataUsed: 12.8, dataRemaining: 2.2,
+    validFrom: '2025-01-05', validTo: '2025-02-05',
+    country: US, plan: MOCK_PLANS[4]!,
+    qrCode: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChwGA60e6kgAAAABJRU5ErkJggg==',
+    network: 'T-Mobile',
+    activationCode: 'LPA:1$rsp.truphone.com$QR-G-5C-2AB4-9XK2',
+    createdAt: '2025-01-02T08:00:00Z',
+  },
+  {
+    id: 'esim-003', iccid: '8901260000000000003',
+    label: 'Europe Trip 2024', status: 'expired',
+    dataTotal: 5, dataUsed: 5, dataRemaining: 0,
+    validFrom: '2024-11-01', validTo: '2024-11-30',
+    country: GB, plan: MOCK_PLANS[6]!,
+    qrCode: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChwGA60e6kgAAAABJRU5ErkJggg==',
+    network: 'EE',
+    activationCode: 'LPA:1$rsp.truphone.com$QR-G-5C-3PQ8-7RT5',
+    createdAt: '2024-10-28T12:00:00Z',
+  },
+  {
+    id: 'esim-004', iccid: '8901260000000000004',
+    label: 'Singapore Vacation', status: 'inactive',
+    dataTotal: 8, dataUsed: 0, dataRemaining: 8,
+    validFrom: '2025-02-01', validTo: '2025-03-01',
+    country: SG, plan: MOCK_PLANS[12]!,
+    qrCode: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChwGA60e6kgAAAABJRU5ErkJggg==',
+    network: 'Singtel',
+    activationCode: 'LPA:1$rsp.truphone.com$QR-G-5C-4MN2-1WX9',
+    createdAt: '2025-01-20T15:00:00Z',
+  },
+];
+
+// ── Orders ────────────────────────────────────────────────────
+export const MOCK_ORDERS: Order[] = [
+  {
+    id: 'ord-001', orderNumber: 'ESM-2025-001',
+    status: 'completed', totalAmount: 8.99, currency: 'USD',
+    plan: MOCK_PLANS[1]!, esim: MOCK_ESIMS[0]!,
+    paymentMethod: { id: 'pm-1', label: 'Visa • 4242', type: 'card', last4: '4242', brand: 'Visa', expiryMonth: 12, expiryYear: 2027, isDefault: true },
+    createdAt: '2024-12-28T10:05:00Z', updatedAt: '2024-12-28T10:06:00Z',
+  },
+  {
+    id: 'ord-002', orderNumber: 'ESM-2025-002',
+    status: 'completed', totalAmount: 12.99, currency: 'USD',
+    plan: MOCK_PLANS[4]!, esim: MOCK_ESIMS[1]!,
+    paymentMethod: { id: 'pm-1', label: 'Visa • 4242', type: 'card', last4: '4242', brand: 'Visa', expiryMonth: 12, expiryYear: 2027, isDefault: true },
+    createdAt: '2025-01-02T08:10:00Z', updatedAt: '2025-01-02T08:11:00Z',
+  },
+  {
+    id: 'ord-003', orderNumber: 'ESM-2024-098',
+    status: 'completed', totalAmount: 5.99, currency: 'USD',
+    plan: MOCK_PLANS[6]!, esim: MOCK_ESIMS[2]!,
+    paymentMethod: { id: 'pm-2', label: 'PayPal', type: 'paypal', last4: '', brand: 'PayPal', expiryMonth: 0, expiryYear: 0, isDefault: false },
+    createdAt: '2024-10-28T12:15:00Z', updatedAt: '2024-10-28T12:16:00Z',
+  },
+  {
+    id: 'ord-004', orderNumber: 'ESM-2025-003',
+    status: 'pending', totalAmount: 9.99, currency: 'USD',
+    plan: MOCK_PLANS[12]!, esim: MOCK_ESIMS[3]!,
+    paymentMethod: { id: 'pm-1', label: 'Visa • 4242', type: 'card', last4: '4242', brand: 'Visa', expiryMonth: 12, expiryYear: 2027, isDefault: true },
+    createdAt: '2025-01-20T15:05:00Z', updatedAt: '2025-01-20T15:05:00Z',
+  },
+];
+
+// ── Notifications ──────────────────────────────────────────────
+export const MOCK_NOTIFICATIONS: Notification[] = [
+  { id: 'n-001', title: 'eSIM Activated',         message: 'Your Japan Explorer plan is now active.',                       type: 'success', isRead: false, createdAt: new Date(Date.now() - 5   * 60000).toISOString()  },
+  { id: 'n-002', title: 'Low Data Warning',        message: 'Your USA Standard plan has only 2.2 GB remaining.',             type: 'warning', isRead: false, createdAt: new Date(Date.now() - 2   * 3600000).toISOString() },
+  { id: 'n-003', title: 'Order Confirmed',         message: 'Singapore Pro eSIM order confirmed. Ready to activate.',        type: 'info',    isRead: false, createdAt: new Date(Date.now() - 6   * 3600000).toISOString() },
+  { id: 'n-004', title: 'Plan Expired',            message: 'Your Europe Trip 2024 plan has expired.',                       type: 'error',   isRead: true,  createdAt: new Date(Date.now() - 24  * 3600000).toISOString() },
+  { id: 'n-005', title: 'Referral Reward',         message: 'You earned $5 credit for referring a friend!',                  type: 'success', isRead: true,  createdAt: new Date(Date.now() - 48  * 3600000).toISOString() },
+  { id: 'n-006', title: 'New Plan Available',      message: 'Thailand Unlimited plan now available from $8.99.',             type: 'info',    isRead: true,  createdAt: new Date(Date.now() - 72  * 3600000).toISOString() },
+];
+
+// ── Support Tickets ────────────────────────────────────────────
+export const MOCK_TICKETS: SupportTicket[] = [
+  {
+    id: 'tkt-001', ticketNumber: 'TKT-2025-001',
+    subject: 'eSIM not connecting after activation',
+    description: 'I activated my Japan plan but cannot connect to the network.',
+    status: 'resolved', priority: 'high',
+    createdAt: '2025-01-05T10:00:00Z', updatedAt: '2025-01-06T14:00:00Z',
+    messages: [
+      { id: 'm-1', sender: 'user',    content: 'I activated but cannot connect.',   createdAt: '2025-01-05T10:00:00Z' },
+      { id: 'm-2', sender: 'support', content: 'Please toggle Airplane Mode off and on again then try reconnecting.', createdAt: '2025-01-05T10:30:00Z' },
+      { id: 'm-3', sender: 'user',    content: 'That worked! Thank you so much.',   createdAt: '2025-01-06T09:00:00Z' },
+    ],
+  },
+  {
+    id: 'tkt-002', ticketNumber: 'TKT-2025-002',
+    subject: 'Refund request for expired plan',
+    description: 'I would like a refund for my unused data.',
+    status: 'in_progress', priority: 'medium',
+    createdAt: '2025-01-18T08:00:00Z', updatedAt: '2025-01-19T10:00:00Z',
+    messages: [
+      { id: 'm-4', sender: 'user',    content: 'I would like a refund for my unused data.', createdAt: '2025-01-18T08:00:00Z' },
+      { id: 'm-5', sender: 'support', content: 'We are reviewing your refund request. You will hear back within 24 hours.', createdAt: '2025-01-19T10:00:00Z' },
+    ],
+  },
+];
+
+// ── Payment Methods ────────────────────────────────────────────
+export const MOCK_PAYMENT_METHODS: PaymentMethod[] = [
+  { id: 'pm-1', type: 'card',   last4: '4242', brand: 'Visa',       expiryMonth: 12, expiryYear: 2027, isDefault: true,  label: 'Visa •••• 4242' },
+  { id: 'pm-2', type: 'paypal', last4: '',     brand: 'PayPal',     expiryMonth: 0,  expiryYear: 0,    isDefault: false, label: 'PayPal' },
+  { id: 'pm-3', type: 'card',   last4: '1234', brand: 'Mastercard', expiryMonth: 8,  expiryYear: 2026, isDefault: false, label: 'Mastercard •••• 1234' },
+];
+
+// ── Analytics ─────────────────────────────────────────────────
+export const MOCK_ANALYTICS: AnalyticsData = {
+  daily: [
+    { date: '2025-01-10', used: 0.8, total: 10 },
+    { date: '2025-01-11', used: 1.2, total: 10 },
+    { date: '2025-01-12', used: 0.6, total: 10 },
+    { date: '2025-01-13', used: 1.5, total: 10 },
+    { date: '2025-01-14', used: 0.9, total: 10 },
+    { date: '2025-01-15', used: 1.1, total: 10 },
+    { date: '2025-01-16', used: 0.7, total: 10 },
+  ],
+  weekly: [
+    { date: 'Week 1', used: 4.2, total: 10 },
+    { date: 'Week 2', used: 3.8, total: 10 },
+    { date: 'Week 3', used: 2.9, total: 15 },
+    { date: 'Week 4', used: 5.1, total: 15 },
+  ],
+  monthly: [
+    { date: 'Aug',  used: 12.9, total: 20 },
+    { date: 'Sep',  used: 8.9,  total: 10 },
+    { date: 'Oct',  used: 24.9, total: 30 },
+    { date: 'Nov',  used: 6.9,  total: 10 },
+    { date: 'Dec',  used: 19.9, total: 20 },
+    { date: 'Jan',  used: 14.9, total: 25 },
+  ],
+};
+
+// ── Referral ──────────────────────────────────────────────────
+export const MOCK_REFERRAL: ReferralData = {
+  code:               'ALEX2025',
+  totalReferrals:     3,
+  successfulReferrals: 2,
+  totalEarned:        10.00,
+  pendingRewards:     5.00,
+  referrals: [
+    { id: 'r-1', email: 'sarah@***', status: 'completed', reward: 5.00, joinedAt: '2024-12-01T00:00:00Z' },
+    { id: 'r-2', email: 'tom@***',   status: 'completed', reward: 5.00, joinedAt: '2024-12-10T00:00:00Z' },
+    { id: 'r-3', email: 'lisa@***',  status: 'pending',   reward: 5.00, joinedAt: '2025-01-15T00:00:00Z' },
+  ],
+};
+
+// ── Rewards ───────────────────────────────────────────────────
+export const MOCK_REWARDS: RewardData = {
+  points:           1250,
+  tier:             'silver',
+  nextTierPoints:   1500,
+  history: [
+    { id: 'rh-1', type: 'earned',   points: 100, description: 'Japan Explorer purchase', createdAt: '2024-12-28T00:00:00Z' },
+    { id: 'rh-2', type: 'earned',   points: 150, description: 'USA Standard purchase',   createdAt: '2025-01-02T00:00:00Z' },
+    { id: 'rh-3', type: 'earned',   points:  50, description: 'Referral bonus',          createdAt: '2024-12-10T00:00:00Z' },
+    { id: 'rh-4', type: 'redeemed', points: 500, description: '$5 discount applied',     createdAt: '2024-11-15T00:00:00Z' },
+    { id: 'rh-5', type: 'earned',   points: 100, description: 'Singapore Pro purchase',  createdAt: '2025-01-20T00:00:00Z' },
+  ],
+};
+
+// ── Blog Posts ────────────────────────────────────────────────
+export const MOCK_BLOG_POSTS: BlogPost[] = [
+  {
+    id: 'blog-1', title: "What Is an eSIM? A Complete Beginner's Guide",
+    slug: 'what-is-esim', excerpt: 'Not sure what an eSIM is or how it works? This guide explains everything in plain English.',
+    coverImage: '📱', tags: ['Guides'], readTime: 7, publishedAt: '2025-01-05',
+    content: 'This beginner-friendly article breaks down what an eSIM is, how it works, and why it is a great choice for travelers and digital nomads.',
+    author: { id: 'a-1', name: 'James T.', avatar: '', bio: 'Product writer with 8 years in mobile tech.' },
+  },
+  {
+    id: 'blog-2', title: 'Best eSIM Plans for Japan 2025',
+    slug: 'best-esim-for-japan', excerpt: 'Everything you need to know about staying connected in Japan.',
+    coverImage: '🇯🇵', tags: ['Travel Tips'], readTime: 5, publishedAt: '2025-01-10',
+    content: 'A curated list of top eSIM plans for Japan in 2025, including recommendations for short trips, business travel, and long-term stays.',
+    author: { id: 'a-2', name: 'Sarah M.', avatar: '', bio: 'Frequent Japan traveler and digital nomad.' },
+  },
+  {
+    id: 'blog-3', title: 'eSIM vs Physical SIM: Which Is Better for Travel?',
+    slug: 'esim-vs-physical-sim', excerpt: 'A detailed comparison to help you decide which option suits your travel style.',
+    coverImage: '⚖️', tags: ['Guides'], readTime: 6, publishedAt: '2025-01-15',
+    content: 'A side-by-side comparison of eSIMs and physical SIM cards, highlighting convenience, compatibility, cost, and use cases for modern travelers.',
+    author: { id: 'a-1', name: 'James T.', avatar: '', bio: 'Product writer with 8 years in mobile tech.' },
+  },
+  {
+    id: 'blog-4', title: 'Top 10 Countries for eSIM Coverage in 2025',
+    slug: 'top-esim-countries-2025', excerpt: 'The best destinations where eSIM connectivity truly shines.',
+    coverImage: '🌍', tags: ['Top Lists'], readTime: 4, publishedAt: '2025-01-20',
+    content: 'A roundup of the top countries with reliable eSIM coverage, perfect for planning your next connected trip.',
+    author: { id: 'a-3', name: 'Maria C.', avatar: '', bio: 'Travel blogger and connectivity enthusiast.' },
+  },
+];
+
+// ── Knowledge Base Articles ────────────────────────────────────
+export const MOCK_ARTICLES = [
+  { id: '1', category: 'getting-started', title: 'How to create your eSIM Platform account',    excerpt: 'Step-by-step guide to signing up and verifying your email.',                  helpful: 142, notHelpful: 4,  views: 3201 },
+  { id: '2', category: 'esim-activation', title: 'How to scan and activate your eSIM QR code',   excerpt: 'Detailed instructions for iOS and Android devices.',                          helpful: 318, notHelpful: 9,  views: 8902 },
+  { id: '3', category: 'esim-activation', title: 'My eSIM is not connecting — troubleshooting',  excerpt: 'Common fixes for connection issues after activation.',                        helpful: 201, notHelpful: 22, views: 5103 },
+  { id: '4', category: 'billing',         title: 'Accepted payment methods',                      excerpt: 'Visa, Mastercard, PayPal, Apple Pay, Google Pay supported.',                 helpful: 89,  notHelpful: 2,  views: 2204 },
+  { id: '5', category: 'billing',         title: 'How to request a refund',                       excerpt: 'Refund eligibility and how to submit a request.',                             helpful: 156, notHelpful: 11, views: 4502 },
+  { id: '6', category: 'security',        title: 'Enabling two-factor authentication',            excerpt: 'Add an extra layer of protection to your account.',                          helpful: 67,  notHelpful: 1,  views: 1830 },
+  { id: '7', category: 'security',        title: 'What to do if you suspect unauthorized access', excerpt: 'Immediate steps to secure your account.',                                    helpful: 45,  notHelpful: 0,  views: 980  },
+  { id: '8', category: 'settings',        title: 'Changing your notification preferences',        excerpt: 'Customize email, push, and SMS alerts.',                                   helpful: 34,  notHelpful: 1,  views: 760  },
+  { id: '9', category: 'getting-started', title: 'Which devices support eSIM?',                  excerpt: 'Full compatibility list for iPhone, Samsung, Pixel and more.',               helpful: 410, notHelpful: 15, views: 12044},
+];

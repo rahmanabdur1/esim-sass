@@ -1,0 +1,26 @@
+{
+  "name": "@esim/ui",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Shared UI component library for eSIM Platform microfrontends",
+  "main": "./src/index.ts",
+  "exports": {
+    ".": "./src/index.ts",
+    "./button": "./src/components/Button.tsx",
+    "./input": "./src/components/Input.tsx",
+    "./badge": "./src/components/Badge.tsx",
+    "./spinner": "./src/components/Spinner.tsx",
+    "./skeleton": "./src/components/Skeleton.tsx"
+  },
+  "scripts": {
+    "type-check": "tsc --noEmit",
+    "lint": "eslint src/ --ext .ts,.tsx"
+  },
+  "peerDependencies": {
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.3.0"
+  }
+}

@@ -1,0 +1,127 @@
+rules:
+  # ── XSS Prevention ──────────────────────────────────────────
+  - id: no-dangerously-set-inner-html
+    patterns:
+      - pattern: dangerouslySetInnerHTML={{...}}
+    message: >
+      dangerouslySetInnerHTML can lead to XSS. Use escapeHtml() from @/lib/security
+      or render text via element.textContent instead.
+    languages: [typescript, javascript]
+    severity: ERROR
+    metadata:
+      category: security
+      owasp: "A03:2021 - Injection"
+
+  - id: no-inner-html-assignment
+    patterns:
+      - pattern: $EL.innerHTML = $VAL
+    message: >
+      Direct innerHTML assignment is dangerous. Use textContent for plain text
+      or DOMPurify/escapeHtml for HTML content.
+    languages: [typescript, javascript]
+    severity: ERROR
+
+  # ── Sensitive Data Exposure ──────────────────────────────────
+  - id: no-sensitive-data-in-localstorage
+    patterns:
+      - pattern: localStorage.setItem($KEY, ...)
+        where:
+          - metavariable-regex:
+              metavariable: $KEY
+              regex: ".*(token|jwt|secret|password|auth|key|credential).*"
+    message: >
+      Do not store sensitive data in localStorage. Use HttpOnly cookies or
+      sessionStorage for sensitive session data.
+    languages: [typescript, javascript]
+    severity: ERROR
+    metadata:
+      owasp: "A02:2021 - Cryptographic Failures"
+
+  - id: no-console-log-sensitive
+    patterns:
+      - pattern: console.log(..., $DATA, ...)
+        where:
+          - metavariable-regex:
+              metavariable: $DATA
+              regex: ".*(password|token|secret|key|card|cvv|ssn).*"
+    message: >
+      Do not log sensitive data to the console. Remove this statement before
+      committing.
+    languages: [typescript, javascript]
+    severity: WARNING
+
+  # ── Hardcoded Secrets ────────────────────────────────────────
+  - id: no-hardcoded-api-keys
+    patterns:
+      - pattern: |
+          const $VAR = "$VALUE"
+        where:
+          - metavariable-regex:
+              metavariable: $VAR
+              regex: ".*(api_key|apiKey|secret|token|password|passwd).*"
+          - metavariable-regex:
+              metavariable: $VALUE
+              regex: "^[A-Za-z0-9+/=]{20,}$"
+    message: >
+      Possible hardcoded secret detected. Move to environment variables and
+      add to .gitignore.
+    languages: [typescript, javascript]
+    severity: ERROR
+    metadata:
+      owasp: "A02:2021 - Cryptographic Failures"
+
+  # ── CSRF / Origin Checks ─────────────────────────────────────
+  - id: fetch-missing-credentials
+    patterns:
+      - pattern: fetch($URL, { method: "POST", ... })
+        where:
+          - pattern-not: fetch($URL, { ..., credentials: ..., ... })
+    message: >
+      POST fetch call missing credentials option. Add credentials: 'same-origin'
+      or 'include' to ensure cookies are sent for CSRF protection.
+    languages: [typescript, javascript]
+    severity: WARNING
+
+  # ── Prototype Pollution ──────────────────────────────────────
+  - id: no-prototype-pollution
+    patterns:
+      - pattern: Object.assign({}, $SRC)
+        where:
+          - pattern-not-inside: |
+              const $SAFE = { ...$SRC }
+    message: >
+      Potential prototype pollution via Object.assign. Use structuredClone()
+      or spread syntax with validated input.
+    languages: [typescript, javascript]
+    severity: WARNING
+    metadata:
+      owasp: "A08:2021 - Software and Data Integrity Failures"
+
+  # ── Open Redirect ────────────────────────────────────────────
+  - id: no-unvalidated-redirect
+    patterns:
+      - pattern: router.push($URL)
+        where:
+          - pattern-not: router.push(ROUTES.$SAFE)
+          - pattern-not: router.push("/...")
+    message: >
+      Possible open redirect. Validate redirect URLs against an allowlist
+      or use the ROUTES constant.
+    languages: [typescript, javascript]
+    severity: WARNING
+    metadata:
+      owasp: "A01:2021 - Broken Access Control"
+
+  # ── Eval / Code Injection ────────────────────────────────────
+  - id: no-eval
+    patterns:
+      - pattern: eval(...)
+      - pattern: new Function(...)
+      - pattern: setTimeout($CODE, ...) where: { pattern: $CODE: "\"...\"" }
+    message: >
+      eval() and equivalent functions enable code injection attacks.
+      Refactor to use safe alternatives.
+    languages: [typescript, javascript]
+    severity: ERROR
+    metadata:
+      owasp: "A03:2021 - Injection"

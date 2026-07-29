@@ -1,0 +1,84 @@
+/**
+ * PlanCard.module.css
+ * CSS Modules — scoped, modular, zero-conflict styling.
+ *
+ * Used alongside Tailwind for component-specific styles
+ * that are too complex for utility classes (animations,
+ * pseudo-elements, complex selectors).
+ *
+ * Import in component:
+ *   import styles from './PlanCard.module.css';
+ *   <div className={styles.card}>
+ */
+
+/* Card shine effect on hover */
+.card {
+  position:  relative;
+  overflow:  hidden;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.card::before {
+  content:    '';
+  position:   absolute;
+  top:        -50%;
+  left:       -50%;
+  width:      200%;
+  height:     200%;
+  background: linear-gradient(
+    45deg,
+    transparent 30%,
+    rgba(255, 255, 255, 0.05) 50%,
+    transparent 70%
+  );
+  transform:   translateX(-100%);
+  transition:  transform 0.6s ease;
+  pointer-events: none;
+}
+
+.card:hover::before {
+  transform: translateX(100%); /* Shine sweeps across card on hover */
+}
+
+.card:hover {
+  transform:  translateY(-2px);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+}
+
+/* Popular badge pulse animation */
+.popularBadge {
+  animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1;   transform: scale(1);    }
+  50%       { opacity: 0.8; transform: scale(1.02); }
+}
+
+/* Data usage ring */
+.dataRing {
+  transform-origin: center;
+  transition: stroke-dashoffset 0.8s ease-in-out;
+}
+
+/* Price highlight */
+.price {
+  background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Responsive grid — CSS Grid with auto-fill */
+.planGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1.25rem;
+}
+
+@media (max-width: 640px) {
+  .planGrid {
+    grid-template-columns: 1fr;
+  }
+}

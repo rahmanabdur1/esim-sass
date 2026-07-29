@@ -3,7 +3,8 @@
 Production-ready eSIM SaaS built with Next.js 15, pnpm workspaces, Turbopack, and a microfrontend architecture.
 
 ## Core Technologies
-- **Next.js 15** (App Router) — SSR, SSG, ISR, Streaming, Route Handlers
+- **Next.js 15+
+- ** (App Router) — SSR, SSG, ISR, Streaming, Route Handlers
 - **pnpm** — Fast, disk-efficient package manager with workspace support
 - **Turbopack** — Ultra-fast dev bundler (`pnpm dev` uses --turbo flag)
 - **TypeScript 5** strict mode

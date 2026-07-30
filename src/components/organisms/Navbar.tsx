@@ -7,7 +7,7 @@ import { Menu, X, Globe, Bell, ChevronDown, User, LogOut, Settings, Search } fro
 import { LanguageSwitcher } from '@/features/i18n/LanguageSwitcher';
 import { CurrencySwitcher } from '@/features/i18n/CurrencySwitcher';
 import { Button } from '@/components/atoms/Button';
-import { Avatar, Badge } from '@/components/atoms/index';
+import { Avatar } from '@/components/atoms/index';
 import { cn } from '@/utils';
 import { ROUTES } from '@/constants';
 import { useAuthStore, useNotificationStore } from '@/store';
@@ -35,34 +35,45 @@ export function Navbar() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  useEffect(() => { setIsOpen(false); }, [pathname]);
+  useEffect(() => {
+    setIsOpen(false);
+  }, [pathname]);
 
   return (
     <header
       className={cn(
         'fixed top-0 z-50 w-full transition-all duration-300',
-        scrolled ? 'bg-background/95 backdrop-blur-md shadow-sm border-b border-border' : 'bg-transparent'
+        scrolled
+          ? 'border-b border-border bg-background/95 shadow-sm backdrop-blur-md'
+          : 'bg-transparent',
       )}
       role="banner"
     >
-      <nav className="container mx-auto flex h-16 items-center justify-between px-4 md:px-6" aria-label="Main navigation">
+      <nav
+        className="container mx-auto flex h-16 items-center justify-between px-4 md:px-6"
+        aria-label="Main navigation"
+      >
         {/* Logo */}
-        <Link href={ROUTES.HOME} className="flex items-center gap-2 font-display font-bold text-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-sm" aria-label="eSIM Platform Home">
+        <Link
+          href={ROUTES.HOME}
+          className="flex items-center gap-2 rounded-sm font-display text-xl font-bold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+          aria-label="eSIM Platform Home"
+        >
           <Globe className="h-6 w-6 text-primary" aria-hidden="true" />
           <span className="text-gradient">eSIM Platform</span>
         </Link>
 
         {/* Desktop Nav */}
-        <ul className="hidden lg:flex items-center gap-1" role="list">
+        <ul className="hidden items-center gap-1 lg:flex">
           {navLinks.map((link) => (
             <li key={link.href}>
               <Link
                 href={link.href}
                 className={cn(
-                  'px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring',
+                  'rounded-md px-3 py-2 text-sm font-medium transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring',
                   pathname === link.href
-                    ? 'text-primary bg-primary/10'
-                    : 'text-foreground/70 hover:text-foreground hover:bg-accent'
+                    ? 'bg-primary/10 text-primary'
+                    : 'text-foreground/70 hover:bg-accent hover:text-foreground',
                 )}
                 aria-current={pathname === link.href ? 'page' : undefined}
               >
@@ -73,24 +84,30 @@ export function Navbar() {
         </ul>
 
         {/* Desktop Actions */}
-        <div className="hidden lg:flex items-center gap-2">
+        <div className="hidden items-center gap-2 lg:flex">
           <LanguageSwitcher compact />
           <CurrencySwitcher compact />
           <button
-            onClick={() => window.dispatchEvent(new KeyboardEvent('keydown', { key: 'k', metaKey: true }))}
-            className="flex items-center gap-2 rounded-md border px-3 py-1.5 text-sm text-muted-foreground hover:bg-accent transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+            onClick={() =>
+              window.dispatchEvent(new KeyboardEvent('keydown', { key: 'k', metaKey: true }))
+            }
+            className="flex items-center gap-2 rounded-md border px-3 py-1.5 text-sm text-muted-foreground transition-colors hover:bg-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
             aria-label="Open search (Command K)"
           >
             <Search className="h-3.5 w-3.5" aria-hidden="true" />
             <span>Search</span>
-            <kbd className="ml-2 text-xs bg-muted rounded px-1.5 py-0.5">⌘K</kbd>
+            <kbd className="ml-2 rounded bg-muted px-1.5 py-0.5 text-xs">⌘K</kbd>
           </button>
           {isAuthenticated ? (
             <>
-              <Link href={ROUTES.NOTIFICATIONS} aria-label={`Notifications${unreadCount > 0 ? `, ${unreadCount} unread` : ''}`} className="relative p-2 rounded-md hover:bg-accent transition-colors">
+              <Link
+                href={ROUTES.NOTIFICATIONS}
+                aria-label={`Notifications${unreadCount > 0 ? `, ${unreadCount} unread` : ''}`}
+                className="relative rounded-md p-2 transition-colors hover:bg-accent"
+              >
                 <Bell className="h-5 w-5" aria-hidden="true" />
                 {unreadCount > 0 && (
-                  <span className="absolute -top-0.5 -right-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-destructive text-[10px] text-white font-bold">
+                  <span className="absolute -right-0.5 -top-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-destructive text-[10px] font-bold text-white">
                     {unreadCount > 9 ? '9+' : unreadCount}
                   </span>
                 )}
@@ -98,14 +115,22 @@ export function Navbar() {
               <div className="relative">
                 <button
                   onClick={() => setUserMenuOpen(!userMenuOpen)}
-                  className="flex items-center gap-2 rounded-md p-1.5 hover:bg-accent transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                  className="flex items-center gap-2 rounded-md p-1.5 transition-colors hover:bg-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                   aria-expanded={userMenuOpen}
                   aria-haspopup="menu"
                   aria-label="User menu"
                 >
-                  <Avatar src={user?.avatar} alt={user?.name || 'User'} name={user?.name} size="sm" />
+                  <Avatar
+                    src={user?.avatar}
+                    alt={user?.name || 'User'}
+                    name={user?.name}
+                    size="sm"
+                  />
                   <span className="text-sm font-medium">{user?.name?.split(' ')[0]}</span>
-                  <ChevronDown className={cn('h-4 w-4 transition-transform', userMenuOpen && 'rotate-180')} aria-hidden="true" />
+                  <ChevronDown
+                    className={cn('h-4 w-4 transition-transform', userMenuOpen && 'rotate-180')}
+                    aria-hidden="true"
+                  />
                 </button>
                 <AnimatePresence>
                   {userMenuOpen && (
@@ -122,12 +147,21 @@ export function Navbar() {
                           { href: ROUTES.DASHBOARD, icon: User, label: 'Dashboard' },
                           { href: ROUTES.PROFILE, icon: Settings, label: 'Profile' },
                         ].map((item) => (
-                          <Link key={item.href} href={item.href} role="menuitem" className="flex items-center gap-2 rounded-sm px-3 py-2 text-sm hover:bg-accent transition-colors" onClick={() => setUserMenuOpen(false)}>
+                          <Link
+                            key={item.href}
+                            href={item.href}
+                            role="menuitem"
+                            className="flex items-center gap-2 rounded-sm px-3 py-2 text-sm transition-colors hover:bg-accent"
+                            onClick={() => setUserMenuOpen(false)}
+                          >
                             <item.icon className="h-4 w-4" aria-hidden="true" /> {item.label}
                           </Link>
                         ))}
                         <hr className="my-1 border-border" />
-                        <button role="menuitem" className="flex w-full items-center gap-2 rounded-sm px-3 py-2 text-sm text-destructive hover:bg-destructive/10 transition-colors">
+                        <button
+                          role="menuitem"
+                          className="flex w-full items-center gap-2 rounded-sm px-3 py-2 text-sm text-destructive transition-colors hover:bg-destructive/10"
+                        >
                           <LogOut className="h-4 w-4" aria-hidden="true" /> Sign Out
                         </button>
                       </div>
@@ -138,21 +172,29 @@ export function Navbar() {
             </>
           ) : (
             <>
-              <Button variant="ghost" size="sm" asChild><Link href={ROUTES.LOGIN}>Sign In</Link></Button>
-              <Button size="sm" variant="gradient" asChild><Link href={ROUTES.REGISTER}>Get Started</Link></Button>
+              <Button variant="ghost" size="sm" asChild>
+                <Link href={ROUTES.LOGIN}>Sign In</Link>
+              </Button>
+              <Button size="sm" variant="gradient" asChild>
+                <Link href={ROUTES.REGISTER}>Get Started</Link>
+              </Button>
             </>
           )}
         </div>
 
         {/* Mobile menu toggle */}
         <button
-          className="lg:hidden p-2 rounded-md hover:bg-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+          className="rounded-md p-2 hover:bg-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring lg:hidden"
           onClick={() => setIsOpen(!isOpen)}
           aria-expanded={isOpen}
           aria-controls="mobile-menu"
           aria-label={isOpen ? 'Close menu' : 'Open menu'}
         >
-          {isOpen ? <X className="h-5 w-5" aria-hidden="true" /> : <Menu className="h-5 w-5" aria-hidden="true" />}
+          {isOpen ? (
+            <X className="h-5 w-5" aria-hidden="true" />
+          ) : (
+            <Menu className="h-5 w-5" aria-hidden="true" />
+          )}
         </button>
       </nav>
 
@@ -164,16 +206,21 @@ export function Navbar() {
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: 'auto' }}
             exit={{ opacity: 0, height: 0 }}
-            className="lg:hidden border-t bg-background overflow-hidden"
+            className="overflow-hidden border-t bg-background lg:hidden"
           >
-            <nav className="container mx-auto px-4 py-4 flex flex-col gap-1" aria-label="Mobile navigation">
+            <nav
+              className="container mx-auto flex flex-col gap-1 px-4 py-4"
+              aria-label="Mobile navigation"
+            >
               {navLinks.map((link) => (
                 <Link
                   key={link.href}
                   href={link.href}
                   className={cn(
                     'rounded-md px-3 py-2 text-sm font-medium transition-colors',
-                    pathname === link.href ? 'text-primary bg-primary/10' : 'text-foreground/70 hover:text-foreground hover:bg-accent'
+                    pathname === link.href
+                      ? 'bg-primary/10 text-primary'
+                      : 'text-foreground/70 hover:bg-accent hover:text-foreground',
                   )}
                   aria-current={pathname === link.href ? 'page' : undefined}
                 >
@@ -182,11 +229,17 @@ export function Navbar() {
               ))}
               <div className="mt-4 flex flex-col gap-2 border-t pt-4">
                 {isAuthenticated ? (
-                  <Button asChild variant="gradient"><Link href={ROUTES.DASHBOARD}>Dashboard</Link></Button>
+                  <Button asChild variant="gradient">
+                    <Link href={ROUTES.DASHBOARD}>Dashboard</Link>
+                  </Button>
                 ) : (
                   <>
-                    <Button asChild variant="outline"><Link href={ROUTES.LOGIN}>Sign In</Link></Button>
-                    <Button asChild variant="gradient"><Link href={ROUTES.REGISTER}>Get Started</Link></Button>
+                    <Button asChild variant="outline">
+                      <Link href={ROUTES.LOGIN}>Sign In</Link>
+                    </Button>
+                    <Button asChild variant="gradient">
+                      <Link href={ROUTES.REGISTER}>Get Started</Link>
+                    </Button>
                   </>
                 )}
               </div>

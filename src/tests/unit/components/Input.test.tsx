@@ -1,7 +1,8 @@
 import React from 'react';
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { axe } from 'jest-axe';
+import 'jest-axe/extend-expect';
 import '@testing-library/jest-dom';
 import { Input } from '@/components/atoms/index';
 
@@ -48,7 +49,13 @@ describe('Input', () => {
   });
 
   it('renders left and right icons', () => {
-    render(<Input label="Search" leftIcon={<span data-testid="left-icon" />} rightIcon={<span data-testid="right-icon" />} />);
+    render(
+      <Input
+        label="Search"
+        leftIcon={<span data-testid="left-icon" />}
+        rightIcon={<span data-testid="right-icon" />}
+      />,
+    );
     expect(screen.getByTestId('left-icon')).toBeInTheDocument();
     expect(screen.getByTestId('right-icon')).toBeInTheDocument();
   });
@@ -77,7 +84,7 @@ describe('Input', () => {
       <form>
         <Input label="Email address" type="email" required />
         <Input label="Password" type="password" hint="Min 8 characters" />
-      </form>
+      </form>,
     );
     const results = await axe(container);
     expect(results).toHaveNoViolations();

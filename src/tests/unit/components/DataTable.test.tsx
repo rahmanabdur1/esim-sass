@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import '@testing-library/jest-dom';
 import { DataTable } from '@/components/data-table/DataTable';
@@ -7,18 +7,24 @@ import { DataTable } from '@/components/data-table/DataTable';
 type Row = { id: string; name: string; email: string; status: string; amount: number };
 
 const MOCK_DATA: Row[] = [
-  { id: '1', name: 'Japan 5GB',   email: 'user1@test.com', status: 'active',   amount: 8.99  },
-  { id: '2', name: 'USA 10GB',    email: 'user2@test.com', status: 'expired',  amount: 12.99 },
-  { id: '3', name: 'UK 3GB',      email: 'user3@test.com', status: 'active',   amount: 5.99  },
-  { id: '4', name: 'France 5GB',  email: 'user4@test.com', status: 'pending',  amount: 6.99  },
-  { id: '5', name: 'Germany 8GB', email: 'user5@test.com', status: 'active',   amount: 9.99  },
+  { id: '1', name: 'Japan 5GB', email: 'user1@test.com', status: 'active', amount: 8.99 },
+  { id: '2', name: 'USA 10GB', email: 'user2@test.com', status: 'expired', amount: 12.99 },
+  { id: '3', name: 'UK 3GB', email: 'user3@test.com', status: 'active', amount: 5.99 },
+  { id: '4', name: 'France 5GB', email: 'user4@test.com', status: 'pending', amount: 6.99 },
+  { id: '5', name: 'Germany 8GB', email: 'user5@test.com', status: 'active', amount: 9.99 },
 ];
 
 const COLUMNS = [
-  { key: 'name',   header: 'Plan',   sortable: true,  getValue: (r: Row) => r.name   },
-  { key: 'email',  header: 'Email',  sortable: false                                   },
-  { key: 'status', header: 'Status', sortable: true,  getValue: (r: Row) => r.status },
-  { key: 'amount', header: 'Price',  sortable: true,  getValue: (r: Row) => r.amount, align: 'right' as const },
+  { key: 'name', header: 'Plan', sortable: true, getValue: (r: Row) => r.name },
+  { key: 'email', header: 'Email', sortable: false },
+  { key: 'status', header: 'Status', sortable: true, getValue: (r: Row) => r.status },
+  {
+    key: 'amount',
+    header: 'Price',
+    sortable: true,
+    getValue: (r: Row) => r.amount,
+    align: 'right' as const,
+  },
 ];
 
 describe('DataTable', () => {
@@ -69,7 +75,9 @@ describe('DataTable', () => {
   });
 
   it('shows empty message when data is empty', () => {
-    render(<DataTable data={[]} columns={COLUMNS} emptyMessage="No records" aria-label="Test table" />);
+    render(
+      <DataTable data={[]} columns={COLUMNS} emptyMessage="No records" aria-label="Test table" />,
+    );
     expect(screen.getByText('No records')).toBeInTheDocument();
   });
 
@@ -81,10 +89,12 @@ describe('DataTable', () => {
 
   it('calls onRowClick when row is clicked', async () => {
     const handler = jest.fn();
-    const user    = userEvent.setup();
-    render(<DataTable data={MOCK_DATA} columns={COLUMNS} onRowClick={handler} aria-label="Test table" />);
+    const user = userEvent.setup();
+    render(
+      <DataTable data={MOCK_DATA} columns={COLUMNS} onRowClick={handler} aria-label="Test table" />,
+    );
 
-    const firstRow = screen.getAllByRole('button')[0];
+    const firstRow = screen.getAllByRole('button')[0]!;
     await user.click(firstRow);
     expect(handler).toHaveBeenCalledTimes(1);
     expect(handler).toHaveBeenCalledWith(MOCK_DATA[0]);
@@ -92,8 +102,11 @@ describe('DataTable', () => {
 
   it('shows pagination when data exceeds pageSize', () => {
     const largeData = Array.from({ length: 25 }, (_, i) => ({
-      id:     String(i), name: `Plan ${i}`, email: `user${i}@t.com`,
-      status: 'active', amount: 9.99,
+      id: String(i),
+      name: `Plan ${i}`,
+      email: `user${i}@t.com`,
+      status: 'active',
+      amount: 9.99,
     }));
     render(<DataTable data={largeData} columns={COLUMNS} pageSize={10} aria-label="Test table" />);
     expect(screen.getByLabelText('Table pagination')).toBeInTheDocument();
@@ -113,7 +126,15 @@ describe('DataTable', () => {
     const mockAnchor = { href: '', download: '', click: jest.fn() };
     createEl.mockReturnValueOnce(mockAnchor as unknown as HTMLElement);
 
-    render(<DataTable data={MOCK_DATA} columns={COLUMNS} exportable exportFilename="test" aria-label="Test table" />);
+    render(
+      <DataTable
+        data={MOCK_DATA}
+        columns={COLUMNS}
+        exportable
+        exportFilename="test"
+        aria-label="Test table"
+      />,
+    );
     const exportBtn = screen.getByText(/export csv/i);
     await user.click(exportBtn);
 

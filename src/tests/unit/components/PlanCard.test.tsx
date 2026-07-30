@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { axe } from 'jest-axe';
 import '@testing-library/jest-dom';
@@ -24,8 +24,14 @@ const mockPlan: Plan = {
   isPopular: true,
   isBestValue: false,
   country: {
-    id: 'jp', name: 'Japan', code: 'JP', flag: '🇯🇵',
-    region: 'Asia', continent: 'Asia', networks: ['NTT Docomo'], coverageQuality: 'excellent',
+    id: 'jp',
+    name: 'Japan',
+    code: 'JP',
+    flag: '🇯🇵',
+    region: 'Asia',
+    continent: 'Asia',
+    networks: ['NTT Docomo'],
+    coverageQuality: 'excellent',
   },
 };
 

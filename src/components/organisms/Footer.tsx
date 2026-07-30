@@ -30,33 +30,43 @@ const footerLinks = {
 };
 
 const socialLinks = [
-  { icon: Twitter,   href: SOCIAL_LINKS.twitter,   label: 'Twitter'   },
-  { icon: Facebook,  href: SOCIAL_LINKS.facebook,  label: 'Facebook'  },
+  { icon: Twitter, href: SOCIAL_LINKS.twitter, label: 'Twitter' },
+  { icon: Facebook, href: SOCIAL_LINKS.facebook, label: 'Facebook' },
   { icon: Instagram, href: SOCIAL_LINKS.instagram, label: 'Instagram' },
-  { icon: Linkedin,  href: SOCIAL_LINKS.linkedin,  label: 'LinkedIn'  },
+  { icon: Linkedin, href: SOCIAL_LINKS.linkedin, label: 'LinkedIn' },
 ];
 
 export function Footer() {
   return (
-    <footer className="bg-background border-t border-border" role="contentinfo">
+    <footer className="border-t border-border bg-background" role="contentinfo">
       <div className="container mx-auto px-4 md:px-6">
         {/* Main Footer */}
         <div className="grid grid-cols-1 gap-8 py-12 md:grid-cols-2 lg:grid-cols-6">
           {/* Brand */}
           <div className="lg:col-span-2">
-            <Link href={ROUTES.HOME} className="flex items-center gap-2 font-display font-bold text-xl mb-4">
+            <Link
+              href={ROUTES.HOME}
+              className="mb-4 flex items-center gap-2 font-display text-xl font-bold"
+            >
               <Globe className="h-6 w-6 text-primary" aria-hidden="true" />
               <span className="text-gradient">eSIM Platform</span>
             </Link>
-            <p className="text-sm text-muted-foreground mb-6 max-w-xs">
-              Stay connected worldwide with our instant eSIM solutions. No physical SIM needed — activate instantly, travel freely.
+            <p className="mb-6 max-w-xs text-sm text-muted-foreground">
+              Stay connected worldwide with our instant eSIM solutions. No physical SIM needed —
+              activate instantly, travel freely.
             </p>
             <div className="flex flex-col gap-2 text-sm text-muted-foreground">
-              <a href="mailto:support@esimplatform.com" className="flex items-center gap-2 hover:text-primary transition-colors">
+              <a
+                href="mailto:support@esimplatform.com"
+                className="flex items-center gap-2 transition-colors hover:text-primary"
+              >
                 <Mail className="h-4 w-4" aria-hidden="true" />
                 support@esimplatform.com
               </a>
-              <a href="tel:+18005551234" className="flex items-center gap-2 hover:text-primary transition-colors">
+              <a
+                href="tel:+18005551234"
+                className="flex items-center gap-2 transition-colors hover:text-primary"
+              >
                 <Phone className="h-4 w-4" aria-hidden="true" />
                 +1 (800) 555-1234
               </a>
@@ -71,10 +81,13 @@ export function Footer() {
           {Object.entries(footerLinks).map(([category, links]) => (
             <div key={category}>
               <h3 className="mb-4 text-sm font-semibold text-foreground">{category}</h3>
-              <ul className="space-y-2" role="list">
+              <ul className="space-y-2">
                 {links.map((link) => (
                   <li key={link.href}>
-                    <Link href={link.href} className="text-sm text-muted-foreground hover:text-primary transition-colors duration-200">
+                    <Link
+                      href={link.href}
+                      className="text-sm text-muted-foreground transition-colors duration-200 hover:text-primary"
+                    >
                       {link.label}
                     </Link>
                   </li>
@@ -89,25 +102,25 @@ export function Footer() {
           <p className="text-sm text-muted-foreground">
             © {new Date().getFullYear()} eSIM Platform. All rights reserved.
           </p>
-       <div className="flex items-center gap-3">
-  {socialLinks.map((social) => {
-    const hasValidLink = Boolean(social.href);
+          <div className="flex items-center gap-3">
+            {socialLinks.map((social) => {
+              const hasValidLink = Boolean(social.href);
 
-    return (
-      <a
-        key={social.label}
-        href={social.href || '#'}
-        target={hasValidLink ? '_blank' : undefined}
-        rel={hasValidLink ? 'noopener noreferrer' : undefined}
-        suppressHydrationWarning // hydration error পুরোপুরি বন্ধ করবে
-        aria-label={`Visit our ${social.label} page`}
-        className="flex h-8 w-8 items-center justify-center rounded-full bg-muted text-muted-foreground hover:bg-primary hover:text-primary-foreground transition-all duration-200"
-      >
-        <social.icon className="h-4 w-4" aria-hidden="true" />
-      </a>
-    );
-  })}
-</div>
+              return (
+                <a
+                  key={social.label}
+                  href={social.href || '#'}
+                  target={hasValidLink ? '_blank' : undefined}
+                  rel={hasValidLink ? 'noopener noreferrer' : undefined}
+                  suppressHydrationWarning
+                  aria-label={`Visit our ${social.label} page`}
+                  className="flex h-8 w-8 items-center justify-center rounded-full bg-muted text-muted-foreground transition-all duration-200 hover:bg-primary hover:text-primary-foreground"
+                >
+                  <social.icon className="h-4 w-4" aria-hidden="true" />
+                </a>
+              );
+            })}
+          </div>
         </div>
       </div>
     </footer>

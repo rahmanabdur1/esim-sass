@@ -16,22 +16,22 @@
 export type MetricName = 'LCP' | 'CLS' | 'INP' | 'FID' | 'TTFB' | 'FCP';
 
 export interface WebVitalMetric {
-  name:       MetricName;
-  value:      number;
-  rating:     'good' | 'needs-improvement' | 'poor';
-  delta:      number;
-  id:         string;
+  name: MetricName;
+  value: number;
+  rating: 'good' | 'needs-improvement' | 'poor';
+  delta: number;
+  id: string;
   navigationType: string;
 }
 
 // ── Thresholds (Google spec) ──────────────────────────────────
 const THRESHOLDS: Record<MetricName, [number, number]> = {
-  LCP:  [2500,  4000],
-  CLS:  [0.1,   0.25],
-  INP:  [200,   500],
-  FID:  [100,   300],
-  TTFB: [800,   1800],
-  FCP:  [1800,  3000],
+  LCP: [2500, 4000],
+  CLS: [0.1, 0.25],
+  INP: [200, 500],
+  FID: [100, 300],
+  TTFB: [800, 1800],
+  FCP: [1800, 3000],
 };
 
 function getRating(name: MetricName, value: number): WebVitalMetric['rating'] {
@@ -44,8 +44,11 @@ function getRating(name: MetricName, value: number): WebVitalMetric['rating'] {
 // ── Send metric to analytics ──────────────────────────────────
 function sendMetric(metric: WebVitalMetric) {
   if (process.env.NODE_ENV === 'development') {
-    const emoji = metric.rating === 'good' ? '✅' : metric.rating === 'needs-improvement' ? '⚠️' : '❌';
-    console.info(`[Web Vitals] ${emoji} ${metric.name}: ${metric.value.toFixed(2)} (${metric.rating})`);
+    const emoji =
+      metric.rating === 'good' ? '✅' : metric.rating === 'needs-improvement' ? '⚠️' : '❌';
+    console.info(
+      `[Web Vitals] ${emoji} ${metric.name}: ${metric.value.toFixed(2)} (${metric.rating})`,
+    );
     return;
   }
 
@@ -54,14 +57,14 @@ function sendMetric(metric: WebVitalMetric) {
   if (!endpoint) return;
 
   const body = JSON.stringify({
-    name:     metric.name,
-    value:    metric.value,
-    rating:   metric.rating,
-    delta:    metric.delta,
-    id:       metric.id,
-    page:     window.location.pathname,
-    userAgent:navigator.userAgent,
-    timestamp:Date.now(),
+    name: metric.name,
+    value: metric.value,
+    rating: metric.rating,
+    delta: metric.delta,
+    id: metric.id,
+    page: window.location.pathname,
+    userAgent: navigator.userAgent,
+    timestamp: Date.now(),
   });
 
   // Use sendBeacon for reliability (works even on page unload)
@@ -79,14 +82,20 @@ export async function initWebVitals() {
   try {
     const { onCLS, onINP, onFCP, onLCP, onTTFB } = await import('web-vitals');
 
-    const handle = (metric: { name: string; value: number; delta: number; id: string; navigationType?: string }) => {
+    const handle = (metric: {
+      name: string;
+      value: number;
+      delta: number;
+      id: string;
+      navigationType?: string;
+    }) => {
       const name = metric.name as MetricName;
       sendMetric({
         name,
-        value:          metric.value,
-        rating:         getRating(name, metric.value),
-        delta:          metric.delta,
-        id:             metric.id,
+        value: metric.value,
+        rating: getRating(name, metric.value),
+        delta: metric.delta,
+        id: metric.id,
         navigationType: metric.navigationType ?? 'navigate',
       });
     };
@@ -105,21 +114,22 @@ export async function initWebVitals() {
 export function checkPerformanceBudget() {
   if (typeof window === 'undefined' || !window.performance) return;
 
-  const navigation = performance.getEntriesByType('navigation')[0] as PerformanceNavigationTiming | undefined;
+  const navigation = performance.getEntriesByType('navigation')[0] as
+    | PerformanceNavigationTiming
+    | undefined;
   if (!navigation) return;
 
   const metrics = {
-    TTFB:     navigation.responseStart - navigation.requestStart,
+    TTFB: navigation.responseStart - navigation.requestStart,
     DOMReady: navigation.domContentLoadedEventEnd - navigation.fetchStart,
-    Load:     navigation.loadEventEnd - navigation.fetchStart,
+    Load: navigation.loadEventEnd - navigation.fetchStart,
   };
 
   if (process.env.NODE_ENV === 'development') {
-    console.group('[Performance Budget]');
-    console.log(`TTFB:     ${metrics.TTFB.toFixed(0)}ms  (budget: 800ms)`);
-    console.log(`DOM Ready:${metrics.DOMReady.toFixed(0)}ms  (budget: 2000ms)`);
-    console.log(`Full Load:${metrics.Load.toFixed(0)}ms  (budget: 3000ms)`);
-    console.groupEnd();
+    console.info('[Performance Budget]');
+    console.info(`TTFB:     ${metrics.TTFB.toFixed(0)}ms  (budget: 800ms)`);
+    console.info(`DOM Ready:${metrics.DOMReady.toFixed(0)}ms  (budget: 2000ms)`);
+    console.info(`Full Load:${metrics.Load.toFixed(0)}ms  (budget: 3000ms)`);
   }
 }
 
@@ -127,17 +137,17 @@ export function checkPerformanceBudget() {
 export function prefetchRoute(href: string) {
   if (typeof document === 'undefined') return;
   const link = document.createElement('link');
-  link.rel  = 'prefetch';
+  link.rel = 'prefetch';
   link.href = href;
-  link.as   = 'document';
+  link.as = 'document';
   document.head.appendChild(link);
 }
 
 export function preconnect(origin: string) {
   if (typeof document === 'undefined') return;
   const link = document.createElement('link');
-  link.rel         = 'preconnect';
-  link.href        = origin;
+  link.rel = 'preconnect';
+  link.href = origin;
   link.crossOrigin = 'anonymous';
   document.head.appendChild(link);
 }

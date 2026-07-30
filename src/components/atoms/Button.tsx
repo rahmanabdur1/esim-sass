@@ -6,26 +6,18 @@ import { cva, type VariantProps } from 'class-variance-authority';
 import { Loader2 } from 'lucide-react';
 import { cn } from '@/utils';
 
-
 const buttonVariants = cva(
   'inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 active:scale-95',
   {
     variants: {
       variant: {
-        default:
-          'bg-primary text-primary-foreground hover:bg-primary/90 shadow-sm',
-        destructive:
-          'bg-destructive text-destructive-foreground hover:bg-destructive/90',
-        outline:
-          'border border-input bg-background hover:bg-accent hover:text-accent-foreground',
-        secondary:
-          'bg-secondary text-secondary-foreground hover:bg-secondary/80',
-        ghost:
-          'hover:bg-accent hover:text-accent-foreground',
-        link:
-          'text-primary underline-offset-4 hover:underline',
-        gradient:
-          'gradient-brand text-white shadow-md hover:opacity-90',
+        default: 'bg-primary text-primary-foreground hover:bg-primary/90 shadow-sm',
+        destructive: 'bg-destructive text-destructive-foreground hover:bg-destructive/90',
+        outline: 'border border-input bg-background hover:bg-accent hover:text-accent-foreground',
+        secondary: 'bg-secondary text-secondary-foreground hover:bg-secondary/80',
+        ghost: 'hover:bg-accent hover:text-accent-foreground',
+        link: 'text-primary underline-offset-4 hover:underline',
+        gradient: 'gradient-brand text-white shadow-md hover:opacity-90',
       },
       size: {
         default: 'h-10 px-4 py-2',
@@ -39,9 +31,8 @@ const buttonVariants = cva(
       variant: 'default',
       size: 'default',
     },
-  }
+  },
 );
-
 
 export interface ButtonProps
   extends React.ButtonHTMLAttributes<HTMLButtonElement>,
@@ -66,15 +57,13 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
       disabled,
       ...props
     },
-    ref
+    ref,
   ) => {
     const Comp = asChild ? Slot : 'button';
 
     if (process.env.NODE_ENV !== 'production') {
       if (asChild && !React.isValidElement(children)) {
-        console.error(
-          '❌ Button: `asChild` requires a single valid React element child.'
-        );
+        console.error(' Button: `asChild` requires a single valid React element child.');
       }
     }
 
@@ -87,16 +76,12 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
         {...props}
       >
         {isLoading ? (
-          <Loader2
-            className="mr-2 h-4 w-4 animate-spin"
-            aria-hidden="true"
-          />
+          <Loader2 className="mr-2 h-4 w-4 animate-spin" aria-hidden="true" />
         ) : leftIcon ? (
           <span className="mr-2 inline-flex items-center" aria-hidden="true">
             {leftIcon}
           </span>
         ) : null}
-
 
         <Slottable>{children}</Slottable>
 
@@ -107,7 +92,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
         )}
       </Comp>
     );
-  }
+  },
 );
 
 Button.displayName = 'Button';

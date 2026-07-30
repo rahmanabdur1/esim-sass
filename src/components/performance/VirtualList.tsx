@@ -21,14 +21,14 @@ import { cn } from '@/utils';
 import { useVirtualScroll } from '@/hooks/useVirtualScroll';
 
 interface VirtualListProps<T> {
-  items:        T[];
-  itemHeight:   number;
-  height:       number;        // Container height in px
-  renderItem:   (item: T, index: number) => React.ReactNode;
-  overscan?:    number;
-  className?:   string;
-  emptyState?:  React.ReactNode;
-  keyExtractor?:(item: T, index: number) => string | number;
+  items: T[];
+  itemHeight: number;
+  height: number; // Container height in px
+  renderItem: (item: T, index: number) => React.ReactNode;
+  overscan?: number;
+  className?: string;
+  emptyState?: React.ReactNode;
+  keyExtractor?: (item: T, index: number) => string | number;
 }
 
 export function VirtualList<T>({
@@ -58,7 +58,6 @@ export function VirtualList<T>({
       className={cn('overflow-auto', className)}
       style={{ height }}
       role="list"
-      aria-rowcount={items.length}
     >
       {/* Total height maintains scrollbar proportions */}
       <div style={{ height: totalHeight, position: 'relative' }}>
@@ -69,7 +68,8 @@ export function VirtualList<T>({
               key={keyExtractor ? keyExtractor(item, index) : index}
               style={{ height: itemHeight }}
               role="listitem"
-              aria-rowindex={index + 1}
+              aria-setsize={items.length}
+              aria-posinset={index + 1}
             >
               {renderItem(item, index)}
             </div>
@@ -82,12 +82,12 @@ export function VirtualList<T>({
 
 // ── Virtual Grid (2D virtualisation) ──────────────────────────
 interface VirtualGridProps<T> {
-  items:      T[];
-  columns:    number;
+  items: T[];
+  columns: number;
   itemHeight: number;
-  height:     number;
+  height: number;
   renderItem: (item: T, index: number) => React.ReactNode;
-  gap?:       number;
+  gap?: number;
   className?: string;
 }
 
@@ -113,11 +113,7 @@ export function VirtualGrid<T>({
   });
 
   return (
-    <div
-      ref={containerRef}
-      className={cn('overflow-auto', className)}
-      style={{ height }}
-    >
+    <div ref={containerRef} className={cn('overflow-auto', className)} style={{ height }}>
       <div style={{ height: totalHeight, position: 'relative' }}>
         <div style={{ transform: `translateY(${offsetY}px)` }}>
           {visibleItems.map(({ item: row, index: rowIndex }) => (
@@ -127,14 +123,12 @@ export function VirtualGrid<T>({
               style={{
                 gridTemplateColumns: `repeat(${columns}, 1fr)`,
                 gap,
-                height:   itemHeight,
+                height: itemHeight,
                 marginBottom: gap,
               }}
             >
               {row.map((item, colIndex) => (
-                <div key={colIndex}>
-                  {renderItem(item, rowIndex * columns + colIndex)}
-                </div>
+                <div key={colIndex}>{renderItem(item, rowIndex * columns + colIndex)}</div>
               ))}
             </div>
           ))}

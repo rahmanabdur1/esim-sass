@@ -1,5 +1,6 @@
 'use client';
 import * as React from 'react';
+import Image from 'next/image';
 import { cva, type VariantProps } from 'class-variance-authority';
 import { cn } from '@/utils';
 
@@ -42,7 +43,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
               leftIcon && 'pl-10',
               rightIcon && 'pr-10',
               error && 'border-destructive focus-visible:ring-destructive',
-              className
+              className,
             )}
             ref={ref}
             aria-invalid={!!error}
@@ -56,14 +57,18 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
           )}
         </div>
         {hint && !error && (
-          <p id={`${inputId}-hint`} className="mt-1 text-xs text-muted-foreground">{hint}</p>
+          <p id={`${inputId}-hint`} className="mt-1 text-xs text-muted-foreground">
+            {hint}
+          </p>
         )}
         {error && (
-          <p id={`${inputId}-error`} role="alert" className="mt-1 text-xs text-destructive">{error}</p>
+          <p id={`${inputId}-error`} role="alert" className="mt-1 text-xs text-destructive">
+            {error}
+          </p>
         )}
       </div>
     );
-  }
+  },
 );
 Input.displayName = 'Input';
 
@@ -74,8 +79,10 @@ const badgeVariants = cva(
     variants: {
       variant: {
         default: 'border-transparent bg-primary text-primary-foreground hover:bg-primary/80',
-        secondary: 'border-transparent bg-secondary text-secondary-foreground hover:bg-secondary/80',
-        destructive: 'border-transparent bg-destructive text-destructive-foreground hover:bg-destructive/80',
+        secondary:
+          'border-transparent bg-secondary text-secondary-foreground hover:bg-secondary/80',
+        destructive:
+          'border-transparent bg-destructive text-destructive-foreground hover:bg-destructive/80',
         outline: 'text-foreground',
         success: 'border-transparent bg-green-100 text-green-700',
         warning: 'border-transparent bg-yellow-100 text-yellow-700',
@@ -83,7 +90,7 @@ const badgeVariants = cva(
       },
     },
     defaultVariants: { variant: 'default' },
-  }
+  },
 );
 
 export interface BadgeProps
@@ -103,14 +110,39 @@ interface AvatarProps {
   className?: string;
 }
 
-const avatarSizes = { xs: 'h-6 w-6 text-xs', sm: 'h-8 w-8 text-sm', md: 'h-10 w-10 text-sm', lg: 'h-12 w-12 text-base', xl: 'h-16 w-16 text-lg' };
+const avatarSizes = {
+  xs: 'h-6 w-6 text-xs',
+  sm: 'h-8 w-8 text-sm',
+  md: 'h-10 w-10 text-sm',
+  lg: 'h-12 w-12 text-base',
+  xl: 'h-16 w-16 text-lg',
+};
 
 function Avatar({ src, alt, name, size = 'md', className }: AvatarProps) {
-  const initials = name ? name.split(' ').map((n) => n[0]).slice(0, 2).join('').toUpperCase() : '?';
+  const initials = name
+    ? name
+        .split(' ')
+        .map((n) => n[0])
+        .slice(0, 2)
+        .join('')
+        .toUpperCase()
+    : '?';
   return (
-    <div className={cn('relative inline-flex items-center justify-center overflow-hidden rounded-full bg-muted font-medium text-muted-foreground', avatarSizes[size], className)}>
+    <div
+      className={cn(
+        'relative inline-flex items-center justify-center overflow-hidden rounded-full bg-muted font-medium text-muted-foreground',
+        avatarSizes[size],
+        className,
+      )}
+    >
       {src ? (
-        <img src={src} alt={alt} className="h-full w-full object-cover" />
+        <Image
+          src={src}
+          alt={alt}
+          fill
+          className="object-cover"
+          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+        />
       ) : (
         <span aria-label={alt}>{initials}</span>
       )}
@@ -119,12 +151,24 @@ function Avatar({ src, alt, name, size = 'md', className }: AvatarProps) {
 }
 
 // ==================== SPINNER ====================
-interface SpinnerProps { size?: 'sm' | 'md' | 'lg'; className?: string; label?: string; }
+interface SpinnerProps {
+  size?: 'sm' | 'md' | 'lg';
+  className?: string;
+  label?: string;
+}
 const spinnerSizes = { sm: 'h-4 w-4', md: 'h-8 w-8', lg: 'h-12 w-12' };
 
 function Spinner({ size = 'md', className, label = 'Loading...' }: SpinnerProps) {
   return (
-    <div role="status" aria-label={label} className={cn('animate-spin rounded-full border-2 border-current border-t-transparent text-primary', spinnerSizes[size], className)}>
+    <div
+      role="status"
+      aria-label={label}
+      className={cn(
+        'animate-spin rounded-full border-2 border-current border-t-transparent text-primary',
+        spinnerSizes[size],
+        className,
+      )}
+    >
       <span className="sr-only">{label}</span>
     </div>
   );
@@ -132,11 +176,17 @@ function Spinner({ size = 'md', className, label = 'Loading...' }: SpinnerProps)
 
 // ==================== SKELETON ====================
 function Skeleton({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) {
-  return <div className={cn('animate-pulse rounded-md bg-muted shimmer', className)} {...props} />;
+  return <div className={cn('shimmer animate-pulse rounded-md bg-muted', className)} {...props} />;
 }
 
 // ==================== PROGRESS ====================
-interface ProgressProps { value: number; max?: number; className?: string; color?: string; showLabel?: boolean; }
+interface ProgressProps {
+  value: number;
+  max?: number;
+  className?: string;
+  color?: string;
+  showLabel?: boolean;
+}
 
 function Progress({ value, max = 100, className, color, showLabel = false }: ProgressProps) {
   const percentage = Math.min(100, Math.max(0, (value / max) * 100));
@@ -148,10 +198,21 @@ function Progress({ value, max = 100, className, color, showLabel = false }: Pro
   };
   return (
     <div className="w-full">
-      <div className={cn('relative h-2 w-full overflow-hidden rounded-full bg-secondary', className)} role="progressbar" aria-valuenow={value} aria-valuemin={0} aria-valuemax={max}>
-        <div className={cn('h-full transition-all duration-500 ease-in-out rounded-full', getColor())} style={{ width: `${percentage}%` }} />
+      <div
+        className={cn('relative h-2 w-full overflow-hidden rounded-full bg-secondary', className)}
+        role="progressbar"
+        aria-valuenow={value}
+        aria-valuemin={0}
+        aria-valuemax={max}
+      >
+        <div
+          className={cn('h-full rounded-full transition-all duration-500 ease-in-out', getColor())}
+          style={{ width: `${percentage}%` }}
+        />
       </div>
-      {showLabel && <p className="mt-1 text-xs text-muted-foreground text-right">{Math.round(percentage)}%</p>}
+      {showLabel && (
+        <p className="mt-1 text-right text-xs text-muted-foreground">{Math.round(percentage)}%</p>
+      )}
     </div>
   );
 }

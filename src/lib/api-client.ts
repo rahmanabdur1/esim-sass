@@ -1,4 +1,5 @@
-import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios';
+import axios from 'axios';
+import type { AxiosInstance, AxiosResponse } from 'axios';
 import { API_BASE_URL, TOKEN_KEY, REFRESH_TOKEN_KEY, ROUTES } from '@/constants';
 import { installMockInterceptor } from '@/lib/mock/handler';
 
@@ -27,7 +28,7 @@ apiClient.interceptors.request.use(
     }
     return config;
   },
-  (error) => Promise.reject(error)
+  (error) => Promise.reject(error),
 );
 
 // Response interceptor - handle errors & token refresh
@@ -59,7 +60,7 @@ apiClient.interceptors.response.use(
     }
 
     return Promise.reject(error);
-  }
+  },
 );
 
 // Cookie helpers (secure storage)
@@ -73,11 +74,11 @@ export const getCookie = (name: string): string | null => {
 
 export const setCookie = (name: string, value: string, days = 7): void => {
   if (typeof document === 'undefined') return;
-  const expires  = new Date(Date.now() + days * 864e5).toUTCString();
+  const expires = new Date(Date.now() + days * 864e5).toUTCString();
   // Secure=true only in production (HTTPS). localhost is HTTP → Secure blocks the cookie.
   // SameSite=Lax allows cookie on top-level navigations (required for middleware redirect flow).
   const isProduction = process.env.NODE_ENV === 'production';
-  const secure       = isProduction ? '; Secure' : '';
+  const secure = isProduction ? '; Secure' : '';
   document.cookie = `${name}=${value}; expires=${expires}; path=/${secure}; SameSite=Lax`;
 };
 

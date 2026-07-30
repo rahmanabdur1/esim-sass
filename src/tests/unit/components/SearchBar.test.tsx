@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { axe } from 'jest-axe';
 import '@testing-library/jest-dom';
@@ -34,7 +34,7 @@ describe('SearchBar', () => {
 
   it('clears value and calls onClear when clear button clicked', async () => {
     const handleChange = jest.fn();
-    const handleClear  = jest.fn();
+    const handleClear = jest.fn();
     const user = userEvent.setup();
     render(<SearchBar value="Japan" onChange={handleChange} onClear={handleClear} />);
     await user.click(screen.getByLabelText('Clear search'));
@@ -48,6 +48,7 @@ describe('SearchBar', () => {
   });
 
   it('autofocuses the input when autoFocus is true', () => {
+    // eslint-disable-next-line jsx-a11y/no-autofocus
     render(<SearchBar value="" onChange={() => {}} autoFocus aria-label="Search" />);
     expect(screen.getByRole('searchbox')).toHaveFocus();
   });
@@ -58,7 +59,9 @@ describe('SearchBar', () => {
   });
 
   it('has no accessibility violations', async () => {
-    const { container } = render(<SearchBar value="test" onChange={() => {}} aria-label="Search plans" />);
+    const { container } = render(
+      <SearchBar value="test" onChange={() => {}} aria-label="Search plans" />,
+    );
     const results = await axe(container);
     expect(results).toHaveNoViolations();
   });

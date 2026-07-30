@@ -1,40 +1,51 @@
 'use client';
+
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { Check, ChevronDown } from 'lucide-react';
 import { cn } from '@/utils';
 
 export interface DropdownOption<T extends string = string> {
-  value:    T;
-  label:    string;
-  icon?:    React.ReactNode;
+  value: T;
+  label: string;
+  icon?: React.ReactNode;
   disabled?: boolean;
 }
 
 export interface DropdownProps<T extends string = string> {
-  options:     DropdownOption<T>[];
-  value:       T | null;
-  onChange:    (value: T) => void;
+  options: DropdownOption<T>[];
+  value: T | null;
+  onChange: (value: T) => void;
   placeholder?: string;
-  label?:      string;
-  error?:      string;
-  disabled?:   boolean;
-  className?:  string;
+  label?: string;
+  error?: string;
+  disabled?: boolean;
+  className?: string;
 }
 
 export function Dropdown<T extends string = string>({
-  options, value, onChange, placeholder = 'Select an option',
-  label, error, disabled = false, className,
+  options,
+  value,
+  onChange,
+  placeholder = 'Select an option',
+  label,
+  error,
+  disabled = false,
+  className,
 }: DropdownProps<T>) {
-  const [open, setOpen]         = useState(false);
-  const [activeIdx, setActive]  = useState(-1);
+  const [open, setOpen] = useState(false);
+  const [activeIdx, setActive] = useState(-1);
   const triggerRef = useRef<HTMLButtonElement>(null);
-  const listRef    = useRef<HTMLUListElement>(null);
-  const id         = label ? `dropdown-${label.replace(/\s+/g, '-').toLowerCase()}` : undefined;
+  const listRef = useRef<HTMLUListElement>(null);
+  const id = label ? `dropdown-${label.replace(/\s+/g, '-').toLowerCase()}` : undefined;
+  const errorId = id ? `${id}-error` : undefined;
 
   const selected = options.find((o) => o.value === value);
 
-  const close = useCallback(() => { setOpen(false); setActive(-1); }, []);
+  const close = useCallback(() => {
+    setOpen(false);
+    setActive(-1);
+  }, []);
 
   useEffect(() => {
     if (!open) return;
@@ -50,9 +61,9 @@ export function Dropdown<T extends string = string>({
     switch (e.key) {
       case 'ArrowDown':
         e.preventDefault();
-        if (!open) { 
-          setOpen(true); 
-          setActive(0); 
+        if (!open) {
+          setOpen(true);
+          setActive(0);
         } else {
           setActive((i) => Math.min(i + 1, options.length - 1));
         }
@@ -64,13 +75,13 @@ export function Dropdown<T extends string = string>({
       case 'Enter':
       case ' ':
         e.preventDefault();
-        if (!open) { 
-          setOpen(true); 
+        if (!open) {
+          setOpen(true);
         } else if (activeIdx >= 0 && activeIdx < options.length) {
           const opt = options[activeIdx];
-          if (opt && !opt.disabled) { // ✅ Fixed ts(18048)
-            onChange(opt.value); 
-            close(); 
+          if (opt && !opt.disabled) {
+            onChange(opt.value);
+            close();
           }
         }
         break;
@@ -86,7 +97,9 @@ export function Dropdown<T extends string = string>({
 
   useEffect(() => {
     if (open && activeIdx >= 0) {
-      listRef.current?.querySelector(`[data-idx="${activeIdx}"]`)?.scrollIntoView({ block: 'nearest' });
+      listRef.current
+        ?.querySelector(`[data-idx="${activeIdx}"]`)
+        ?.scrollIntoView({ block: 'nearest' });
     }
   }, [open, activeIdx]);
 
@@ -107,22 +120,34 @@ export function Dropdown<T extends string = string>({
         aria-haspopup="listbox"
         aria-expanded={open}
         aria-labelledby={label ? `${id}-label ${id}` : undefined}
-        aria-invalid={!!error}
+        aria-describedby={error && errorId ? errorId : undefined}
         className={cn(
           'flex h-10 w-full items-center justify-between rounded-md border bg-background px-3 text-sm transition-colors',
           'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring',
           disabled && 'cursor-not-allowed opacity-50',
-          error && 'border-destructive focus-visible:ring-destructive'
+          error && 'border-destructive focus-visible:ring-destructive',
         )}
       >
-        <span className={cn('flex items-center gap-2 truncate', !selected && 'text-muted-foreground')}>
+        <span
+          className={cn('flex items-center gap-2 truncate', !selected && 'text-muted-foreground')}
+        >
           {selected?.icon}
           {selected ? selected.label : placeholder}
         </span>
-        <ChevronDown className={cn('h-4 w-4 flex-shrink-0 text-muted-foreground transition-transform', open && 'rotate-180')} aria-hidden="true" />
+        <ChevronDown
+          className={cn(
+            'h-4 w-4 flex-shrink-0 text-muted-foreground transition-transform',
+            open && 'rotate-180',
+          )}
+          aria-hidden="true"
+        />
       </button>
 
-      {error && <p role="alert" className="mt-1 text-xs text-destructive">{error}</p>}
+      {error && (
+        <p id={errorId} role="alert" className="mt-1 text-xs text-destructive">
+          {error}
+        </p>
+      )}
 
       <AnimatePresence>
         {open && (
@@ -137,24 +162,32 @@ export function Dropdown<T extends string = string>({
             className="absolute z-20 mt-1 max-h-60 w-full overflow-auto rounded-md border bg-popover py-1 shadow-lg"
           >
             {options.map((opt, idx) => (
+              /* eslint-disable-next-line jsx-a11y/click-events-have-key-events */
               <li
                 key={opt.value}
                 data-idx={idx}
                 role="option"
                 aria-selected={opt.value === value}
                 aria-disabled={opt.disabled}
-                onClick={() => { if (!opt.disabled) { onChange(opt.value); close(); } }}
+                onClick={() => {
+                  if (!opt.disabled) {
+                    onChange(opt.value);
+                    close();
+                  }
+                }}
                 onMouseEnter={() => setActive(idx)}
                 className={cn(
                   'flex cursor-pointer items-center gap-2 px-3 py-2 text-sm transition-colors',
                   idx === activeIdx && 'bg-accent',
-                  opt.value === value && 'text-primary font-medium',
-                  opt.disabled && 'cursor-not-allowed opacity-50'
+                  opt.value === value && 'font-medium text-primary',
+                  opt.disabled && 'cursor-not-allowed opacity-50',
                 )}
               >
                 {opt.icon}
                 <span className="flex-1">{opt.label}</span>
-                {opt.value === value && <Check className="h-3.5 w-3.5 flex-shrink-0" aria-hidden="true" />}
+                {opt.value === value && (
+                  <Check className="h-3.5 w-3.5 flex-shrink-0" aria-hidden="true" />
+                )}
               </li>
             ))}
             {options.length === 0 && (

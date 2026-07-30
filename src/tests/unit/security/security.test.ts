@@ -5,11 +5,9 @@ import {
   enforceMaxLength,
   sanitizeFilename,
   validateFile,
-  detectClickjacking,
   detectTokenTampering,
   buildStrictCSP,
   isTrustedScriptSrc,
-  auditClientEnvVars,
 } from '@/lib/security';
 
 describe('escapeHtml', () => {
@@ -122,7 +120,8 @@ describe('validateFile', () => {
 });
 
 describe('detectTokenTampering', () => {
-  const validToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjMiLCJleHAiOjk5OTk5OTk5OTl9.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c';
+  const validToken =
+    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjMiLCJleHAiOjk5OTk5OTk5OTl9.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c';
 
   it('does not flag a valid JWT', () => {
     expect(detectTokenTampering(validToken)).toBe(false);

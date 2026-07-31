@@ -1,4 +1,5 @@
 'use client';
+
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { DashboardSidebar } from '@/components/organisms/DashboardSidebar';
@@ -47,7 +48,7 @@ const KPI_CARDS = [
     change: '+12%',
     up: true,
     icon: Wifi,
-    color: 'bg-blue-100   text-blue-600',
+    color: 'bg-blue-100 text-blue-600',
   },
   {
     label: 'Total Spent',
@@ -55,7 +56,7 @@ const KPI_CARDS = [
     change: '+5%',
     up: true,
     icon: DollarSign,
-    color: 'bg-green-100  text-green-600',
+    color: 'bg-green-100 text-green-600',
   },
   {
     label: 'Countries Visited',
@@ -107,7 +108,9 @@ export default function AdvancedAnalyticsPage() {
               <p className="mb-1 text-xs text-muted-foreground">{kpi.label}</p>
               <p className="text-2xl font-bold">{kpi.value}</p>
               <p
-                className={`mt-0.5 flex items-center gap-1 text-xs ${kpi.up ? 'text-green-600' : 'text-red-500'}`}
+                className={`mt-0.5 flex items-center gap-1 text-xs ${
+                  kpi.up ? 'text-green-600' : 'text-red-500'
+                }`}
               >
                 {kpi.up ? (
                   <TrendingUp className="h-3 w-3" aria-hidden="true" />
@@ -171,7 +174,7 @@ export default function AdvancedAnalyticsPage() {
                         borderRadius: '8px',
                         fontSize: '12px',
                       }}
-                      formatter={(v: number) => [`${v} GB`]}
+                      formatter={(v) => [`${v} GB`]}
                     />
                     <Legend />
                     <Area
@@ -222,7 +225,7 @@ export default function AdvancedAnalyticsPage() {
                     ))}
                   </Pie>
                   <Tooltip
-                    formatter={(v: number) => [`${v}%`, 'Usage']}
+                    formatter={(v) => [`${v}%`, 'Usage']}
                     contentStyle={{ fontSize: '12px', borderRadius: '8px' }}
                   />
                 </PieChart>
@@ -258,7 +261,7 @@ export default function AdvancedAnalyticsPage() {
                 <XAxis dataKey="month" tick={{ fontSize: 11 }} />
                 <YAxis tick={{ fontSize: 11 }} tickFormatter={(v) => `$${v}`} />
                 <Tooltip
-                  formatter={(v: number) => [`$${v.toFixed(2)}`, 'Spent']}
+                  formatter={(v) => [`$${Number(v).toFixed(2)}`, 'Spent']}
                   contentStyle={{ fontSize: '12px', borderRadius: '8px' }}
                 />
                 <Bar dataKey="spent" name="Spent ($)" fill="#3b82f6" radius={[4, 4, 0, 0]} />

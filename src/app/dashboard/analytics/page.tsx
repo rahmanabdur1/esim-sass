@@ -73,7 +73,7 @@ export default function AnalyticsPage() {
                       borderRadius: '8px',
                       fontSize: '12px',
                     }}
-                    formatter={(value: number) => [`${value} GB`]}
+                    formatter={(value) => [`${value ?? 0} GB`]}
                   />
                   <Legend />
                   <Area

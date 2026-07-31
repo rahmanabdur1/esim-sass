@@ -9,8 +9,8 @@
     "dev:webpack": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "cross-env ESLINT_USE_FLAT_CONFIG=false next lint",
-    "lint:fix": "cross-env ESLINT_USE_FLAT_CONFIG=false next lint --fix",
+    "lint": "next lint",
+    "lint:fix": "next lint --fix",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "type-check": "tsc --noEmit",
@@ -94,7 +94,7 @@
     "autoprefixer": "10.4.21",
     "axe-core": "4.10.3",
     "cross-env": "7.0.3",
-    "eslint": "9.28.0",
+    "eslint": "8.57.1",
     "eslint-config-next": "16.2.12",
     "eslint-plugin-jsx-a11y": "6.10.2",
     "eslint-plugin-react-hooks": "5.2.0",
@@ -117,7 +117,7 @@
   },
   "lint-staged": {
     "*.{js,jsx,ts,tsx}": [
-      "cross-env ESLINT_USE_FLAT_CONFIG=false eslint --fix",
+      "eslint --fix",
       "prettier --write"
     ],
     "*.{json,md,yml,yaml}": [

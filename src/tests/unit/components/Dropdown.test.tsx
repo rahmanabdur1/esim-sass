@@ -14,7 +14,14 @@ const OPTIONS: DropdownOption[] = [
 
 describe('Dropdown', () => {
   it('renders placeholder when no value is selected', () => {
-    render(<Dropdown options={OPTIONS} value={null} onChange={jest.fn()} placeholder="Select a country" />);
+    render(
+      <Dropdown
+        options={OPTIONS}
+        value={null}
+        onChange={jest.fn()}
+        placeholder="Select a country"
+      />,
+    );
     expect(screen.getByText('Select a country')).toBeInTheDocument();
   });
 
@@ -85,7 +92,14 @@ describe('Dropdown', () => {
   });
 
   it('shows an error message and sets aria-invalid', () => {
-    render(<Dropdown options={OPTIONS} value={null} onChange={jest.fn()} error="Please select a country" />);
+    render(
+      <Dropdown
+        options={OPTIONS}
+        value={null}
+        onChange={jest.fn()}
+        error="Please select a country"
+      />,
+    );
     expect(screen.getByRole('button')).toHaveAttribute('aria-invalid', 'true');
     expect(screen.getByRole('alert')).toHaveTextContent('Please select a country');
   });
@@ -105,14 +119,18 @@ describe('Dropdown', () => {
   });
 
   it('has no accessibility violations when closed', async () => {
-    const { container } = render(<Dropdown options={OPTIONS} value="jp" onChange={jest.fn()} label="Country" />);
+    const { container } = render(
+      <Dropdown options={OPTIONS} value="jp" onChange={jest.fn()} label="Country" />,
+    );
     const results = await axe(container);
     expect(results).toHaveNoViolations();
   });
 
   it('has no accessibility violations when open', async () => {
     const user = userEvent.setup();
-    const { container } = render(<Dropdown options={OPTIONS} value="jp" onChange={jest.fn()} label="Country" />);
+    const { container } = render(
+      <Dropdown options={OPTIONS} value="jp" onChange={jest.fn()} label="Country" />,
+    );
     await user.click(screen.getByRole('button'));
     const results = await axe(container);
     expect(results).toHaveNoViolations();

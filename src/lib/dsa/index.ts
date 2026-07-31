@@ -19,8 +19,8 @@
 
 interface TrieNode {
   children: Map<string, TrieNode>;
-  isEnd:    boolean;
-  data?:    Record<string, unknown>; // store full item for suggestion
+  isEnd: boolean;
+  data?: Record<string, unknown>; // store full item for suggestion
 }
 
 export class Trie {
@@ -40,7 +40,7 @@ export class Trie {
       node = node.children.get(ch)!;
     }
     node.isEnd = true;
-    node.data  = data;
+    node.data = data;
   }
 
   /** Search: returns true if exact word exists */
@@ -74,7 +74,8 @@ export class Trie {
   }
 
   private _dfs(
-    node: TrieNode, prefix: string,
+    node: TrieNode,
+    prefix: string,
     results: Array<{ word: string; data?: Record<string, unknown> }>,
     limit: number,
   ): void {
@@ -92,25 +93,25 @@ export class Trie {
 // Space: O(capacity)
 
 interface LRUNode<V> {
-  key:   string;
+  key: string;
   value: V;
-  prev:  LRUNode<V> | null;
-  next:  LRUNode<V> | null;
+  prev: LRUNode<V> | null;
+  next: LRUNode<V> | null;
 }
 
 export class LRUCache<V> {
   private capacity: number;
-  private map:      Map<string, LRUNode<V>>;
-  private head:     LRUNode<V>; // dummy head
-  private tail:     LRUNode<V>; // dummy tail
-  private ttl:      number;     // ms — 0 = no expiry
+  private map: Map<string, LRUNode<V>>;
+  private head: LRUNode<V>; // dummy head
+  private tail: LRUNode<V>; // dummy tail
+  private ttl: number; // ms — 0 = no expiry
   private timestamps: Map<string, number>;
 
   constructor(capacity: number, ttlMs = 0) {
-    this.capacity   = capacity;
-    this.map        = new Map();
+    this.capacity = capacity;
+    this.map = new Map();
     this.timestamps = new Map();
-    this.ttl        = ttlMs;
+    this.ttl = ttlMs;
     // Dummy sentinel nodes simplify edge cases
     this.head = { key: '', value: null as V, prev: null, next: null };
     this.tail = { key: '', value: null as V, prev: null, next: null };
@@ -155,9 +156,18 @@ export class LRUCache<V> {
     this.timestamps.set(key, Date.now());
   }
 
-  has(key: string): boolean { return this.get(key) !== null; }
-  size(): number            { return this.map.size; }
-  clear(): void             { this.map.clear(); this.timestamps.clear(); this.head.next = this.tail; this.tail.prev = this.head; }
+  has(key: string): boolean {
+    return this.get(key) !== null;
+  }
+  size(): number {
+    return this.map.size;
+  }
+  clear(): void {
+    this.map.clear();
+    this.timestamps.clear();
+    this.head.next = this.tail;
+    this.tail.prev = this.head;
+  }
 
   private _remove(node: LRUNode<V>): void {
     node.prev!.next = node.next;
@@ -182,7 +192,8 @@ export class LRUCache<V> {
 // Delays execution until user stops typing for `wait` ms
 
 export function debounce<T extends (...args: unknown[]) => unknown>(
-  fn: T, wait: number,
+  fn: T,
+  wait: number,
 ): (...args: Parameters<T>) => void {
   let timer: ReturnType<typeof setTimeout> | null = null;
   return (...args: Parameters<T>) => {
@@ -195,14 +206,17 @@ export function debounce<T extends (...args: unknown[]) => unknown>(
 // Used in: scroll tracking, resize handlers, analytics events
 
 export function throttle<T extends (...args: unknown[]) => unknown>(
-  fn: T, limit: number,
+  fn: T,
+  limit: number,
 ): (...args: Parameters<T>) => void {
   let inThrottle = false;
   return (...args: Parameters<T>) => {
     if (!inThrottle) {
       fn(...args);
       inThrottle = true;
-      setTimeout(() => { inThrottle = false; }, limit);
+      setTimeout(() => {
+        inThrottle = false;
+      }, limit);
     }
   };
 }
@@ -220,7 +234,8 @@ export function binarySearchRange<T>(
   if (arr.length === 0) return [];
 
   const findLeft = (target: number): number => {
-    let lo = 0, hi = arr.length;
+    let lo = 0,
+      hi = arr.length;
     while (lo < hi) {
       const mid = (lo + hi) >> 1;
       if (getKey(arr[mid]!) < target) lo = mid + 1;
@@ -230,7 +245,8 @@ export function binarySearchRange<T>(
   };
 
   const findRight = (target: number): number => {
-    let lo = 0, hi = arr.length;
+    let lo = 0,
+      hi = arr.length;
     while (lo < hi) {
       const mid = (lo + hi) >> 1;
       if (getKey(arr[mid]!) <= target) lo = mid + 1;
@@ -245,18 +261,18 @@ export function binarySearchRange<T>(
 // ── 6. SORTING — Plan list ordering ───────────────────────────
 // Used in: Buy Plan page — sort by price/data/validity
 
-export type SortKey   = 'price' | 'data' | 'validity' | 'popular';
+export type SortKey = 'price' | 'data' | 'validity' | 'popular';
 export type SortOrder = 'asc' | 'desc';
 
-export function sortPlans<T extends { price: number; data: number; validity: number; isPopular?: boolean }>(
-  plans: T[], key: SortKey, order: SortOrder = 'asc',
-): T[] {
+export function sortPlans<
+  T extends { price: number; data: number; validity: number; isPopular?: boolean },
+>(plans: T[], key: SortKey, order: SortOrder = 'asc'): T[] {
   return [...plans].sort((a, b) => {
     let diff = 0;
-    if (key === 'price')    diff = a.price    - b.price;
-    if (key === 'data')     diff = a.data     - b.data;
+    if (key === 'price') diff = a.price - b.price;
+    if (key === 'data') diff = a.data - b.data;
     if (key === 'validity') diff = a.validity - b.validity;
-    if (key === 'popular')  diff = (b.isPopular ? 1 : 0) - (a.isPopular ? 1 : 0);
+    if (key === 'popular') diff = (b.isPopular ? 1 : 0) - (a.isPopular ? 1 : 0);
     return order === 'asc' ? diff : -diff;
   });
 }
@@ -284,17 +300,37 @@ export function filterBySet<T>(arr: T[], allowed: Set<T>): T[] {
 export class HashMap<K, V> {
   private store: Map<K, V>;
 
-  constructor() { this.store = new Map(); }
+  constructor() {
+    this.store = new Map();
+  }
 
-  set(key: K, value: V): void  { this.store.set(key, value); }
-  get(key: K): V | undefined   { return this.store.get(key); }
-  has(key: K): boolean         { return this.store.has(key); }
-  delete(key: K): void         { this.store.delete(key); }
-  keys(): K[]                  { return [...this.store.keys()]; }
-  values(): V[]                { return [...this.store.values()]; }
-  entries(): [K, V][]          { return [...this.store.entries()]; }
-  size(): number               { return this.store.size; }
-  clear(): void                { this.store.clear(); }
+  set(key: K, value: V): void {
+    this.store.set(key, value);
+  }
+  get(key: K): V | undefined {
+    return this.store.get(key);
+  }
+  has(key: K): boolean {
+    return this.store.has(key);
+  }
+  delete(key: K): void {
+    this.store.delete(key);
+  }
+  keys(): K[] {
+    return [...this.store.keys()];
+  }
+  values(): V[] {
+    return [...this.store.values()];
+  }
+  entries(): [K, V][] {
+    return [...this.store.entries()];
+  }
+  size(): number {
+    return this.store.size;
+  }
+  clear(): void {
+    this.store.clear();
+  }
   toObject(): Record<string, V> {
     return Object.fromEntries(this.store as Map<string, V>);
   }

@@ -7,24 +7,30 @@ import Link from 'next/link';
 import { ROUTES } from '@/constants';
 
 interface Props {
-  children:    ReactNode;
-  fallback?:   ReactNode;
-  onError?:    (error: Error, info: React.ErrorInfo) => void;
-  level?:      'page' | 'section' | 'widget';
+  children: ReactNode;
+  fallback?: ReactNode;
+  onError?: (error: Error, info: React.ErrorInfo) => void;
+  level?: 'page' | 'section' | 'widget';
 }
 
 interface State {
-  hasError:    boolean;
-  error:       Error | null;
-  errorInfo:   React.ErrorInfo | null;
-  eventId:     string | null;
+  hasError: boolean;
+  error: Error | null;
+  errorInfo: React.ErrorInfo | null;
+  eventId: string | null;
   showDetails: boolean;
 }
 
 export class ErrorBoundary extends Component<Props, State> {
   constructor(props: Props) {
     super(props);
-    this.state = { hasError: false, error: null, errorInfo: null, eventId: null, showDetails: false };
+    this.state = {
+      hasError: false,
+      error: null,
+      errorInfo: null,
+      eventId: null,
+      showDetails: false,
+    };
   }
 
   static getDerivedStateFromError(error: Error): Partial<State> {
@@ -34,14 +40,20 @@ export class ErrorBoundary extends Component<Props, State> {
   override componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
     const eventId = Sentry.captureException(error, {
       extra: { componentStack: errorInfo.componentStack },
-      tags:  { source: 'error-boundary', level: this.props.level ?? 'page' },
+      tags: { source: 'error-boundary', level: this.props.level ?? 'page' },
     });
     this.setState({ errorInfo, eventId });
     this.props.onError?.(error, errorInfo);
   }
 
   handleReset = () => {
-    this.setState({ hasError: false, error: null, errorInfo: null, eventId: null, showDetails: false });
+    this.setState({
+      hasError: false,
+      error: null,
+      errorInfo: null,
+      eventId: null,
+      showDetails: false,
+    });
   };
 
   override render() {
@@ -49,19 +61,23 @@ export class ErrorBoundary extends Component<Props, State> {
     const { children, fallback, level = 'page' } = this.props;
 
     if (!hasError) return children;
-    if (fallback)  return fallback;
+    if (fallback) return fallback;
 
     // Widget-level error — compact inline
     if (level === 'widget') {
       return (
         <div className="flex items-center gap-3 rounded-lg border border-destructive/20 bg-destructive/5 p-4">
-          <AlertTriangle className="h-4 w-4 text-destructive flex-shrink-0" aria-hidden="true" />
-          <div className="flex-1 min-w-0">
+          <AlertTriangle className="h-4 w-4 flex-shrink-0 text-destructive" aria-hidden="true" />
+          <div className="min-w-0 flex-1">
             <p className="text-sm font-medium text-destructive">Something went wrong</p>
-            <p className="text-xs text-muted-foreground truncate">{error?.message}</p>
+            <p className="truncate text-xs text-muted-foreground">{error?.message}</p>
           </div>
-          <Button size="sm" variant="outline" onClick={this.handleReset}
-            leftIcon={<RefreshCw className="h-3.5 w-3.5" />}>
+          <Button
+            size="sm"
+            variant="outline"
+            onClick={this.handleReset}
+            leftIcon={<RefreshCw className="h-3.5 w-3.5" />}
+          >
             Retry
           </Button>
         </div>
@@ -71,12 +87,18 @@ export class ErrorBoundary extends Component<Props, State> {
     // Section-level error — moderate
     if (level === 'section') {
       return (
-        <div className="rounded-xl border border-destructive/20 bg-destructive/5 p-8 text-center my-4">
+        <div className="my-4 rounded-xl border border-destructive/20 bg-destructive/5 p-8 text-center">
           <AlertTriangle className="mx-auto mb-3 h-8 w-8 text-destructive" aria-hidden="true" />
-          <h3 className="font-semibold mb-1">This section failed to load</h3>
-          <p className="text-sm text-muted-foreground mb-4">{error?.message || 'An unexpected error occurred.'}</p>
-          <Button size="sm" variant="outline" onClick={this.handleReset}
-            leftIcon={<RefreshCw className="h-3.5 w-3.5" />}>
+          <h3 className="mb-1 font-semibold">This section failed to load</h3>
+          <p className="mb-4 text-sm text-muted-foreground">
+            {error?.message || 'An unexpected error occurred.'}
+          </p>
+          <Button
+            size="sm"
+            variant="outline"
+            onClick={this.handleReset}
+            leftIcon={<RefreshCw className="h-3.5 w-3.5" />}
+          >
             Try Again
           </Button>
         </div>
@@ -91,24 +113,24 @@ export class ErrorBoundary extends Component<Props, State> {
         aria-describedby="error-desc"
         className="flex min-h-screen flex-col items-center justify-center bg-background px-4 py-16 text-center"
       >
-        <div className="max-w-md w-full">
-          <div className="flex h-20 w-20 items-center justify-center rounded-2xl bg-destructive/10 mx-auto mb-6">
+        <div className="w-full max-w-md">
+          <div className="mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-2xl bg-destructive/10">
             <AlertTriangle className="h-10 w-10 text-destructive" aria-hidden="true" />
           </div>
 
-          <h1 id="error-title" className="font-display text-2xl font-bold mb-2">
+          <h1 id="error-title" className="mb-2 font-display text-2xl font-bold">
             Something went wrong
           </h1>
-          <p id="error-desc" className="text-muted-foreground mb-2">
+          <p id="error-desc" className="mb-2 text-muted-foreground">
             An unexpected error occurred. Our team has been notified automatically.
           </p>
           {eventId && (
-            <p className="text-xs text-muted-foreground font-mono mb-6">
+            <p className="mb-6 font-mono text-xs text-muted-foreground">
               Error ID: <span className="select-all">{eventId}</span>
             </p>
           )}
 
-          <div className="flex flex-col sm:flex-row gap-3 justify-center mb-6">
+          <div className="mb-6 flex flex-col justify-center gap-3 sm:flex-row">
             <Button
               variant="gradient"
               onClick={this.handleReset}
@@ -124,7 +146,7 @@ export class ErrorBoundary extends Component<Props, State> {
           {/* Report feedback */}
           {eventId && (
             <button
-              className="text-xs text-primary hover:underline mb-4"
+              className="mb-4 text-xs text-primary hover:underline"
               onClick={() => Sentry.showReportDialog({ eventId })}
             >
               Report this issue with feedback
@@ -133,29 +155,31 @@ export class ErrorBoundary extends Component<Props, State> {
 
           {/* Technical details (dev only) */}
           {process.env.NODE_ENV === 'development' && error && (
-            <div className="text-left mt-4">
+            <div className="mt-4 text-left">
               <button
                 onClick={() => this.setState((s) => ({ showDetails: !s.showDetails }))}
-                className="flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground transition-colors w-full"
+                className="flex w-full items-center gap-1 text-xs text-muted-foreground transition-colors hover:text-foreground"
                 aria-expanded={showDetails}
               >
-                {showDetails
-                  ? <ChevronUp   className="h-3.5 w-3.5" aria-hidden="true" />
-                  : <ChevronDown className="h-3.5 w-3.5" aria-hidden="true" />}
+                {showDetails ? (
+                  <ChevronUp className="h-3.5 w-3.5" aria-hidden="true" />
+                ) : (
+                  <ChevronDown className="h-3.5 w-3.5" aria-hidden="true" />
+                )}
                 Technical details (dev mode)
               </button>
               {showDetails && (
-                <div className="mt-2 rounded-lg bg-muted p-4 text-left overflow-auto max-h-64">
-                  <p className="text-xs font-mono text-destructive font-semibold mb-2">
+                <div className="mt-2 max-h-64 overflow-auto rounded-lg bg-muted p-4 text-left">
+                  <p className="mb-2 font-mono text-xs font-semibold text-destructive">
                     {error.name}: {error.message}
                   </p>
-                  <pre className="text-xs font-mono text-muted-foreground whitespace-pre-wrap break-all">
+                  <pre className="whitespace-pre-wrap break-all font-mono text-xs text-muted-foreground">
                     {error.stack}
                   </pre>
                   {errorInfo?.componentStack && (
                     <>
-                      <p className="text-xs font-mono font-semibold mt-3 mb-1">Component Stack:</p>
-                      <pre className="text-xs font-mono text-muted-foreground whitespace-pre-wrap break-all">
+                      <p className="mb-1 mt-3 font-mono text-xs font-semibold">Component Stack:</p>
+                      <pre className="whitespace-pre-wrap break-all font-mono text-xs text-muted-foreground">
                         {errorInfo.componentStack}
                       </pre>
                     </>

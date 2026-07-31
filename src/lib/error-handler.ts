@@ -7,9 +7,11 @@ export function parseApiError(error: unknown): string {
     if (e.response?.status === 401) return 'Your session has expired. Please sign in again.';
     if (e.response?.status === 403) return 'You do not have permission to perform this action.';
     if (e.response?.status === 404) return 'The requested resource was not found.';
-    if (e.response?.status === 422) return 'The submitted data is invalid. Please check your inputs.';
+    if (e.response?.status === 422)
+      return 'The submitted data is invalid. Please check your inputs.';
     if (e.response?.status === 429) return 'Too many requests. Please slow down and try again.';
-    if (e.response?.status && e.response.status >= 500) return 'A server error occurred. Please try again later.';
+    if (e.response?.status && e.response.status >= 500)
+      return 'A server error occurred. Please try again later.';
     if (e.message) return e.message;
   }
   return 'An unexpected error occurred. Please try again.';

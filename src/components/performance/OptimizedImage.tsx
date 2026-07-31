@@ -36,22 +36,16 @@ export function OptimizedImage({
   priority = false,
   ...props
 }: Props) {
-  const [loaded,  setLoaded]  = useState(false);
+  const [loaded, setLoaded] = useState(false);
   const [errored, setErrored] = useState(false);
 
   const imgSrc = errored ? fallbackSrc : src;
 
   return (
-    <div
-      className={cn('relative overflow-hidden', containerClassName)}
-      style={wrapperStyle}
-    >
+    <div className={cn('relative overflow-hidden', containerClassName)} style={wrapperStyle}>
       {/* Skeleton shimmer while loading */}
       {showSkeleton && !loaded && (
-        <div
-          className="absolute inset-0 bg-muted animate-pulse rounded"
-          aria-hidden="true"
-        />
+        <div className="absolute inset-0 animate-pulse rounded bg-muted" aria-hidden="true" />
       )}
 
       <Image
@@ -78,9 +72,9 @@ export function OptimizedImage({
 
 // ── Avatar with fallback initials ─────────────────────────────
 interface AvatarImageProps {
-  src?:       string | null;
-  alt:        string;
-  size?:      number;
+  src?: string | null;
+  alt: string;
+  size?: number;
   className?: string;
 }
 
@@ -97,7 +91,7 @@ export function AvatarImage({ src, alt, size = 40, className }: AvatarImageProps
     return (
       <div
         className={cn(
-          'flex items-center justify-center rounded-full bg-primary/10 text-primary font-semibold text-sm select-none',
+          'flex select-none items-center justify-center rounded-full bg-primary/10 text-sm font-semibold text-primary',
           className,
         )}
         style={{ width: size, height: size, fontSize: size * 0.35 }}
@@ -122,13 +116,17 @@ export function AvatarImage({ src, alt, size = 40, className }: AvatarImageProps
 }
 
 // ── Country flag emoji renderer ───────────────────────────────
-export function CountryFlag({ flag, name, size = 'text-2xl' }: { flag: string; name: string; size?: string }) {
+export function CountryFlag({
+  flag,
+  name,
+  size = 'text-2xl',
+}: {
+  flag: string;
+  name: string;
+  size?: string;
+}) {
   return (
-    <span
-      className={cn(size, 'leading-none')}
-      role="img"
-      aria-label={`Flag of ${name}`}
-    >
+    <span className={cn(size, 'leading-none')} role="img" aria-label={`Flag of ${name}`}>
       {flag}
     </span>
   );

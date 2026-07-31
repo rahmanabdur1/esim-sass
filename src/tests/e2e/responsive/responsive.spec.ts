@@ -8,18 +8,19 @@ import { test, expect } from '@playwright/test';
  */
 
 const VIEWPORTS = [
-  { name: 'Mobile XS',      width: 320,  height: 812  },
-  { name: 'Mobile',         width: 640,  height: 812  },
-  { name: 'Tablet',         width: 768,  height: 1024 },
-  { name: 'Laptop',         width: 1024, height: 768  },
-  { name: 'Desktop',        width: 1280, height: 900  },
-  { name: 'Large Desktop',  width: 1440, height: 900  },
+  { name: 'Mobile XS', width: 320, height: 812 },
+  { name: 'Mobile', width: 640, height: 812 },
+  { name: 'Tablet', width: 768, height: 1024 },
+  { name: 'Laptop', width: 1024, height: 768 },
+  { name: 'Desktop', width: 1280, height: 900 },
+  { name: 'Large Desktop', width: 1440, height: 900 },
 ] as const;
 
 const AUTH_COOKIE = {
   name: 'esim_access_token',
   value: 'eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxMjMiLCJleHAiOjk5OTk5OTk5OTl9.test',
-  domain: 'localhost', path: '/',
+  domain: 'localhost',
+  path: '/',
 };
 
 for (const viewport of VIEWPORTS) {
@@ -28,9 +29,11 @@ for (const viewport of VIEWPORTS) {
 
     test('home page renders without horizontal overflow', async ({ page }) => {
       await page.goto('/');
-      const bodyWidth    = await page.evaluate(() => document.body.scrollWidth);
-      const windowWidth  = await page.evaluate(() => window.innerWidth);
-      expect(bodyWidth, `Horizontal overflow at ${viewport.width}px`).toBeLessThanOrEqual(windowWidth + 2);
+      const bodyWidth = await page.evaluate(() => document.body.scrollWidth);
+      const windowWidth = await page.evaluate(() => window.innerWidth);
+      expect(bodyWidth, `Horizontal overflow at ${viewport.width}px`).toBeLessThanOrEqual(
+        windowWidth + 2,
+      );
     });
 
     test('navbar renders correctly — logo visible', async ({ page }) => {

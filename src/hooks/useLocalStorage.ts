@@ -26,7 +26,7 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 
 type SetValue<T> = (value: T | ((prev: T) => T)) => void;
-type RemoveValue  = () => void;
+type RemoveValue = () => void;
 
 interface Options {
   /** Sync changes to server (for cross-device persistence) */
@@ -38,22 +38,22 @@ interface Options {
 }
 
 interface StoredItem<T> {
-  value:     T;
+  value: T;
   expiresAt: number | null;
-  version:   number;
+  version: number;
 }
 
 const STORAGE_VERSION = 1;
 
 export function useLocalStorage<T>(
-  key:          string,
+  key: string,
   initialValue: T,
-  options:      Options = {},
+  options: Options = {},
 ): [T, SetValue<T>, RemoveValue, { isLoading: boolean; isSynced: boolean }] {
   const { syncToServer, loadFromServer, expiresIn } = options;
 
   const [isLoading, setIsLoading] = useState(!!loadFromServer);
-  const [isSynced,  setIsSynced]  = useState(!loadFromServer);
+  const [isSynced, setIsSynced] = useState(!loadFromServer);
   const initRef = useRef(false);
 
   // ── Read from localStorage (with expiry check) ─────────────
@@ -97,15 +97,20 @@ export function useLocalStorage<T>(
           setStoredValue(serverValue as T);
           // Update localStorage with server value
           const item: StoredItem<T> = {
-            value:     serverValue as T,
+            value: serverValue as T,
             expiresAt: expiresIn ? Date.now() + expiresIn : null,
-            version:   STORAGE_VERSION,
+            version: STORAGE_VERSION,
           };
           window.localStorage.setItem(key, JSON.stringify(item));
         }
       })
-      .catch(() => { /* use localStorage fallback */ })
-      .finally(() => { setIsLoading(false); setIsSynced(true); });
+      .catch(() => {
+        /* use localStorage fallback */
+      })
+      .finally(() => {
+        setIsLoading(false);
+        setIsSynced(true);
+      });
   }, [key, loadFromServer, expiresIn]);
 
   // ── Write to localStorage + optional server sync ───────────
@@ -116,9 +121,9 @@ export function useLocalStorage<T>(
 
         // Write to localStorage with metadata
         const item: StoredItem<T> = {
-          value:     next,
+          value: next,
           expiresAt: expiresIn ? Date.now() + expiresIn : null,
-          version:   STORAGE_VERSION,
+          version: STORAGE_VERSION,
         };
         window.localStorage.setItem(key, JSON.stringify(item));
         setStoredValue(next);
@@ -152,7 +157,7 @@ export function useLocalStorage<T>(
             const item: StoredItem<T> = {
               value: value instanceof Function ? value(storedValue) : value,
               expiresAt: null,
-              version:   STORAGE_VERSION,
+              version: STORAGE_VERSION,
             };
             window.localStorage.setItem(key, JSON.stringify(item));
           } catch {
@@ -169,7 +174,9 @@ export function useLocalStorage<T>(
     try {
       window.localStorage.removeItem(key);
       setStoredValue(initialValue);
-    } catch { /* empty */ }
+    } catch {
+      /* empty */
+    }
   }, [key, initialValue]);
 
   // ── Cross-tab synchronization ─────────────────────────────
@@ -185,7 +192,9 @@ export function useLocalStorage<T>(
         if (parsed.version === STORAGE_VERSION) {
           setStoredValue(parsed.value);
         }
-      } catch { /* empty */ }
+      } catch {
+        /* empty */
+      }
     };
 
     window.addEventListener('storage', handleStorage);
@@ -208,7 +217,9 @@ function clearExpiredEntries() {
       if (parsed.expiresAt && now > parsed.expiresAt) {
         window.localStorage.removeItem(key);
       }
-    } catch { /* not our format, skip */ }
+    } catch {
+      /* not our format, skip */
+    }
   }
 }
 

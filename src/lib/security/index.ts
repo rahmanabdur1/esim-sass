@@ -8,30 +8,30 @@
 // ============================================================
 
 export interface CSPDirectives {
-  'default-src':               string[];
-  'script-src':                string[];
-  'style-src':                 string[];
-  'img-src':                   string[];
-  'font-src':                  string[];
-  'connect-src':               string[];
-  'frame-src':                 string[];
-  'frame-ancestors':           string[];
-  'object-src':                string[];
-  'base-uri':                  string[];
-  'form-action':               string[];
-  'worker-src':                string[];
-  'manifest-src':              string[];
+  'default-src': string[];
+  'script-src': string[];
+  'style-src': string[];
+  'img-src': string[];
+  'font-src': string[];
+  'connect-src': string[];
+  'frame-src': string[];
+  'frame-ancestors': string[];
+  'object-src': string[];
+  'base-uri': string[];
+  'form-action': string[];
+  'worker-src': string[];
+  'manifest-src': string[];
   'upgrade-insecure-requests': string[];
-  'block-all-mixed-content':   string[];
+  'block-all-mixed-content': string[];
 }
 
 export function buildStrictCSP(nonce: string, isDev = false): string {
-  const self  = "'self'";
-  const none  = "'none'";
+  const self = "'self'";
+  const none = "'none'";
 
   const dirs: Partial<CSPDirectives> = {
-    'default-src':               [self],
-    'script-src':                [
+    'default-src': [self],
+    'script-src': [
       self,
       `'nonce-${nonce}'`,
       'https://js.stripe.com',
@@ -39,10 +39,10 @@ export function buildStrictCSP(nonce: string, isDev = false): string {
       'https://www.gstatic.com/recaptcha/',
       ...(isDev ? ["'unsafe-eval'"] : []),
     ],
-    'style-src':                 [self, "'unsafe-inline'", 'https://fonts.googleapis.com'],
-    'font-src':                  [self, 'https://fonts.gstatic.com', 'data:'],
-    'img-src':                   [self, 'data:', 'blob:', 'https:', 'https://www.google-analytics.com'],
-    'connect-src':               [
+    'style-src': [self, "'unsafe-inline'", 'https://fonts.googleapis.com'],
+    'font-src': [self, 'https://fonts.gstatic.com', 'data:'],
+    'img-src': [self, 'data:', 'blob:', 'https:', 'https://www.google-analytics.com'],
+    'connect-src': [
       self,
       process.env.NEXT_PUBLIC_API_URL ?? 'https://api.esimplatform.com',
       'https://vitals.vercel-insights.com',
@@ -50,15 +50,15 @@ export function buildStrictCSP(nonce: string, isDev = false): string {
       'https://www.google-analytics.com',
       ...(isDev ? ['ws://localhost:*', 'http://localhost:*'] : []),
     ],
-    'frame-src':                 ['https://js.stripe.com', 'https://www.google.com/recaptcha/'],
-    'frame-ancestors':           [none],
-    'object-src':                [none],
-    'base-uri':                  [self],
-    'form-action':               [self],
-    'worker-src':                [self, 'blob:'],
-    'manifest-src':              [self],
+    'frame-src': ['https://js.stripe.com', 'https://www.google.com/recaptcha/'],
+    'frame-ancestors': [none],
+    'object-src': [none],
+    'base-uri': [self],
+    'form-action': [self],
+    'worker-src': [self, 'blob:'],
+    'manifest-src': [self],
     'upgrade-insecure-requests': [],
-    'block-all-mixed-content':   [],
+    'block-all-mixed-content': [],
   };
 
   return Object.entries(dirs)
@@ -71,7 +71,12 @@ export function buildStrictCSP(nonce: string, isDev = false): string {
 // ============================================================
 
 const HTML_ESCAPE_MAP: Record<string, string> = {
-  '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#x27;', '/': '&#x2F;',
+  '&': '&amp;',
+  '<': '&lt;',
+  '>': '&gt;',
+  '"': '&quot;',
+  "'": '&#x27;',
+  '/': '&#x2F;',
 };
 
 /** Escape HTML special characters — use for displaying user content */
@@ -96,16 +101,16 @@ export function sanitizeInput(input: string): string {
 
 /** Enforce max-length per field type */
 export const INPUT_LENGTH_LIMITS = {
-  name:        50,
-  email:       254,
-  password:    128,
-  phone:       20,
-  subject:     200,
-  message:     5000,
-  coupon:      30,
-  search:      100,
-  url:         2000,
-  filename:    255,
+  name: 50,
+  email: 254,
+  password: 128,
+  phone: 20,
+  subject: 200,
+  message: 5000,
+  coupon: 30,
+  search: 100,
+  url: 2000,
+  filename: 255,
   description: 10000,
 } as const;
 
@@ -120,7 +125,10 @@ export function enforceMaxLength(value: string, field: InputFieldType): string {
 // ============================================================
 
 export const ALLOWED_MIME_TYPES = new Set([
-  'image/jpeg', 'image/png', 'image/gif', 'image/webp',
+  'image/jpeg',
+  'image/png',
+  'image/gif',
+  'image/webp',
   'application/pdf',
   'text/plain',
   'application/msword',
@@ -128,18 +136,47 @@ export const ALLOWED_MIME_TYPES = new Set([
 ]);
 
 export const BLOCKED_EXTENSIONS = new Set([
-  'exe','bat','cmd','sh','ps1','vbs','js','jsx','ts','tsx',
-  'php','py','rb','pl','java','class','jar','war',
-  'dll','so','dylib','bin','msi','dmg','pkg','deb','rpm',
-  'zip','tar','gz','7z','rar','bz2',
+  'exe',
+  'bat',
+  'cmd',
+  'sh',
+  'ps1',
+  'vbs',
+  'js',
+  'jsx',
+  'ts',
+  'tsx',
+  'php',
+  'py',
+  'rb',
+  'pl',
+  'java',
+  'class',
+  'jar',
+  'war',
+  'dll',
+  'so',
+  'dylib',
+  'bin',
+  'msi',
+  'dmg',
+  'pkg',
+  'deb',
+  'rpm',
+  'zip',
+  'tar',
+  'gz',
+  '7z',
+  'rar',
+  'bz2',
 ]);
 
 export const MAX_FILE_SIZE_MB = 10;
 export const MAX_FILE_SIZE_BYTES = MAX_FILE_SIZE_MB * 1024 * 1024;
 
 export interface FileValidationResult {
-  valid:    boolean;
-  error?:   string;
+  valid: boolean;
+  error?: string;
   warnings: string[];
 }
 
@@ -198,9 +235,9 @@ export async function validateFile(file: File): Promise<FileValidationResult> {
 // ============================================================
 
 export interface TrustedTypesPolicy {
-  createHTML:        (s: string) => string;
-  createScript:      (s: string) => string;
-  createScriptURL:   (s: string) => string;
+  createHTML: (s: string) => string;
+  createScript: (s: string) => string;
+  createScriptURL: (s: string) => string;
 }
 
 /** Initialize a strict Trusted Types policy (browser-only) */
@@ -283,9 +320,9 @@ export function enforceTopFrame(): void {
 // ============================================================
 
 export interface ThreatEvent {
-  type:      string;
-  severity:  'low' | 'medium' | 'high' | 'critical';
-  message:   string;
+  type: string;
+  severity: 'low' | 'medium' | 'high' | 'critical';
+  message: string;
   timestamp: number;
   metadata?: Record<string, unknown>;
 }
@@ -306,7 +343,10 @@ function emitThreat(event: ThreatEvent) {
   threatHandlers.forEach((h) => h(event));
   // Always log to console in dev
   if (process.env.NODE_ENV !== 'production') {
-    console.warn(`[ThreatDetection] ${event.severity.toUpperCase()}: ${event.message}`, event.metadata);
+    console.warn(
+      `[ThreatDetection] ${event.severity.toUpperCase()}: ${event.message}`,
+      event.metadata,
+    );
   }
 }
 
@@ -318,12 +358,17 @@ export function detectDevTools(onOpen: () => void): () => void {
 
   const check = () => {
     const threshold = 160;
-    const widthDiff  = window.outerWidth  - window.innerWidth  > threshold;
+    const widthDiff = window.outerWidth - window.innerWidth > threshold;
     const heightDiff = window.outerHeight - window.innerHeight > threshold;
 
     if ((widthDiff || heightDiff) && !devToolsOpen) {
       devToolsOpen = true;
-      emitThreat({ type: 'DEVTOOLS_OPENED', severity: 'low', message: 'Developer Tools opened', timestamp: Date.now() });
+      emitThreat({
+        type: 'DEVTOOLS_OPENED',
+        severity: 'low',
+        message: 'Developer Tools opened',
+        timestamp: Date.now(),
+      });
       onOpen();
     } else if (!widthDiff && !heightDiff) {
       devToolsOpen = false;
@@ -339,18 +384,33 @@ export function detectTokenTampering(token: string): boolean {
   try {
     const parts = token.split('.');
     if (parts.length !== 3) {
-      emitThreat({ type: 'TOKEN_MALFORMED', severity: 'high', message: 'JWT has wrong format', timestamp: Date.now() });
+      emitThreat({
+        type: 'TOKEN_MALFORMED',
+        severity: 'high',
+        message: 'JWT has wrong format',
+        timestamp: Date.now(),
+      });
       return true;
     }
     // Decode header
     const header = JSON.parse(atob(parts[0]!.replace(/-/g, '+').replace(/_/g, '/')));
     if (!header.alg || header.alg === 'none') {
-      emitThreat({ type: 'TOKEN_ALG_NONE', severity: 'critical', message: 'JWT alg:none attack detected', timestamp: Date.now() });
+      emitThreat({
+        type: 'TOKEN_ALG_NONE',
+        severity: 'critical',
+        message: 'JWT alg:none attack detected',
+        timestamp: Date.now(),
+      });
       return true;
     }
     return false;
   } catch {
-    emitThreat({ type: 'TOKEN_PARSE_ERROR', severity: 'high', message: 'JWT parse failed', timestamp: Date.now() });
+    emitThreat({
+      type: 'TOKEN_PARSE_ERROR',
+      severity: 'high',
+      message: 'JWT parse failed',
+      timestamp: Date.now(),
+    });
     return true;
   }
 }
@@ -360,7 +420,7 @@ export function createClientRateDetector(maxRequests: number, windowMs: number) 
   const timestamps: number[] = [];
 
   return function check(): boolean {
-    const now  = Date.now();
+    const now = Date.now();
     const cutoff = now - windowMs;
     // Keep only timestamps within window
     while (timestamps.length > 0 && timestamps[0]! < cutoff) timestamps.shift();
@@ -383,23 +443,22 @@ export function createClientRateDetector(maxRequests: number, windowMs: number) 
 // 7. ENVIRONMENT VARIABLE VALIDATION
 // ============================================================
 
-const REQUIRED_ENV_VARS = [
-  'NEXT_PUBLIC_API_URL',
-  'NEXT_PUBLIC_APP_URL',
-] as const;
+const REQUIRED_ENV_VARS = ['NEXT_PUBLIC_API_URL', 'NEXT_PUBLIC_APP_URL'] as const;
 
 export function validateEnvVars(): { valid: boolean; missing: string[] } {
-  const missing = REQUIRED_ENV_VARS.filter(
-    (key) => !process.env[key]
-  );
+  const missing = REQUIRED_ENV_VARS.filter((key) => !process.env[key]);
   return { valid: missing.length === 0, missing };
 }
 
 /** Ensure no secrets are accidentally exposed client-side */
 export function auditClientEnvVars(): string[] {
   const FORBIDDEN_PATTERNS = [
-    /secret/i, /private.*key/i, /api.*secret/i,
-    /database.*url/i, /db.*password/i, /jwt.*secret/i,
+    /secret/i,
+    /private.*key/i,
+    /api.*secret/i,
+    /database.*url/i,
+    /db.*password/i,
+    /jwt.*secret/i,
   ];
 
   const exposed: string[] = [];
@@ -419,7 +478,7 @@ export function auditClientEnvVars(): string[] {
 // ============================================================
 
 export interface SRIResource {
-  url:       string;
+  url: string;
   integrity: string;
   crossOrigin: 'anonymous' | 'use-credentials';
 }

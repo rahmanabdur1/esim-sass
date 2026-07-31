@@ -41,20 +41,14 @@ export const useGDPRStore = create<GDPRStore>()(
       setConsent: (prefs) =>
         set({
           consentGiven: true,
-          consentDate:
-            typeof window !== 'undefined'
-              ? new Date().toISOString()
-              : null,
+          consentDate: typeof window !== 'undefined' ? new Date().toISOString() : null,
           preferences: { essential: true, ...prefs },
         }),
 
       acceptAll: () =>
         set({
           consentGiven: true,
-          consentDate:
-            typeof window !== 'undefined'
-              ? new Date().toISOString()
-              : null,
+          consentDate: typeof window !== 'undefined' ? new Date().toISOString() : null,
           preferences: {
             essential: true,
             analytics: true,
@@ -66,10 +60,7 @@ export const useGDPRStore = create<GDPRStore>()(
       rejectAll: () =>
         set({
           consentGiven: true,
-          consentDate:
-            typeof window !== 'undefined'
-              ? new Date().toISOString()
-              : null,
+          consentDate: typeof window !== 'undefined' ? new Date().toISOString() : null,
           preferences: {
             essential: true,
             analytics: false,
@@ -88,8 +79,8 @@ export const useGDPRStore = create<GDPRStore>()(
       name: 'gdpr-consent',
       storage: createJSONStorage(() => localStorage),
       skipHydration: true, // 🔥 VERY IMPORTANT
-    }
-  )
+    },
+  ),
 );
 
 // ─── Component ─────────────────────────────────
@@ -119,17 +110,16 @@ export function CookieConsentBanner() {
         className="fixed bottom-0 left-0 right-0 z-50 border-t bg-card p-4 shadow-xl"
       >
         <div className="container mx-auto flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-
           {/* Left */}
           <div className="flex items-start gap-3">
-            <Cookie className="h-5 w-5 text-primary mt-1" />
+            <Cookie className="mt-1 h-5 w-5 text-primary" />
             <div>
               <h2 id="cookie-title" className="text-sm font-semibold">
                 We use cookies 🍪
               </h2>
               <p className="text-xs text-muted-foreground">
-                We use essential cookies to make our site work. With your consent,
-                we may also use analytics and marketing cookies.
+                We use essential cookies to make our site work. With your consent, we may also use
+                analytics and marketing cookies.
               </p>
             </div>
           </div>
@@ -139,11 +129,8 @@ export function CookieConsentBanner() {
             <Button variant="outline" onClick={rejectAll}>
               Reject
             </Button>
-            <Button onClick={acceptAll}>
-              Accept All
-            </Button>
+            <Button onClick={acceptAll}>Accept All</Button>
           </div>
-
         </div>
       </motion.div>
     </AnimatePresence>

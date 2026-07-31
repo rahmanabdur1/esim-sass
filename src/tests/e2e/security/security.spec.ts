@@ -33,20 +33,32 @@ test.describe('Security — Route Protection', () => {
   });
 
   test('public pages are accessible without auth', async ({ page }) => {
-    for (const path of ['/', '/plans', '/countries', '/about', '/contact', '/faq', '/terms', '/privacy', '/blog']) {
+    for (const path of [
+      '/',
+      '/plans',
+      '/countries',
+      '/about',
+      '/contact',
+      '/faq',
+      '/terms',
+      '/privacy',
+      '/blog',
+    ]) {
       await page.goto(path);
       await expect(page).not.toHaveURL(/\/auth\/login/);
     }
   });
 
   test('login page redirects authenticated user to dashboard', async ({ page, context }) => {
-    await context.addCookies([{
-      name:   'esim_access_token',
-      // A JWT with a far-future exp for test purposes
-      value:  'eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxMjMiLCJleHAiOjk5OTk5OTk5OTl9.test',
-      domain: 'localhost',
-      path:   '/',
-    }]);
+    await context.addCookies([
+      {
+        name: 'esim_access_token',
+        // A JWT with a far-future exp for test purposes
+        value: 'eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxMjMiLCJleHAiOjk5OTk5OTk5OTl9.test',
+        domain: 'localhost',
+        path: '/',
+      },
+    ]);
     await page.goto('/auth/login');
     await expect(page).toHaveURL(/\/dashboard/);
   });
@@ -56,7 +68,9 @@ test.describe('Security — XSS Prevention', () => {
   test('login form does not execute injected script', async ({ page }) => {
     await page.goto('/auth/login');
     let alertFired = false;
-    page.on('dialog', () => { alertFired = true; });
+    page.on('dialog', () => {
+      alertFired = true;
+    });
 
     await page.getByLabel(/email/i).fill('<script>alert("xss")</script>');
     await page.getByLabel(/^password/i).fill('password123');
@@ -68,7 +82,9 @@ test.describe('Security — XSS Prevention', () => {
   test('search input does not execute injected script', async ({ page }) => {
     await page.goto('/plans');
     let alertFired = false;
-    page.on('dialog', () => { alertFired = true; });
+    page.on('dialog', () => {
+      alertFired = true;
+    });
 
     const searchInput = page.getByLabel(/search/i).first();
     if (await searchInput.isVisible()) {
@@ -82,7 +98,7 @@ test.describe('Security — XSS Prevention', () => {
 test.describe('Security — Response Headers', () => {
   test('home page returns security headers', async ({ page }) => {
     const response = await page.goto('/');
-    const headers  = response?.headers() ?? {};
+    const headers = response?.headers() ?? {};
 
     expect(headers['x-frame-options']).toBe('DENY');
     expect(headers['x-content-type-options']).toBe('nosniff');
@@ -93,7 +109,7 @@ test.describe('Security — Response Headers', () => {
   test('CSP header is present on all pages', async ({ page }) => {
     for (const path of ['/', '/plans', '/auth/login']) {
       const response = await page.goto(path);
-      const headers  = response?.headers() ?? {};
+      const headers = response?.headers() ?? {};
       expect(headers['content-security-policy']).toBeTruthy();
       expect(headers['content-security-policy']).toContain('nonce-');
       expect(headers['content-security-policy']).toContain("frame-ancestors 'none'");
@@ -102,13 +118,13 @@ test.describe('Security — Response Headers', () => {
 
   test('rate limit headers are present', async ({ page }) => {
     const response = await page.goto('/');
-    const headers  = response?.headers() ?? {};
+    const headers = response?.headers() ?? {};
     expect(headers['x-ratelimit-remaining']).toBeTruthy();
   });
 
   test('X-Frame-Options prevents iframe embedding', async ({ page }) => {
     const response = await page.goto('/dashboard');
-    const headers  = response?.headers() ?? {};
+    const headers = response?.headers() ?? {};
     expect(headers['x-frame-options']).toBe('DENY');
   });
 });
@@ -126,7 +142,10 @@ test.describe('Security — Input Validation', () => {
     await page.goto('/auth/register');
     await page.getByLabel(/full name/i).fill('Test User');
     await page.getByLabel(/email/i).fill('test@example.com');
-    await page.getByLabel(/^password/i).first().fill('weakpass');
+    await page
+      .getByLabel(/^password/i)
+      .first()
+      .fill('weakpass');
     await page.getByLabel(/confirm/i).fill('weakpass');
     await page.getByRole('button', { name: /create account/i }).click();
     await expect(page.getByRole('alert').first()).toBeVisible();
@@ -137,7 +156,9 @@ test.describe('Security — Input Validation', () => {
     await page.getByLabel(/name/i).fill('Test');
     await page.getByLabel(/email/i).fill('notanemail');
     await page.getByLabel(/subject/i).fill('Test subject here');
-    await page.getByLabel(/message/i).fill('This is a test message that is long enough to pass validation.');
+    await page
+      .getByLabel(/message/i)
+      .fill('This is a test message that is long enough to pass validation.');
     await page.getByRole('button', { name: /send/i }).click();
     await expect(page.getByRole('alert')).toBeVisible();
   });

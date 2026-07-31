@@ -5,20 +5,20 @@ export default function robots(): MetadataRoute.Robots {
     rules: [
       {
         userAgent: '*',
-        allow:     '/',
-        disallow:  [
-          '/dashboard/',   // Private pages
-          '/api/',         // API routes
-          '/auth/',        // Auth pages
-          '/_next/',       // Next.js internals
+        allow: '/',
+        disallow: [
+          '/dashboard/', // Private pages
+          '/api/', // API routes
+          '/auth/', // Auth pages
+          '/_next/', // Next.js internals
         ],
       },
       {
         userAgent: 'GPTBot',
-        disallow:  ['/'], // Block AI training crawlers
+        disallow: ['/'], // Block AI training crawlers
       },
     ],
-    sitemap:   'https://esimplatform.com/sitemap.xml',
-    host:      'https://esimplatform.com',
+    sitemap: 'https://esimplatform.com/sitemap.xml',
+    host: 'https://esimplatform.com',
   };
 }

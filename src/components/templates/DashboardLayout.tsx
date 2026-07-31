@@ -19,7 +19,9 @@ export function DashboardLayout({ children, title, description, action }: Dashbo
               {title && (
                 <div>
                   <h1 className="font-display text-2xl font-bold md:text-3xl">{title}</h1>
-                  {description && <p className="text-muted-foreground mt-1 text-sm">{description}</p>}
+                  {description && (
+                    <p className="mt-1 text-sm text-muted-foreground">{description}</p>
+                  )}
                 </div>
               )}
               {action && <div className="flex-shrink-0">{action}</div>}

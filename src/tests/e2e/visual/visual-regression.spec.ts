@@ -12,7 +12,8 @@ import { test, expect } from '@playwright/test';
 const AUTH_COOKIE = {
   name: 'esim_access_token',
   value: 'eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxMjMiLCJleHAiOjk5OTk5OTk5OTl9.test',
-  domain: 'localhost', path: '/',
+  domain: 'localhost',
+  path: '/',
 };
 
 // Shared screenshot options
@@ -153,7 +154,7 @@ test.describe('Visual Regression — Component States', () => {
     await page.waitForTimeout(300);
     await expect(page.getByRole('form', { name: /login form/i })).toHaveScreenshot(
       'login-validation-errors.png',
-      { ...SNAP_OPTS, maxDiffPixelRatio: 0.03 }
+      { ...SNAP_OPTS, maxDiffPixelRatio: 0.03 },
     );
   });
 
@@ -164,10 +165,10 @@ test.describe('Visual Regression — Component States', () => {
     if (await menuBtn.isVisible()) {
       await menuBtn.click();
       await page.waitForTimeout(300);
-      await expect(page.getByRole('banner')).toHaveScreenshot(
-        'navbar-mobile-menu-open.png',
-        { ...SNAP_OPTS, maxDiffPixelRatio: 0.03 }
-      );
+      await expect(page.getByRole('banner')).toHaveScreenshot('navbar-mobile-menu-open.png', {
+        ...SNAP_OPTS,
+        maxDiffPixelRatio: 0.03,
+      });
     }
   });
 });

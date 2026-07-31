@@ -9,7 +9,8 @@ import { test, expect } from '@playwright/test';
 const AUTH_COOKIE = {
   name: 'esim_access_token',
   value: 'eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxMjMiLCJleHAiOjk5OTk5OTk5OTl9.test',
-  domain: 'localhost', path: '/',
+  domain: 'localhost',
+  path: '/',
 };
 
 test.describe('Smoke — Public Pages', () => {
@@ -92,7 +93,9 @@ test.describe('Smoke — Auth Pages', () => {
 });
 
 test.describe('Smoke — Dashboard (Authenticated)', () => {
-  test.beforeEach(async ({ context }) => { await context.addCookies([AUTH_COOKIE]); });
+  test.beforeEach(async ({ context }) => {
+    await context.addCookies([AUTH_COOKIE]);
+  });
 
   test('DASHBOARD HOME: loads with welcome message and stat cards', async ({ page }) => {
     await page.goto('/dashboard');
@@ -125,7 +128,9 @@ test.describe('Smoke — Dashboard (Authenticated)', () => {
 });
 
 test.describe('Smoke — Purchase Flow', () => {
-  test.beforeEach(async ({ context }) => { await context.addCookies([AUTH_COOKIE]); });
+  test.beforeEach(async ({ context }) => {
+    await context.addCookies([AUTH_COOKIE]);
+  });
 
   test('PURCHASE FLOW: buy-plan → plans visible', async ({ page }) => {
     await page.goto('/dashboard/buy-plan');

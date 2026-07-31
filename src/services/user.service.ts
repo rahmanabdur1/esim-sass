@@ -13,26 +13,26 @@ import type {
 
 // ── Local types for session/activity (not in global types yet) ──
 export interface Session {
-  id:         string;
-  device:     string;
-  browser:    string;
-  os:         string;
-  location:   string;
-  ip:         string;
+  id: string;
+  device: string;
+  browser: string;
+  os: string;
+  location: string;
+  ip: string;
   lastActive: string;
-  current:    boolean;
+  current: boolean;
 }
 
 export interface ActivityEvent {
-  id:          string;
-  type:        'login' | 'logout' | 'settings_change' | 'password_change' | 'security_alert';
+  id: string;
+  type: 'login' | 'logout' | 'settings_change' | 'password_change' | 'security_alert';
   description: string;
-  ip:          string;
-  location:    string;
-  browser:     string;
-  os:          string;
-  timestamp:   string;
-  success:     boolean;
+  ip: string;
+  location: string;
+  browser: string;
+  os: string;
+  timestamp: string;
+  success: boolean;
 }
 
 export const userService = {
@@ -50,14 +50,14 @@ export const userService = {
     return data.data;
   },
 
-
   async getAnalytics(): Promise<AnalyticsData> {
     const { data } = await apiClient.get<ApiResponse<AnalyticsData>>('/user/analytics');
     return data.data;
   },
 
   async getNotifications(): Promise<PaginatedResponse<Notification>> {
-    const { data } = await apiClient.get<ApiResponse<PaginatedResponse<Notification>>>('/user/notifications');
+    const { data } =
+      await apiClient.get<ApiResponse<PaginatedResponse<Notification>>>('/user/notifications');
     return data.data;
   },
 
@@ -70,11 +70,16 @@ export const userService = {
   },
 
   async getSupportTickets(): Promise<PaginatedResponse<SupportTicket>> {
-    const { data } = await apiClient.get<ApiResponse<PaginatedResponse<SupportTicket>>>('/user/tickets');
+    const { data } =
+      await apiClient.get<ApiResponse<PaginatedResponse<SupportTicket>>>('/user/tickets');
     return data.data;
   },
 
-  async createSupportTicket(payload: { subject: string; description: string; priority: string }): Promise<SupportTicket> {
+  async createSupportTicket(payload: {
+    subject: string;
+    description: string;
+    priority: string;
+  }): Promise<SupportTicket> {
     const { data } = await apiClient.post<ApiResponse<SupportTicket>>('/user/tickets', payload);
     return data.data;
   },
@@ -95,7 +100,10 @@ export const userService = {
   },
 
   async addPaymentMethod(payload: { token: string; type: string }): Promise<PaymentMethod> {
-    const { data } = await apiClient.post<ApiResponse<PaymentMethod>>('/user/payment-methods', payload);
+    const { data } = await apiClient.post<ApiResponse<PaymentMethod>>(
+      '/user/payment-methods',
+      payload,
+    );
     return data.data;
   },
 
@@ -112,7 +120,10 @@ export const userService = {
   },
 
   async exportData(): Promise<{ downloadUrl: string; expiresAt: string }> {
-    const { data } = await apiClient.get<ApiResponse<{ downloadUrl: string; expiresAt: string }>>('/users/me/export');
+    const { data } =
+      await apiClient.get<ApiResponse<{ downloadUrl: string; expiresAt: string }>>(
+        '/users/me/export',
+      );
     return data.data;
   },
 
@@ -144,7 +155,10 @@ export const userService = {
   },
 
   async updateSettings(payload: Record<string, unknown>): Promise<Record<string, unknown>> {
-    const { data } = await apiClient.patch<ApiResponse<Record<string, unknown>>>('/user/settings', payload);
+    const { data } = await apiClient.patch<ApiResponse<Record<string, unknown>>>(
+      '/user/settings',
+      payload,
+    );
     return data.data;
   },
 };

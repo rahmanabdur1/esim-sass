@@ -34,19 +34,12 @@ export function LazyImage({
     <div
       ref={ref}
       className={cn('relative overflow-hidden', containerClassName)}
-      style={
-        width && height
-          ? { width: Number(width), height: Number(height) }
-          : undefined
-      }
+      style={width && height ? { width: Number(width), height: Number(height) } : undefined}
     >
       {/* Skeleton placeholder — shows before image loads */}
       {!hasIntersected && (
         <div
-          className={cn(
-            'absolute inset-0 bg-muted animate-pulse',
-            skeletonClassName,
-          )}
+          className={cn('absolute inset-0 animate-pulse bg-muted', skeletonClassName)}
           aria-hidden="true"
         />
       )}
@@ -76,7 +69,7 @@ export function LazyImage({
  *   </LazySection>
  */
 interface LazySectionProps {
-  children:  React.ReactNode;
+  children: React.ReactNode;
   fallback?: React.ReactNode;
   rootMargin?: string;
   className?: string;
@@ -92,7 +85,11 @@ export function LazySection({
 
   return (
     <div ref={ref} className={className}>
-      {hasIntersected ? children : (fallback ?? <div className="h-32 bg-muted animate-pulse rounded-xl" aria-hidden="true" />)}
+      {hasIntersected
+        ? children
+        : (fallback ?? (
+            <div className="h-32 animate-pulse rounded-xl bg-muted" aria-hidden="true" />
+          ))}
     </div>
   );
 }
@@ -103,18 +100,18 @@ export function LazySection({
  * Uses CSS transitions only — no JS animation library needed.
  */
 interface AnimateOnEnterProps {
-  children:  React.ReactNode;
+  children: React.ReactNode;
   className?: string;
   animation?: 'fade-up' | 'fade-in' | 'slide-left' | 'slide-right' | 'scale-up';
-  delay?:    number; // ms
+  delay?: number; // ms
 }
 
 const ANIMATIONS = {
-  'fade-up':    'translate-y-6 opacity-0',
-  'fade-in':    'opacity-0',
+  'fade-up': 'translate-y-6 opacity-0',
+  'fade-in': 'opacity-0',
   'slide-left': '-translate-x-6 opacity-0',
-  'slide-right':'translate-x-6 opacity-0',
-  'scale-up':   'scale-95 opacity-0',
+  'slide-right': 'translate-x-6 opacity-0',
+  'scale-up': 'scale-95 opacity-0',
 };
 
 export function AnimateOnEnter({
@@ -130,7 +127,9 @@ export function AnimateOnEnter({
       ref={ref}
       className={cn(
         'transition-all duration-700 ease-out',
-        hasIntersected ? 'translate-y-0 translate-x-0 opacity-100 scale-100' : ANIMATIONS[animation],
+        hasIntersected
+          ? 'translate-x-0 translate-y-0 scale-100 opacity-100'
+          : ANIMATIONS[animation],
         className,
       )}
       style={{ transitionDelay: `${delay}ms` }}

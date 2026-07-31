@@ -1,34 +1,34 @@
 import { test, expect } from '@playwright/test';
 
 const AUTH_COOKIE = {
-  name:   'esim_access_token',
-  value:  'eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxMjMiLCJleHAiOjk5OTk5OTk5OTl9.test',
+  name: 'esim_access_token',
+  value: 'eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxMjMiLCJleHAiOjk5OTk5OTk5OTl9.test',
   domain: 'localhost',
-  path:   '/',
+  path: '/',
 };
 
 // All 20 dashboard sidebar routes — must each render without crashing
 const DASHBOARD_ROUTES = [
-  { path: '/dashboard',                      heading: /welcome back/i },
-  { path: '/dashboard/my-esims',             heading: /my esims/i },
-  { path: '/dashboard/buy-plan',             heading: /buy a plan/i },
-  { path: '/dashboard/travel-planner',       heading: /smart travel planner/i },
-  { path: '/dashboard/compare',              heading: /compare plans/i },
-  { path: '/dashboard/orders',               heading: /order history/i },
-  { path: '/dashboard/invoices',             heading: /invoices/i },
-  { path: '/dashboard/analytics',            heading: /usage analytics/i },
-  { path: '/dashboard/advanced-analytics',   heading: /advanced analytics/i },
-  { path: '/dashboard/notifications',        heading: /notifications/i },
-  { path: '/dashboard/support',              heading: /support/i },
-  { path: '/dashboard/knowledge-base',       heading: /how can we help/i },
-  { path: '/dashboard/referral',             heading: /referral program/i },
-  { path: '/dashboard/rewards',              heading: /rewards program/i },
-  { path: '/dashboard/profile',              heading: /profile/i },
-  { path: '/dashboard/security',             heading: /account security/i },
-  { path: '/dashboard/activity',             heading: /account activity/i },
-  { path: '/dashboard/payment-methods',      heading: /payment methods/i },
-  { path: '/dashboard/privacy',              heading: /privacy.*data/i },
-  { path: '/dashboard/settings',             heading: /settings/i },
+  { path: '/dashboard', heading: /welcome back/i },
+  { path: '/dashboard/my-esims', heading: /my esims/i },
+  { path: '/dashboard/buy-plan', heading: /buy a plan/i },
+  { path: '/dashboard/travel-planner', heading: /smart travel planner/i },
+  { path: '/dashboard/compare', heading: /compare plans/i },
+  { path: '/dashboard/orders', heading: /order history/i },
+  { path: '/dashboard/invoices', heading: /invoices/i },
+  { path: '/dashboard/analytics', heading: /usage analytics/i },
+  { path: '/dashboard/advanced-analytics', heading: /advanced analytics/i },
+  { path: '/dashboard/notifications', heading: /notifications/i },
+  { path: '/dashboard/support', heading: /support/i },
+  { path: '/dashboard/knowledge-base', heading: /how can we help/i },
+  { path: '/dashboard/referral', heading: /referral program/i },
+  { path: '/dashboard/rewards', heading: /rewards program/i },
+  { path: '/dashboard/profile', heading: /profile/i },
+  { path: '/dashboard/security', heading: /account security/i },
+  { path: '/dashboard/activity', heading: /account activity/i },
+  { path: '/dashboard/payment-methods', heading: /payment methods/i },
+  { path: '/dashboard/privacy', heading: /privacy.*data/i },
+  { path: '/dashboard/settings', heading: /settings/i },
 ];
 
 test.describe('Dashboard Navigation — Full Coverage', () => {

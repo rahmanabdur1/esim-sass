@@ -14,16 +14,14 @@ import { PlansPageClient } from '@/features/plans/PlansPageClient';
 export const revalidate = 300; // ISR — revalidate every 5 minutes
 
 export const metadata: Metadata = {
-  title:       'Browse eSIM Plans',
-  description: 'Find the perfect eSIM plan for your destination. Filter by country, data, validity, and price.',
+  title: 'Browse eSIM Plans',
+  description:
+    'Find the perfect eSIM plan for your destination. Filter by country, data, validity, and price.',
 };
 
 export default async function PlansPage() {
   // Parallel server fetches — cached at edge, no client waterfall
-  const [plans, countries] = await Promise.all([
-    getPlansServer(),
-    getCountriesServer(),
-  ]);
+  const [plans, countries] = await Promise.all([getPlansServer(), getCountriesServer()]);
 
   return (
     <>

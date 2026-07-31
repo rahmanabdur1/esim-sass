@@ -1,4 +1,9 @@
-import { loginSchema, registerSchema, forgotPasswordSchema, contactSchema } from '@/lib/validations';
+import {
+  loginSchema,
+  registerSchema,
+  forgotPasswordSchema,
+  contactSchema,
+} from '@/lib/validations';
 
 describe('loginSchema', () => {
   it('passes with valid data', () => {
@@ -16,15 +21,25 @@ describe('loginSchema', () => {
 });
 
 describe('registerSchema', () => {
-  const valid = { name: 'John Doe', email: 'john@example.com', password: 'MyP@ss1!', confirmPassword: 'MyP@ss1!' };
+  const valid = {
+    name: 'John Doe',
+    email: 'john@example.com',
+    password: 'MyP@ss1!',
+    confirmPassword: 'MyP@ss1!',
+  };
   it('passes with valid data', () => {
     expect(registerSchema.safeParse(valid).success).toBe(true);
   });
   it('fails when passwords do not match', () => {
-    expect(registerSchema.safeParse({ ...valid, confirmPassword: 'different' }).success).toBe(false);
+    expect(registerSchema.safeParse({ ...valid, confirmPassword: 'different' }).success).toBe(
+      false,
+    );
   });
   it('fails with weak password', () => {
-    expect(registerSchema.safeParse({ ...valid, password: 'weakpass', confirmPassword: 'weakpass' }).success).toBe(false);
+    expect(
+      registerSchema.safeParse({ ...valid, password: 'weakpass', confirmPassword: 'weakpass' })
+        .success,
+    ).toBe(false);
   });
 });
 
@@ -38,7 +53,12 @@ describe('forgotPasswordSchema', () => {
 });
 
 describe('contactSchema', () => {
-  const valid = { name: 'Jo', email: 'a@b.com', subject: 'Hello there', message: 'This is a test message that is long enough.' };
+  const valid = {
+    name: 'Jo',
+    email: 'a@b.com',
+    subject: 'Hello there',
+    message: 'This is a test message that is long enough.',
+  };
   it('passes with valid data', () => {
     expect(contactSchema.safeParse(valid).success).toBe(true);
   });

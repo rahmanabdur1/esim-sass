@@ -16,17 +16,25 @@ export function useToast() {
     setToasts((prev) => prev.filter((t) => t.id !== id));
   }, []);
 
-  const success = useCallback((title: string, description?: string) =>
-    addToast({ title, description, type: 'success' }), [addToast]);
+  const success = useCallback(
+    (title: string, description?: string) => addToast({ title, description, type: 'success' }),
+    [addToast],
+  );
 
-  const error = useCallback((title: string, description?: string) =>
-    addToast({ title, description, type: 'error' }), [addToast]);
+  const error = useCallback(
+    (title: string, description?: string) => addToast({ title, description, type: 'error' }),
+    [addToast],
+  );
 
-  const warning = useCallback((title: string, description?: string) =>
-    addToast({ title, description, type: 'warning' }), [addToast]);
+  const warning = useCallback(
+    (title: string, description?: string) => addToast({ title, description, type: 'warning' }),
+    [addToast],
+  );
 
-  const info = useCallback((title: string, description?: string) =>
-    addToast({ title, description, type: 'info' }), [addToast]);
+  const info = useCallback(
+    (title: string, description?: string) => addToast({ title, description, type: 'info' }),
+    [addToast],
+  );
 
   return { toasts, addToast, removeToast, success, error, warning, info };
 }

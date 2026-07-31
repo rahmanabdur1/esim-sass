@@ -12,16 +12,26 @@ export const ordersService = {
     return data.data;
   },
 
-  async create(payload: { planId: string; couponCode?: string; paymentMethodId: string }): Promise<Order> {
+  async create(payload: {
+    planId: string;
+    couponCode?: string;
+    paymentMethodId: string;
+  }): Promise<Order> {
     const { data } = await apiClient.post<ApiResponse<Order>>('/orders', payload);
     return data.data;
   },
 
-  async applyCoupon(code: string, planId: string): Promise<{ discount: number; finalPrice: number }> {
-    const { data } = await apiClient.post<ApiResponse<{ discount: number; finalPrice: number }>>('/coupons/apply', {
-      code,
-      planId,
-    });
+  async applyCoupon(
+    code: string,
+    planId: string,
+  ): Promise<{ discount: number; finalPrice: number }> {
+    const { data } = await apiClient.post<ApiResponse<{ discount: number; finalPrice: number }>>(
+      '/coupons/apply',
+      {
+        code,
+        planId,
+      },
+    );
     return data.data;
   },
 

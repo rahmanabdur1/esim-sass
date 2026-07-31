@@ -11,15 +11,11 @@ import { redirect } from 'next/navigation';
 import { ROUTES } from '@/constants';
 
 export const metadata: Metadata = {
-  title:    { default: 'Dashboard', template: '%s | Dashboard — eSIM Platform' },
-  robots:   { index: false, follow: false }, // No indexing for authenticated pages
+  title: { default: 'Dashboard', template: '%s | Dashboard — eSIM Platform' },
+  robots: { index: false, follow: false }, // No indexing for authenticated pages
 };
 
-export default async function DashboardLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default async function DashboardLayout({ children }: { children: React.ReactNode }) {
   // ── Server-side auth guard ────────────────────────────────────
   // Reads HttpOnly cookie on the server — token never exposed to JS
   const cookieStore = await cookies();
@@ -29,9 +25,5 @@ export default async function DashboardLayout({
     redirect(`${ROUTES.LOGIN}?callbackUrl=/dashboard`);
   }
 
-  return (
-    <div className="min-h-screen bg-background">
-      {children}
-    </div>
-  );
+  return <div className="min-h-screen bg-background">{children}</div>;
 }

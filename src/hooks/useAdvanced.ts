@@ -6,37 +6,37 @@ import { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 // ============================================================
 
 interface UseVirtualListOptions {
-  itemHeight:      number;
-  overscan?:       number;
+  itemHeight: number;
+  overscan?: number;
   containerHeight: number;
 }
 
 interface VirtualItem {
-  index:  number;
-  start:  number;
-  end:    number;
-  size:   number;
+  index: number;
+  start: number;
+  end: number;
+  size: number;
 }
 
 export function useVirtualList<T>(
-  items:   T[],
-  options: UseVirtualListOptions
+  items: T[],
+  options: UseVirtualListOptions,
 ): {
-  virtualItems:    VirtualItem[];
-  totalHeight:     number;
-  containerProps:  { ref: React.RefObject<HTMLDivElement | null>; style: React.CSSProperties };
-  scrollTo:        (index: number) => void;
+  virtualItems: VirtualItem[];
+  totalHeight: number;
+  containerProps: { ref: React.RefObject<HTMLDivElement | null>; style: React.CSSProperties };
+  scrollTo: (index: number) => void;
 } {
   const { itemHeight, overscan = 5, containerHeight } = options;
   const containerRef = useRef<HTMLDivElement | null>(null);
-  const [scrollTop,  setScrollTop]  = useState(0);
+  const [scrollTop, setScrollTop] = useState(0);
 
   const totalHeight = items.length * itemHeight;
 
   const startIndex = Math.max(0, Math.floor(scrollTop / itemHeight) - overscan);
-  const endIndex   = Math.min(
+  const endIndex = Math.min(
     items.length - 1,
-    Math.ceil((scrollTop + containerHeight) / itemHeight) + overscan
+    Math.ceil((scrollTop + containerHeight) / itemHeight) + overscan,
   );
 
   const virtualItems: VirtualItem[] = useMemo(() => {
@@ -55,17 +55,20 @@ export function useVirtualList<T>(
     return () => el.removeEventListener('scroll', onScroll);
   }, []);
 
-  const scrollTo = useCallback((index: number) => {
-    if (containerRef.current) {
-      containerRef.current.scrollTop = index * itemHeight;
-    }
-  }, [itemHeight]);
+  const scrollTo = useCallback(
+    (index: number) => {
+      if (containerRef.current) {
+        containerRef.current.scrollTop = index * itemHeight;
+      }
+    },
+    [itemHeight],
+  );
 
   return {
     virtualItems,
     totalHeight,
     containerProps: {
-      ref:   containerRef,
+      ref: containerRef,
       style: { height: containerHeight, overflow: 'auto' },
     },
     scrollTo,
@@ -77,17 +80,19 @@ export function useVirtualList<T>(
 // ============================================================
 
 interface UseIntersectionObserverOptions {
-  threshold?:   number;
-  rootMargin?:  string;
+  threshold?: number;
+  rootMargin?: string;
   freezeOnceVisible?: boolean;
 }
 
-export function useIntersectionObserver(
-  options: UseIntersectionObserverOptions = {}
-): { ref: React.RefObject<HTMLDivElement | null>; isVisible: boolean; hasBeenVisible: boolean } {
+export function useIntersectionObserver(options: UseIntersectionObserverOptions = {}): {
+  ref: React.RefObject<HTMLDivElement | null>;
+  isVisible: boolean;
+  hasBeenVisible: boolean;
+} {
   const { threshold = 0.1, rootMargin = '0px', freezeOnceVisible = true } = options;
-  const ref          = useRef<HTMLDivElement | null>(null);
-  const [isVisible,  setIsVisible]  = useState(false);
+  const ref = useRef<HTMLDivElement | null>(null);
+  const [isVisible, setIsVisible] = useState(false);
   const [hasBeenVisible, setHasBeen] = useState(false);
 
   useEffect(() => {
@@ -104,7 +109,7 @@ export function useIntersectionObserver(
           if (freezeOnceVisible) observer.unobserve(el);
         }
       },
-      { threshold, rootMargin }
+      { threshold, rootMargin },
     );
 
     observer.observe(el);
@@ -118,12 +123,9 @@ export function useIntersectionObserver(
 // 3. OPTIMISTIC UPDATE HOOK — instant UI feedback
 // ============================================================
 
-export function useOptimistic<T>(
-  serverState: T,
-  updateFn:    (state: T, update: Partial<T>) => T
-) {
+export function useOptimistic<T>(serverState: T, updateFn: (state: T, update: Partial<T>) => T) {
   const [optimisticState, setOptimistic] = useState<T>(serverState);
-  const [pending, setPending]            = useState(false);
+  const [pending, setPending] = useState(false);
 
   // Sync with server state when it changes
   useEffect(() => {
@@ -144,7 +146,7 @@ export function useOptimistic<T>(
         setPending(false);
       }
     },
-    [optimisticState, updateFn]
+    [optimisticState, updateFn],
   );
 
   return { state: optimisticState, applyOptimistic, pending };
@@ -156,11 +158,15 @@ export function useOptimistic<T>(
 
 interface UseInfiniteScrollOptions {
   onLoadMore: () => void;
-  hasMore:    boolean;
+  hasMore: boolean;
   threshold?: number;
 }
 
-export function useInfiniteScroll({ onLoadMore, hasMore, threshold = 200 }: UseInfiniteScrollOptions) {
+export function useInfiniteScroll({
+  onLoadMore,
+  hasMore,
+  threshold = 200,
+}: UseInfiniteScrollOptions) {
   const sentinelRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -168,8 +174,10 @@ export function useInfiniteScroll({ onLoadMore, hasMore, threshold = 200 }: UseI
     if (!el || !hasMore) return;
 
     const observer = new IntersectionObserver(
-      ([entry]) => { if (entry?.isIntersecting) onLoadMore(); },
-      { rootMargin: `0px 0px ${threshold}px 0px` }
+      ([entry]) => {
+        if (entry?.isIntersecting) onLoadMore();
+      },
+      { rootMargin: `0px 0px ${threshold}px 0px` },
     );
     observer.observe(el);
     return () => observer.disconnect();
@@ -182,17 +190,16 @@ export function useInfiniteScroll({ onLoadMore, hasMore, threshold = 200 }: UseI
 // 5. FORM AUTO-SAVE HOOK — debounced draft saving
 // ============================================================
 
-export function useAutoSave<T>(
-  data:      T,
-  saveFn:    (data: T) => Promise<void>,
-  delay =    2000
-) {
-  const [status,   setStatus]  = useState<'idle' | 'saving' | 'saved' | 'error'>('idle');
+export function useAutoSave<T>(data: T, saveFn: (data: T) => Promise<void>, delay = 2000) {
+  const [status, setStatus] = useState<'idle' | 'saving' | 'saved' | 'error'>('idle');
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const isFirst  = useRef(true);
+  const isFirst = useRef(true);
 
   useEffect(() => {
-    if (isFirst.current) { isFirst.current = false; return; }
+    if (isFirst.current) {
+      isFirst.current = false;
+      return;
+    }
     if (timerRef.current) clearTimeout(timerRef.current);
     setStatus('idle');
     timerRef.current = setTimeout(async () => {
@@ -205,7 +212,9 @@ export function useAutoSave<T>(
         setStatus('error');
       }
     }, delay);
-    return () => { if (timerRef.current) clearTimeout(timerRef.current); };
+    return () => {
+      if (timerRef.current) clearTimeout(timerRef.current);
+    };
   }, [data, saveFn, delay]);
 
   return { status };
@@ -219,18 +228,26 @@ export function useCopyToClipboard(timeout = 2000) {
   const [copied, setCopied] = useState(false);
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  const copy = useCallback(async (text: string) => {
-    try {
-      await navigator.clipboard.writeText(text);
-      setCopied(true);
-      if (timerRef.current) clearTimeout(timerRef.current);
-      timerRef.current = setTimeout(() => setCopied(false), timeout);
-    } catch {
-      console.error('Failed to copy to clipboard');
-    }
-  }, [timeout]);
+  const copy = useCallback(
+    async (text: string) => {
+      try {
+        await navigator.clipboard.writeText(text);
+        setCopied(true);
+        if (timerRef.current) clearTimeout(timerRef.current);
+        timerRef.current = setTimeout(() => setCopied(false), timeout);
+      } catch {
+        console.error('Failed to copy to clipboard');
+      }
+    },
+    [timeout],
+  );
 
-  useEffect(() => () => { if (timerRef.current) clearTimeout(timerRef.current); }, []);
+  useEffect(
+    () => () => {
+      if (timerRef.current) clearTimeout(timerRef.current);
+    },
+    [],
+  );
 
   return { copied, copy };
 }

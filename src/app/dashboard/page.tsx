@@ -12,13 +12,15 @@ import { getCurrentUserServer, getESIMsServer, getOrdersServer } from '@/lib/ser
 import { DashboardHomeClient } from '@/features/dashboard/DashboardHomeClient';
 import { Skeleton } from '@/components/atoms/index';
 
-export const dynamic  = 'force-dynamic';
+export const dynamic = 'force-dynamic';
 export const metadata: Metadata = { title: 'Dashboard' };
 
 function StatsSkeleton() {
   return (
-    <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-      {[1,2,3,4].map((i) => <Skeleton key={i} className="h-28 rounded-xl" />)}
+    <div className="mb-8 grid grid-cols-2 gap-4 lg:grid-cols-4">
+      {[1, 2, 3, 4].map((i) => (
+        <Skeleton key={i} className="h-28 rounded-xl" />
+      ))}
     </div>
   );
 }
@@ -32,9 +34,9 @@ export default async function DashboardPage() {
   ]);
 
   const stats = {
-    activeESIMs:   esims.filter((e) => e.status === 'active').length,
-    totalOrders:   orders.length,
-    totalSpent:    orders.reduce((sum, o) => sum + o.totalAmount, 0),
+    activeESIMs: esims.filter((e) => e.status === 'active').length,
+    totalOrders: orders.length,
+    totalSpent: orders.reduce((sum, o) => sum + o.totalAmount, 0),
     dataRemaining: esims
       .filter((e) => e.status === 'active')
       .reduce((sum, e) => sum + e.dataRemaining, 0),
@@ -49,7 +51,7 @@ export default async function DashboardPage() {
           <h1 className="font-display text-2xl font-bold">
             Welcome back{user ? `, ${user.name.split(' ')[0]}` : ''}! 👋
           </h1>
-          <p className="text-muted-foreground text-sm mt-1">
+          <p className="mt-1 text-sm text-muted-foreground">
             Here's what's happening with your eSIMs today.
           </p>
         </div>

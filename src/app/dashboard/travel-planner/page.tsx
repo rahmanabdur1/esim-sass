@@ -11,9 +11,9 @@ export default function TravelPlannerPage() {
   return (
     <div className="flex h-screen overflow-hidden bg-background">
       <DashboardSidebar />
-      <main id="main-content" className="flex-1 overflow-y-auto p-6 md:p-8 max-w-3xl">
-        <h1 className="font-display text-2xl font-bold mb-1">Smart Travel Planner</h1>
-        <p className="text-muted-foreground text-sm mb-8">
+      <main id="main-content" className="max-w-3xl flex-1 overflow-y-auto p-6 md:p-8">
+        <h1 className="mb-1 font-display text-2xl font-bold">Smart Travel Planner</h1>
+        <p className="mb-8 text-sm text-muted-foreground">
           Tell us where you're going and we'll recommend the perfect eSIM plan.
         </p>
         <TravelPlanner />

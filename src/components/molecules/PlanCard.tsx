@@ -23,7 +23,7 @@ export function PlanCard({ plan, className, onSelect }: PlanCardProps) {
       className={cn(
         'relative flex flex-col rounded-xl border bg-card p-6 transition-colors',
         plan.isBestValue && 'border-primary ring-2 ring-primary ring-offset-2',
-        className
+        className,
       )}
       aria-label={`${plan.name} plan - ${formatDataGB(plan.data)} for ${formatCurrency(plan.price, plan.currency)}`}
     >
@@ -43,8 +43,10 @@ export function PlanCard({ plan, className, onSelect }: PlanCardProps) {
 
       {/* Country + Plan Name */}
       <div className="mb-4">
-        <div className="flex items-center gap-2 mb-1">
-          <span className="text-2xl" aria-hidden="true">{plan.country.flag}</span>
+        <div className="mb-1 flex items-center gap-2">
+          <span className="text-2xl" aria-hidden="true">
+            {plan.country.flag}
+          </span>
           <span className="text-sm text-muted-foreground">{plan.country.name}</span>
         </div>
         <h3 className="text-lg font-semibold">{plan.name}</h3>
@@ -53,17 +55,17 @@ export function PlanCard({ plan, className, onSelect }: PlanCardProps) {
       {/* Stats */}
       <dl className="mb-6 space-y-2">
         <div className="flex items-center gap-2 text-sm">
-          <Wifi className="h-4 w-4 text-primary flex-shrink-0" aria-hidden="true" />
+          <Wifi className="h-4 w-4 flex-shrink-0 text-primary" aria-hidden="true" />
           <dt className="text-muted-foreground">Data:</dt>
           <dd className="font-medium">{formatDataGB(plan.data)}</dd>
         </div>
         <div className="flex items-center gap-2 text-sm">
-          <Clock className="h-4 w-4 text-primary flex-shrink-0" aria-hidden="true" />
+          <Clock className="h-4 w-4 flex-shrink-0 text-primary" aria-hidden="true" />
           <dt className="text-muted-foreground">Validity:</dt>
           <dd className="font-medium">{formatValidity(plan.validity)}</dd>
         </div>
         <div className="flex items-center gap-2 text-sm">
-          <Globe className="h-4 w-4 text-primary flex-shrink-0" aria-hidden="true" />
+          <Globe className="h-4 w-4 flex-shrink-0 text-primary" aria-hidden="true" />
           <dt className="text-muted-foreground">Network:</dt>
           <dd className="font-medium">{plan.network}</dd>
         </div>
@@ -74,7 +76,7 @@ export function PlanCard({ plan, className, onSelect }: PlanCardProps) {
         <ul className="mb-6 space-y-1.5" aria-label="Plan features">
           {plan.features.slice(0, 3).map((feature) => (
             <li key={feature} className="flex items-center gap-2 text-xs text-muted-foreground">
-              <Check className="h-3.5 w-3.5 text-green-500 flex-shrink-0" aria-hidden="true" />
+              <Check className="h-3.5 w-3.5 flex-shrink-0 text-green-500" aria-hidden="true" />
               {feature}
             </li>
           ))}
@@ -85,7 +87,9 @@ export function PlanCard({ plan, className, onSelect }: PlanCardProps) {
       <div className="mt-auto">
         <div className="mb-3">
           <span className="text-3xl font-bold">{formatCurrency(plan.price, plan.currency)}</span>
-          <span className="text-sm text-muted-foreground ml-1">/ {formatValidity(plan.validity)}</span>
+          <span className="ml-1 text-sm text-muted-foreground">
+            / {formatValidity(plan.validity)}
+          </span>
         </div>
         <Button
           className="w-full"

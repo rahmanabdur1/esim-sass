@@ -19,8 +19,8 @@ export async function purchasePlanAction(planId: string, couponCode?: string) {
   if (!token) throw new Error('Not authenticated');
   const res = await fetch(`${API_BASE}/orders`, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
-    body:  JSON.stringify({ planId, couponCode }),
+    headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+    body: JSON.stringify({ planId, couponCode }),
     cache: 'no-store',
   });
   if (!res.ok) throw new Error((await res.json()).message ?? 'Purchase failed');
@@ -35,8 +35,8 @@ export async function updateProfileAction(formData: FormData) {
   if (!token) throw new Error('Not authenticated');
   const res = await fetch(`${API_BASE}/users/me`, {
     method: 'PATCH',
-    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
-    body:  JSON.stringify({ name: formData.get('name'), email: formData.get('email') }),
+    headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+    body: JSON.stringify({ name: formData.get('name'), email: formData.get('email') }),
     cache: 'no-store',
   });
   if (!res.ok) throw new Error('Profile update failed');
@@ -50,8 +50,11 @@ export async function submitTicketAction(formData: FormData) {
   if (!token) throw new Error('Not authenticated');
   const res = await fetch(`${API_BASE}/support/tickets`, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
-    body:  JSON.stringify({ subject: formData.get('subject'), description: formData.get('description') }),
+    headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+    body: JSON.stringify({
+      subject: formData.get('subject'),
+      description: formData.get('description'),
+    }),
     cache: 'no-store',
   });
   if (!res.ok) throw new Error('Ticket submission failed');

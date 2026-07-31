@@ -15,30 +15,33 @@ import { useRouter, usePathname } from 'next/navigation';
 // ── Route prediction map ───────────────────────────────────────
 // When user is on X, prefetch Y (most common next route)
 const ROUTE_PREDICTIONS: Record<string, string[]> = {
-  '/':              ['/plans', '/countries', '/auth/login'],
-  '/plans':         ['/dashboard/checkout', '/countries'],
-  '/countries':     ['/plans'],
-  '/auth/login':    ['/dashboard', '/auth/forgot-password'],
+  '/': ['/plans', '/countries', '/auth/login'],
+  '/plans': ['/dashboard/checkout', '/countries'],
+  '/countries': ['/plans'],
+  '/auth/login': ['/dashboard', '/auth/forgot-password'],
   '/auth/register': ['/auth/verify-email'],
-  '/dashboard':     ['/dashboard/my-esims', '/dashboard/orders', '/dashboard/buy-plan'],
-  '/blog':          ['/plans'],
+  '/dashboard': ['/dashboard/my-esims', '/dashboard/orders', '/dashboard/buy-plan'],
+  '/blog': ['/plans'],
 };
 
 // ── Prefetch on hover intent ───────────────────────────────────
 export function usePrefetchOnHover() {
-  const router   = useRouter();
+  const router = useRouter();
   const prefetched = useRef<Set<string>>(new Set());
-  const timer    = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  const prefetch = useCallback((href: string) => {
-    if (prefetched.current.has(href)) return;
-    prefetched.current.add(href);
+  const prefetch = useCallback(
+    (href: string) => {
+      if (prefetched.current.has(href)) return;
+      prefetched.current.add(href);
 
-    // Delay 150ms — only prefetch if user lingers (not accidental hover)
-    timer.current = setTimeout(() => {
-      router.prefetch(href);
-    }, 150);
-  }, [router]);
+      // Delay 150ms — only prefetch if user lingers (not accidental hover)
+      timer.current = setTimeout(() => {
+        router.prefetch(href);
+      }, 150);
+    },
+    [router],
+  );
 
   const cancel = useCallback(() => {
     if (timer.current) {
@@ -52,7 +55,7 @@ export function usePrefetchOnHover() {
 
 // ── Prefetch predicted next routes ────────────────────────────
 export function usePredictivePrefetch() {
-  const router   = useRouter();
+  const router = useRouter();
   const pathname = usePathname();
 
   useEffect(() => {
@@ -85,7 +88,7 @@ export function usePrefetchInViewport() {
           observer.unobserve(entry.target);
         });
       },
-      { rootMargin: '0px 0px 200px 0px' } // prefetch 200px before visible
+      { rootMargin: '0px 0px 200px 0px' }, // prefetch 200px before visible
     );
 
     // Observe all internal links

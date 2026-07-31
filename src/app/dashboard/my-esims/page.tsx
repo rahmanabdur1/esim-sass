@@ -11,7 +11,7 @@ import { Skeleton } from '@/components/atoms/index';
 import { getESIMsServer } from '@/lib/server/data';
 import { MyESIMsClient } from './MyESIMsClient';
 
-export const dynamic  = 'force-dynamic'; // SSR — always fresh
+export const dynamic = 'force-dynamic'; // SSR — always fresh
 export const metadata: Metadata = { title: 'My eSIMs' };
 
 export default async function MyESIMsPage() {
@@ -22,8 +22,8 @@ export default async function MyESIMsPage() {
     <div className="flex h-screen overflow-hidden bg-background">
       <DashboardSidebar />
       <main id="main-content" className="flex-1 overflow-y-auto p-6 md:p-8">
-        <h1 className="font-display text-2xl font-bold mb-1">My eSIMs</h1>
-        <p className="text-muted-foreground text-sm mb-8">
+        <h1 className="mb-1 font-display text-2xl font-bold">My eSIMs</h1>
+        <p className="mb-8 text-sm text-muted-foreground">
           Manage your active and past eSIM profiles.
         </p>
         <Suspense fallback={<Skeleton className="h-64 rounded-xl" />}>

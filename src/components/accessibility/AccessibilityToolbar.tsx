@@ -6,6 +6,15 @@ import { cn } from '@/utils';
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
 
+// ─── Custom Hook for Hydration Safety ─────────────────────────
+function useHasMounted() {
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+  return mounted;
+}
+
 // ─── A11y Store ───────────────────────────────────────────────
 interface A11yStore {
   fontSize: 'normal' | 'large' | 'xl';
@@ -33,8 +42,11 @@ export const useA11yStore = create<A11yStore>()(
 // ─── Apply preferences to <html> element ─────────────────────
 export function A11yProvider({ children }: { children: React.ReactNode }) {
   const { fontSize, highContrast, reduceMotion } = useA11yStore();
+  const mounted = useHasMounted();
 
   useEffect(() => {
+    if (!mounted) return;
+
     const root = document.documentElement;
     // Font size
     root.classList.remove('text-base-size', 'text-large-size', 'text-xl-size');
@@ -49,7 +61,7 @@ export function A11yProvider({ children }: { children: React.ReactNode }) {
     root.classList.toggle('high-contrast', highContrast);
     // Reduce motion
     root.classList.toggle('reduce-motion', reduceMotion);
-  }, [fontSize, highContrast, reduceMotion]);
+  }, [fontSize, highContrast, reduceMotion, mounted]);
 
   return <>{children}</>;
 }
@@ -57,6 +69,7 @@ export function A11yProvider({ children }: { children: React.ReactNode }) {
 // ─── Accessibility Toolbar Component ─────────────────────────
 export function AccessibilityToolbar() {
   const [open, setOpen] = useState(false);
+  const mounted = useHasMounted();
   const { fontSize, highContrast, reduceMotion, setFontSize, toggleContrast, toggleMotion } =
     useA11yStore();
 
@@ -66,8 +79,18 @@ export function AccessibilityToolbar() {
     { value: 'xl', label: 'X-Large', size: 'text-lg' },
   ];
 
+  // Client-side mount না হওয়া পর্যন্ত Server Markup-এর সাথে সামঞ্জস্য রাখতে null রিটার্ন করা হবে
+  if (!mounted) {
+    return null;
+  }
+
   return (
-    <div className="fixed bottom-6 left-6 z-40" role="region" aria-label="Accessibility toolbar">
+    <div
+      className="fixed bottom-6 left-6 z-40"
+      role="region"
+      aria-label="Accessibility toolbar"
+      suppressHydrationWarning
+    >
       {/* Toggle button */}
       <button
         onClick={() => setOpen((v) => !v)}

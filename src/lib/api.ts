@@ -9,9 +9,8 @@
 
 // ── Base configuration ─────────────────────────────────────────
 
-const CLIENT_API_BASE = '/api';    // Client → Next.js Route Handlers → Backend
-const SERVER_API_BASE =            // Server Components → Backend directly
-  process.env.NEXT_PUBLIC_API_URL ?? 'https://api.esimplatform.com/v1';
+const CLIENT_API_BASE = '/api'; // Client → Next.js Route Handlers → Backend
+const SERVER_API_BASE = process.env.NEXT_PUBLIC_API_URL ?? 'https://api.esimplatform.com/v1'; // Server Components → Backend directly
 
 interface RequestOptions extends RequestInit {
   params?: Record<string, string | number | boolean | undefined>;
@@ -20,8 +19,8 @@ interface RequestOptions extends RequestInit {
 
 interface ApiError {
   message: string;
-  status:  number;
-  code?:   string;
+  status: number;
+  code?: string;
 }
 
 class ApiClient {
@@ -31,8 +30,14 @@ class ApiClient {
     this.baseUrl = baseUrl;
   }
 
-  private buildUrl(path: string, params?: Record<string, string | number | boolean | undefined>): string {
-    const url = new URL(`${this.baseUrl}${path}`, typeof window !== 'undefined' ? window.location.origin : 'http://localhost:3000');
+  private buildUrl(
+    path: string,
+    params?: Record<string, string | number | boolean | undefined>,
+  ): string {
+    const url = new URL(
+      `${this.baseUrl}${path}`,
+      typeof window !== 'undefined' ? window.location.origin : 'http://localhost:3000',
+    );
     if (params) {
       Object.entries(params).forEach(([k, v]) => {
         if (v !== undefined && v !== null) url.searchParams.set(k, String(v));
@@ -46,8 +51,8 @@ class ApiClient {
 
     // Route Handlers proxy on client; direct backend call on server
     const isServer = typeof window === 'undefined';
-    const base = (isServer || serverSide) ? SERVER_API_BASE : CLIENT_API_BASE;
-    const url  = this.buildUrl.call({ baseUrl: base }, path, params);
+    const base = isServer || serverSide ? SERVER_API_BASE : CLIENT_API_BASE;
+    const url = this.buildUrl.call({ baseUrl: base }, path, params);
 
     const res = await fetch(url, {
       ...fetchOptions,
@@ -77,14 +82,18 @@ class ApiClient {
 
   // ── Convenience methods ────────────────────────────────────────
 
-  get<T>(path: string, params?: RequestOptions['params'], options?: Omit<RequestOptions, 'params'>) {
+  get<T>(
+    path: string,
+    params?: RequestOptions['params'],
+    options?: Omit<RequestOptions, 'params'>,
+  ) {
     return this.request<T>(path, { method: 'GET', params, ...options });
   }
 
   post<T>(path: string, body?: unknown, options?: RequestOptions) {
     return this.request<T>(path, {
       method: 'POST',
-      body:   body ? JSON.stringify(body) : undefined,
+      body: body ? JSON.stringify(body) : undefined,
       ...options,
     });
   }
@@ -92,7 +101,7 @@ class ApiClient {
   put<T>(path: string, body?: unknown, options?: RequestOptions) {
     return this.request<T>(path, {
       method: 'PUT',
-      body:   body ? JSON.stringify(body) : undefined,
+      body: body ? JSON.stringify(body) : undefined,
       ...options,
     });
   }
@@ -100,7 +109,7 @@ class ApiClient {
   patch<T>(path: string, body?: unknown, options?: RequestOptions) {
     return this.request<T>(path, {
       method: 'PATCH',
-      body:   body ? JSON.stringify(body) : undefined,
+      body: body ? JSON.stringify(body) : undefined,
       ...options,
     });
   }
@@ -121,25 +130,25 @@ export const serverApi = new ApiClient(SERVER_API_BASE);
 // ── Typed API endpoints ────────────────────────────────────────
 
 export const planApi = {
-  list:   (params?: Record<string, string>) => api.get('/plans', params),
-  get:    (id: string)                       => api.get(`/plans/${id}`),
+  list: (params?: Record<string, string>) => api.get('/plans', params),
+  get: (id: string) => api.get(`/plans/${id}`),
 };
 
 export const esimApi = {
-  list:   ()         => api.get('/esims'),
-  get:    (id: string) => api.get(`/esims/${id}`),
+  list: () => api.get('/esims'),
+  get: (id: string) => api.get(`/esims/${id}`),
   activate: (id: string) => api.post(`/esims/${id}/activate`),
 };
 
 export const orderApi = {
-  list:   ()              => api.get('/orders'),
-  get:    (id: string)    => api.get(`/orders/${id}`),
+  list: () => api.get('/orders'),
+  get: (id: string) => api.get(`/orders/${id}`),
   create: (body: unknown) => api.post('/orders', body),
 };
 
 export const authApi = {
-  login:    (creds: { email: string; password: string }) => api.post('/auth/login', creds),
-  logout:   ()                                            => api.post('/auth/logout'),
-  register: (body: unknown)                               => api.post('/auth/register', body),
-  me:       ()                                            => api.get('/auth/me'),
+  login: (creds: { email: string; password: string }) => api.post('/auth/login', creds),
+  logout: () => api.post('/auth/logout'),
+  register: (body: unknown) => api.post('/auth/register', body),
+  me: () => api.get('/auth/me'),
 };

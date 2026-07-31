@@ -31,7 +31,9 @@ export interface RegisterCredentials {
   confirmPassword: string;
 }
 
-export interface ForgotPasswordPayload { email: string; }
+export interface ForgotPasswordPayload {
+  email: string;
+}
 export interface ResetPasswordPayload {
   token: string;
   password: string;
@@ -92,18 +94,18 @@ export interface Country {
 export type OrderStatus = 'pending' | 'processing' | 'completed' | 'failed' | 'refunded';
 
 export interface Order {
-  id:              string;
-  orderNumber:     string;
-  plan:            Plan;
-  status:          OrderStatus;
-  totalAmount:     number;
-  currency:        string;
-  couponCode?:     string;
+  id: string;
+  orderNumber: string;
+  plan: Plan;
+  status: OrderStatus;
+  totalAmount: number;
+  currency: string;
+  couponCode?: string;
   discountAmount?: number;
-  paymentMethod:   PaymentMethod | string;
-  createdAt:       string;
-  updatedAt:       string;
-  esim?:           ESIM;
+  paymentMethod: PaymentMethod | string;
+  createdAt: string;
+  updatedAt: string;
+  esim?: ESIM;
 }
 
 // ==================== API TYPES ====================
@@ -145,15 +147,15 @@ export type TicketStatus = 'open' | 'in_progress' | 'resolved' | 'closed';
 export type TicketPriority = 'low' | 'medium' | 'high' | 'urgent';
 
 export interface SupportTicket {
-  id:           string;
+  id: string;
   ticketNumber: string;
-  subject:      string;
-  description:  string;
-  status:       TicketStatus;
-  priority:     TicketPriority;
-  createdAt:    string;
-  updatedAt:    string;
-  messages:     TicketMessage[];
+  subject: string;
+  description: string;
+  status: TicketStatus;
+  priority: TicketPriority;
+  createdAt: string;
+  updatedAt: string;
+  messages: TicketMessage[];
 }
 
 export interface TicketMessage {
@@ -258,10 +260,10 @@ export interface BlogAuthor {
 
 export interface BlogCountry {
   code: string;
-  name: string;     
-  flag: string;       
-  currency?: string;  
-  region?: string;     
+  name: string;
+  flag: string;
+  currency?: string;
+  region?: string;
 }
 
 // ==================== UI TYPES ====================

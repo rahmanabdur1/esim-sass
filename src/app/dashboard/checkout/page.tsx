@@ -22,7 +22,11 @@ export default function CheckoutPage() {
   const { mutate: applyCoupon, isPending: applyingCoupon, error: couponError } = useApplyCoupon();
   const [selectedPayment, setSelectedPayment] = useState<string>('');
 
-  const { register, handleSubmit, formState: { errors } } = useForm<CouponFormValues>({
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<CouponFormValues>({
     resolver: zodResolver(couponSchema),
   });
 
@@ -41,8 +45,8 @@ export default function CheckoutPage() {
     if (!selectedPayment) return;
     createOrder(
       {
-        planId:          item.planId,
-        couponCode:      couponCode || undefined,
+        planId: item.planId,
+        couponCode: couponCode || undefined,
         paymentMethodId: selectedPayment,
       },
       {
@@ -61,23 +65,28 @@ export default function CheckoutPage() {
     <div className="flex h-screen overflow-hidden bg-background">
       <DashboardSidebar />
       <main id="main-content" className="flex-1 overflow-y-auto p-6 md:p-8">
-        <h1 className="font-display text-2xl font-bold mb-1">Checkout</h1>
-        <p className="text-muted-foreground text-sm mb-8">Review your order and complete payment</p>
+        <h1 className="mb-1 font-display text-2xl font-bold">Checkout</h1>
+        <p className="mb-8 text-sm text-muted-foreground">Review your order and complete payment</p>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 max-w-5xl">
+        <div className="grid max-w-5xl grid-cols-1 gap-6 lg:grid-cols-3">
           {/* Left — Payment */}
-          <div className="lg:col-span-2 space-y-6">
+          <div className="space-y-6 lg:col-span-2">
             {/* Payment Methods */}
             <section aria-labelledby="payment-heading" className="rounded-xl border bg-card p-6">
-              <h2 id="payment-heading" className="font-semibold flex items-center gap-2 mb-5">
+              <h2 id="payment-heading" className="mb-5 flex items-center gap-2 font-semibold">
                 <CreditCard className="h-4 w-4 text-primary" aria-hidden="true" /> Payment Method
               </h2>
               {pmLoading ? (
-                <div className="flex justify-center py-6"><Spinner /></div>
+                <div className="flex justify-center py-6">
+                  <Spinner />
+                </div>
               ) : !paymentMethods?.length ? (
                 <div className="rounded-lg border-2 border-dashed p-6 text-center">
-                  <CreditCard className="mx-auto mb-2 h-8 w-8 text-muted-foreground" aria-hidden="true" />
-                  <p className="text-sm text-muted-foreground mb-3">No payment methods saved</p>
+                  <CreditCard
+                    className="mx-auto mb-2 h-8 w-8 text-muted-foreground"
+                    aria-hidden="true"
+                  />
+                  <p className="mb-3 text-sm text-muted-foreground">No payment methods saved</p>
                   <Button variant="outline" size="sm" asChild>
                     <a href={ROUTES.PAYMENT_METHODS}>Add Payment Method</a>
                   </Button>
@@ -101,13 +110,17 @@ export default function CheckoutPage() {
                           aria-label={`${pm.brand} ending in ${pm.last4}`}
                         />
                         <div className="flex-1">
-                          <p className="text-sm font-medium capitalize">{pm.brand} •••• {pm.last4}</p>
+                          <p className="text-sm font-medium capitalize">
+                            {pm.brand} •••• {pm.last4}
+                          </p>
                           {pm.expiryMonth && (
-                            <p className="text-xs text-muted-foreground">Expires {pm.expiryMonth}/{pm.expiryYear}</p>
+                            <p className="text-xs text-muted-foreground">
+                              Expires {pm.expiryMonth}/{pm.expiryYear}
+                            </p>
                           )}
                         </div>
                         {pm.isDefault && (
-                          <span className="text-xs text-primary font-medium">Default</span>
+                          <span className="text-xs font-medium text-primary">Default</span>
                         )}
                       </label>
                     ))}
@@ -118,15 +131,26 @@ export default function CheckoutPage() {
 
             {/* Coupon */}
             <section aria-labelledby="coupon-heading" className="rounded-xl border bg-card p-6">
-              <h2 id="coupon-heading" className="font-semibold flex items-center gap-2 mb-4">
+              <h2 id="coupon-heading" className="mb-4 flex items-center gap-2 font-semibold">
                 <Tag className="h-4 w-4 text-primary" aria-hidden="true" /> Coupon Code
               </h2>
               {couponCode ? (
-                <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex items-center gap-3 rounded-lg bg-green-50 border border-green-200 p-3">
-                  <CheckCircle className="h-5 w-5 text-green-600 flex-shrink-0" aria-hidden="true" />
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  className="flex items-center gap-3 rounded-lg border border-green-200 bg-green-50 p-3"
+                >
+                  <CheckCircle
+                    className="h-5 w-5 flex-shrink-0 text-green-600"
+                    aria-hidden="true"
+                  />
                   <div>
-                    <p className="text-sm font-medium text-green-800">Coupon <strong>{couponCode}</strong> applied!</p>
-                    <p className="text-xs text-green-600">You saved {formatCurrency(discount, item.currency)}</p>
+                    <p className="text-sm font-medium text-green-800">
+                      Coupon <strong>{couponCode}</strong> applied!
+                    </p>
+                    <p className="text-xs text-green-600">
+                      You saved {formatCurrency(discount, item.currency)}
+                    </p>
                   </div>
                 </motion.div>
               ) : (
@@ -146,27 +170,32 @@ export default function CheckoutPage() {
                       </p>
                     )}
                   </div>
-                  <Button type="submit" variant="outline" isLoading={applyingCoupon}>Apply</Button>
+                  <Button type="submit" variant="outline" isLoading={applyingCoupon}>
+                    Apply
+                  </Button>
                 </form>
               )}
             </section>
 
             {/* Security note */}
             <div className="flex items-center gap-2 text-xs text-muted-foreground">
-              <ShieldCheck className="h-4 w-4 text-green-600 flex-shrink-0" aria-hidden="true" />
-              <span>Your payment is secured with 256-bit SSL encryption. We never store your card details.</span>
+              <ShieldCheck className="h-4 w-4 flex-shrink-0 text-green-600" aria-hidden="true" />
+              <span>
+                Your payment is secured with 256-bit SSL encryption. We never store your card
+                details.
+              </span>
             </div>
           </div>
 
           {/* Right — Order Summary */}
           <div>
-            <div className="rounded-xl border bg-card p-6 sticky top-6">
-              <h2 className="font-semibold mb-5">Order Summary</h2>
+            <div className="sticky top-6 rounded-xl border bg-card p-6">
+              <h2 className="mb-5 font-semibold">Order Summary</h2>
 
               {/* Plan details */}
-              <div className="rounded-lg bg-muted/50 p-4 mb-5">
-                <p className="font-medium text-sm mb-1">{item.planName}</p>
-                <p className="text-xs text-muted-foreground mb-3">{item.countryName}</p>
+              <div className="mb-5 rounded-lg bg-muted/50 p-4">
+                <p className="mb-1 text-sm font-medium">{item.planName}</p>
+                <p className="mb-3 text-xs text-muted-foreground">{item.countryName}</p>
                 <div className="space-y-1.5">
                   <div className="flex items-center gap-2 text-xs">
                     <Wifi className="h-3.5 w-3.5 text-primary" aria-hidden="true" />
@@ -180,7 +209,7 @@ export default function CheckoutPage() {
               </div>
 
               {/* Price breakdown */}
-              <dl className="space-y-2 text-sm mb-5">
+              <dl className="mb-5 space-y-2 text-sm">
                 <div className="flex justify-between">
                   <dt className="text-muted-foreground">Subtotal</dt>
                   <dd>{formatCurrency(item.price, item.currency)}</dd>
@@ -195,7 +224,7 @@ export default function CheckoutPage() {
                   <dt className="text-muted-foreground">Tax</dt>
                   <dd>$0.00</dd>
                 </div>
-                <div className="flex justify-between font-bold text-base border-t pt-2 mt-2">
+                <div className="mt-2 flex justify-between border-t pt-2 text-base font-bold">
                   <dt>Total</dt>
                   <dd>{formatCurrency(finalPrice, item.currency)}</dd>
                 </div>
@@ -214,8 +243,11 @@ export default function CheckoutPage() {
               </Button>
 
               <button
-                onClick={() => { clearCart(); router.push(ROUTES.BUY_PLAN); }}
-                className="mt-3 w-full text-xs text-muted-foreground hover:text-foreground text-center transition-colors"
+                onClick={() => {
+                  clearCart();
+                  router.push(ROUTES.BUY_PLAN);
+                }}
+                className="mt-3 w-full text-center text-xs text-muted-foreground transition-colors hover:text-foreground"
               >
                 Cancel and go back
               </button>

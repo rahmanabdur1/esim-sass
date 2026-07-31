@@ -11,8 +11,8 @@ const SECRET = process.env.REVALIDATE_SECRET ?? 'dev-secret';
 export async function POST(request: NextRequest) {
   const { searchParams } = new URL(request.url);
   const secret = searchParams.get('secret');
-  const tag    = searchParams.get('tag');
-  const path   = searchParams.get('path');
+  const tag = searchParams.get('tag');
+  const path = searchParams.get('path');
 
   // Validate secret (skip in dev/mock mode)
   const isMock = process.env.NEXT_PUBLIC_USE_MOCK_API === 'true';
@@ -25,14 +25,14 @@ export async function POST(request: NextRequest) {
   }
 
   try {
-    if (tag)  revalidateTag(tag);
+    if (tag) revalidateTag(tag);
     if (path) revalidatePath(path);
 
     return NextResponse.json({
       revalidated: true,
-      type:        tag ? 'tag' : 'path',
-      value:       tag ?? path,
-      timestamp:   new Date().toISOString(),
+      type: tag ? 'tag' : 'path',
+      value: tag ?? path,
+      timestamp: new Date().toISOString(),
     });
   } catch (e) {
     return NextResponse.json({ error: String(e) }, { status: 500 });

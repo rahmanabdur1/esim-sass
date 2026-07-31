@@ -70,13 +70,15 @@ test.describe('Middleware Redirects', () => {
 
   test('login page redirects authenticated users to dashboard', async ({ page, context }) => {
     // Simulate auth cookie
-    await context.addCookies([{
-      name: 'esim_access_token',
-      // A real but expired JWT — middleware reads the exp claim
-      value: 'eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxMjMiLCJleHAiOjk5OTk5OTk5OTl9.fake',
-      domain: 'localhost',
-      path: '/',
-    }]);
+    await context.addCookies([
+      {
+        name: 'esim_access_token',
+        // A real but expired JWT — middleware reads the exp claim
+        value: 'eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxMjMiLCJleHAiOjk5OTk5OTk5OTl9.fake',
+        domain: 'localhost',
+        path: '/',
+      },
+    ]);
     await page.goto('/auth/login');
     await expect(page).toHaveURL(/\/dashboard/);
   });

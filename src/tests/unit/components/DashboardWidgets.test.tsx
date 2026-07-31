@@ -2,11 +2,18 @@ import React from 'react';
 import { render, screen } from '@testing-library/react';
 import { axe } from 'jest-axe';
 import '@testing-library/jest-dom';
-import { ActiveESIMWidget, ActiveESIMWidgetSkeleton } from '@/components/organisms/DashboardWidgets';
+import {
+  ActiveESIMWidget,
+  ActiveESIMWidgetSkeleton,
+} from '@/components/organisms/DashboardWidgets';
 import type { ESIM } from '@/types';
 
 jest.mock('next/link', () => {
-  const MockLink = ({ children, href, ...props }: any) => <a href={href} {...props}>{children}</a>;
+  const MockLink = ({ children, href, ...props }: any) => (
+    <a href={href} {...props}>
+      {children}
+    </a>
+  );
   MockLink.displayName = 'Link';
   return MockLink;
 });
@@ -21,11 +28,36 @@ const mockESIM: ESIM = {
   dataRemaining: 6,
   validFrom: '2025-01-01',
   validTo: '2025-01-31',
-  country: { id: 'jp', name: 'Japan', code: 'JP', flag: '🇯🇵', region: 'Asia', continent: 'Asia', networks: ['NTT Docomo'], coverageQuality: 'excellent' },
+  country: {
+    id: 'jp',
+    name: 'Japan',
+    code: 'JP',
+    flag: '🇯🇵',
+    region: 'Asia',
+    continent: 'Asia',
+    networks: ['NTT Docomo'],
+    coverageQuality: 'excellent',
+  },
   plan: {
-    id: 'plan-1', name: 'Japan 10GB', data: 10, validity: 30, price: 8.99, currency: 'USD',
-    network: 'NTT Docomo', coverage: ['JP'], features: [],
-    country: { id: 'jp', name: 'Japan', code: 'JP', flag: '🇯🇵', region: 'Asia', continent: 'Asia', networks: ['NTT Docomo'], coverageQuality: 'excellent' },
+    id: 'plan-1',
+    name: 'Japan 10GB',
+    data: 10,
+    validity: 30,
+    price: 8.99,
+    currency: 'USD',
+    network: 'NTT Docomo',
+    coverage: ['JP'],
+    features: [],
+    country: {
+      id: 'jp',
+      name: 'Japan',
+      code: 'JP',
+      flag: '🇯🇵',
+      region: 'Asia',
+      continent: 'Asia',
+      networks: ['NTT Docomo'],
+      coverageQuality: 'excellent',
+    },
   },
   qrCode: 'data:image/png;base64,xyz',
   network: 'NTT Docomo',

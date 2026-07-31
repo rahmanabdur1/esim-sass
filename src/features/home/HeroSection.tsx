@@ -10,14 +10,14 @@ import { ROUTES } from '@/constants';
 const stats = [
   { value: '190+', label: 'Countries' },
   { value: '500+', label: 'Networks' },
-  { value: '2M+',  label: 'Happy Users' },
+  { value: '2M+', label: 'Happy Users' },
   { value: '24/7', label: 'Support' },
 ];
 
 const trustBadges = [
-  { icon: Zap,         label: 'Instant Activation' },
-  { icon: Shield,      label: 'Secure & Reliable'  },
-  { icon: Headphones,  label: '24/7 Support'        },
+  { icon: Zap, label: 'Instant Activation' },
+  { icon: Shield, label: 'Secure & Reliable' },
+  { icon: Headphones, label: '24/7 Support' },
 ];
 
 export function HeroSection() {
@@ -25,14 +25,14 @@ export function HeroSection() {
 
   return (
     <section
-      className="relative overflow-hidden bg-gradient-to-br from-slate-900 via-blue-950 to-slate-900 pt-24 pb-20 md:pt-32 md:pb-28"
+      className="relative overflow-hidden bg-gradient-to-br from-slate-900 via-blue-950 to-slate-900 pb-20 pt-24 md:pb-28 md:pt-32"
       aria-labelledby="hero-heading"
     >
       {/* Background decoration */}
       <div className="pointer-events-none absolute inset-0 overflow-hidden" aria-hidden="true">
-        <div className="absolute -top-40 -right-40 h-96 w-96 rounded-full bg-blue-500/10 blur-3xl" />
+        <div className="absolute -right-40 -top-40 h-96 w-96 rounded-full bg-blue-500/10 blur-3xl" />
         <div className="absolute -bottom-40 -left-40 h-96 w-96 rounded-full bg-purple-500/10 blur-3xl" />
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 h-[600px] w-[600px] rounded-full bg-blue-600/5 blur-3xl" />
+        <div className="absolute left-1/2 top-1/2 h-[600px] w-[600px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-blue-600/5 blur-3xl" />
       </div>
 
       <div className="container relative mx-auto px-4 md:px-6">
@@ -68,10 +68,10 @@ export function HeroSection() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.2 }}
-            className="mb-8 text-lg text-slate-400 md:text-xl max-w-2xl mx-auto"
+            className="mx-auto mb-8 max-w-2xl text-lg text-slate-400 md:text-xl"
           >
-            Get instant eSIM for your travels. No physical SIM card needed — activate in minutes
-            and enjoy reliable data in over 190 countries.
+            Get instant eSIM for your travels. No physical SIM card needed — activate in minutes and
+            enjoy reliable data in over 190 countries.
           </motion.p>
 
           {/* Search */}
@@ -89,11 +89,14 @@ export function HeroSection() {
                   placeholder="Search destinations (e.g., Japan, Europe...)"
                   aria-label="Search destinations"
                   leftIcon={<Search className="h-4 w-4" />}
-                  className="h-12 bg-white/10 border-white/20 text-white placeholder:text-slate-400 focus-visible:ring-blue-400"
+                  className="h-12 border-white/20 bg-white/10 text-white placeholder:text-slate-400 focus-visible:ring-blue-400"
                 />
               </div>
-              <Button size="lg" variant="gradient" className="h-12 px-6 flex-shrink-0">
-                <Link href={`${ROUTES.PLANS}${search ? `?search=${encodeURIComponent(search)}` : ''}`} className="flex items-center gap-2">
+              <Button size="lg" variant="gradient" className="h-12 flex-shrink-0 px-6">
+                <Link
+                  href={`${ROUTES.PLANS}${search ? `?search=${encodeURIComponent(search)}` : ''}`}
+                  className="flex items-center gap-2"
+                >
                   Search <ArrowRight className="h-4 w-4" aria-hidden="true" />
                 </Link>
               </Button>
@@ -105,12 +108,17 @@ export function HeroSection() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.4 }}
-            className="flex flex-col sm:flex-row items-center justify-center gap-3 mb-12"
+            className="mb-12 flex flex-col items-center justify-center gap-3 sm:flex-row"
           >
             <Button size="xl" variant="gradient" asChild>
               <Link href={ROUTES.PLANS}>Browse All Plans</Link>
             </Button>
-            <Button size="xl" variant="outline" className="border-white/20 text-white hover:bg-white/10" asChild>
+            <Button
+              size="xl"
+              variant="outline"
+              className="border-white/20 text-white hover:bg-white/10"
+              asChild
+            >
               <Link href={ROUTES.ABOUT}>How It Works</Link>
             </Button>
           </motion.div>
@@ -120,12 +128,12 @@ export function HeroSection() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.5 }}
-            className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-12"
+            className="mb-12 grid grid-cols-2 gap-6 md:grid-cols-4"
             aria-label="Platform statistics"
           >
             {stats.map((stat) => (
               <div key={stat.label} className="text-center">
-                <p className="text-3xl font-bold text-white font-display">{stat.value}</p>
+                <p className="font-display text-3xl font-bold text-white">{stat.value}</p>
                 <p className="text-sm text-slate-400">{stat.label}</p>
               </div>
             ))}

@@ -9,14 +9,24 @@ import { test, expect } from '@playwright/test';
 const AUTH_COOKIE = {
   name: 'esim_access_token',
   value: 'eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxMjMiLCJleHAiOjk5OTk5OTk5OTl9.test',
-  domain: 'localhost', path: '/',
+  domain: 'localhost',
+  path: '/',
 };
 
 test.describe('Regression — Navigation', () => {
   test('all public nav links render without 404', async ({ page }) => {
     const publicPaths = [
-      '/', '/plans', '/countries', '/about', '/contact',
-      '/blog', '/faq', '/terms', '/privacy', '/system-status', '/affiliate',
+      '/',
+      '/plans',
+      '/countries',
+      '/about',
+      '/contact',
+      '/blog',
+      '/faq',
+      '/terms',
+      '/privacy',
+      '/system-status',
+      '/affiliate',
     ];
     for (const path of publicPaths) {
       const response = await page.goto(path);
@@ -71,7 +81,10 @@ test.describe('Regression — Authentication', () => {
     await page.goto('/auth/register');
     await page.getByLabel(/full name/i).fill('Test User');
     await page.getByLabel(/email/i).fill('test@example.com');
-    await page.getByLabel(/^password/i).first().fill('weakpass');
+    await page
+      .getByLabel(/^password/i)
+      .first()
+      .fill('weakpass');
     await page.getByLabel(/confirm/i).fill('weakpass');
     await page.getByRole('button', { name: /create account/i }).click();
     await expect(page.getByRole('alert').first()).toBeVisible();
@@ -89,15 +102,17 @@ test.describe('Regression — Authentication', () => {
 });
 
 test.describe('Regression — Dashboard', () => {
-  test.beforeEach(async ({ context }) => { await context.addCookies([AUTH_COOKIE]); });
+  test.beforeEach(async ({ context }) => {
+    await context.addCookies([AUTH_COOKIE]);
+  });
 
   test('authenticated user sees correct page on dashboard routes', async ({ page }) => {
     const routes = [
-      ['/dashboard',             /welcome back/i],
-      ['/dashboard/my-esims',    /my esims/i],
-      ['/dashboard/orders',      /order history/i],
-      ['/dashboard/settings',    /settings/i],
-      ['/dashboard/profile',     /profile/i],
+      ['/dashboard', /welcome back/i],
+      ['/dashboard/my-esims', /my esims/i],
+      ['/dashboard/orders', /order history/i],
+      ['/dashboard/settings', /settings/i],
+      ['/dashboard/profile', /profile/i],
     ] as const;
     for (const [path, heading] of routes) {
       await page.goto(path);
@@ -129,7 +144,9 @@ test.describe('Regression — Dashboard', () => {
 
   test('knowledge base category buttons are keyboard accessible', async ({ page }) => {
     await page.goto('/dashboard/knowledge-base');
-    const categoryBtns = page.getByRole('button').filter({ hasText: /billing|getting started|esim/i });
+    const categoryBtns = page
+      .getByRole('button')
+      .filter({ hasText: /billing|getting started|esim/i });
     if (await categoryBtns.first().isVisible()) {
       await categoryBtns.first().focus();
       await page.keyboard.press('Enter');
@@ -155,7 +172,9 @@ test.describe('Regression — Dashboard', () => {
 });
 
 test.describe('Regression — Plan Flows', () => {
-  test.beforeEach(async ({ context }) => { await context.addCookies([AUTH_COOKIE]); });
+  test.beforeEach(async ({ context }) => {
+    await context.addCookies([AUTH_COOKIE]);
+  });
 
   test('plan cards show required information fields', async ({ page }) => {
     await page.goto('/plans');
@@ -191,9 +210,13 @@ test.describe('Regression — Forms', () => {
     await page.getByLabel(/name/i).first().fill('Test User');
     await page.getByLabel(/email/i).first().fill('test@example.com');
     await page.getByLabel(/subject/i).fill('Test subject line here');
-    await page.getByLabel(/message/i).fill('This is a test message that is definitely long enough to pass validation checks.');
+    await page
+      .getByLabel(/message/i)
+      .fill('This is a test message that is definitely long enough to pass validation checks.');
     await page.getByRole('button', { name: /send message/i }).click();
-    await expect(page.getByText(/message sent/i).or(page.getByRole('status'))).toBeVisible({ timeout: 5000 });
+    await expect(page.getByText(/message sent/i).or(page.getByRole('status'))).toBeVisible({
+      timeout: 5000,
+    });
   });
 
   test('support ticket form validates description length', async ({ page, context }) => {
@@ -223,13 +246,26 @@ test.describe('Regression — Forms', () => {
 test.describe('Regression — Permission Boundaries', () => {
   test('all 20 dashboard routes redirect unauthenticated users', async ({ page }) => {
     const routes = [
-      '/dashboard', '/dashboard/my-esims', '/dashboard/buy-plan',
-      '/dashboard/checkout', '/dashboard/orders', '/dashboard/invoices',
-      '/dashboard/analytics', '/dashboard/notifications', '/dashboard/support',
-      '/dashboard/referral', '/dashboard/rewards', '/dashboard/profile',
-      '/dashboard/security', '/dashboard/payment-methods', '/dashboard/settings',
-      '/dashboard/travel-planner', '/dashboard/compare', '/dashboard/activity',
-      '/dashboard/privacy', '/dashboard/knowledge-base',
+      '/dashboard',
+      '/dashboard/my-esims',
+      '/dashboard/buy-plan',
+      '/dashboard/checkout',
+      '/dashboard/orders',
+      '/dashboard/invoices',
+      '/dashboard/analytics',
+      '/dashboard/notifications',
+      '/dashboard/support',
+      '/dashboard/referral',
+      '/dashboard/rewards',
+      '/dashboard/profile',
+      '/dashboard/security',
+      '/dashboard/payment-methods',
+      '/dashboard/settings',
+      '/dashboard/travel-planner',
+      '/dashboard/compare',
+      '/dashboard/activity',
+      '/dashboard/privacy',
+      '/dashboard/knowledge-base',
     ];
     for (const route of routes) {
       await page.goto(route);

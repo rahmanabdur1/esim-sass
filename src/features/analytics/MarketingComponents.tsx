@@ -10,40 +10,41 @@ import { persist, createJSONStorage } from 'zustand/middleware';
 
 // ── Store ─────────────────────────────────────────────────────
 interface MarketingStore {
-  exitModalDismissed:   boolean;
-  lastPromoShown:       string | null;
-  dismissExitModal:     () => void;
-  setPromoShown:        (id: string) => void;
+  exitModalDismissed: boolean;
+  lastPromoShown: string | null;
+  dismissExitModal: () => void;
+  setPromoShown: (id: string) => void;
 }
 
 const useMarketingStore = create<MarketingStore>()(
   persist(
     (set) => ({
       exitModalDismissed: false,
-      lastPromoShown:     null,
-      dismissExitModal:   () => set({ exitModalDismissed: true }),
-      setPromoShown:      (id) => set({ lastPromoShown: id }),
+      lastPromoShown: null,
+      dismissExitModal: () => set({ exitModalDismissed: true }),
+      setPromoShown: (id) => set({ lastPromoShown: id }),
     }),
-    { name: 'marketing-prefs', storage: createJSONStorage(() => localStorage) }
-  )
+    { name: 'marketing-prefs', storage: createJSONStorage(() => localStorage) },
+  ),
 );
 
 // ── Exit Intent Modal ─────────────────────────────────────────
 export function ExitIntentModal() {
-  const [show, setShow]                 = useState(false);
+  const [show, setShow] = useState(false);
   const { exitModalDismissed, dismissExitModal } = useMarketingStore();
 
   const handleMouseLeave = useCallback(
     (e: MouseEvent) => {
       if (e.clientY <= 0 && !exitModalDismissed) setShow(true);
     },
-    [exitModalDismissed]
+    [exitModalDismissed],
   );
 
   useEffect(() => {
     // Only run on public marketing pages
-    const isPublic = !window.location.pathname.startsWith('/dashboard') &&
-                     !window.location.pathname.startsWith('/auth');
+    const isPublic =
+      !window.location.pathname.startsWith('/dashboard') &&
+      !window.location.pathname.startsWith('/auth');
     if (!isPublic || exitModalDismissed) return;
 
     const timer = setTimeout(() => {
@@ -78,50 +79,52 @@ export function ExitIntentModal() {
           {/* Modal */}
           <motion.div
             initial={{ opacity: 0, scale: 0.92, y: 24 }}
-            animate={{ opacity: 1, scale: 1,    y: 0  }}
-            exit={{   opacity: 0, scale: 0.92, y: 24 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.92, y: 24 }}
             transition={{ type: 'spring', stiffness: 280, damping: 24 }}
             role="dialog"
             aria-modal="true"
             aria-labelledby="exit-modal-title"
             aria-describedby="exit-modal-desc"
-            className="fixed inset-0 z-50 flex items-center justify-center p-4 pointer-events-none"
+            className="pointer-events-none fixed inset-0 z-50 flex items-center justify-center p-4"
           >
-            <div className="w-full max-w-md rounded-2xl bg-card shadow-2xl overflow-hidden pointer-events-auto">
+            <div className="pointer-events-auto w-full max-w-md overflow-hidden rounded-2xl bg-card shadow-2xl">
               {/* Header gradient */}
-              <div className="gradient-brand px-8 pt-8 pb-6 text-white text-center relative">
+              <div className="gradient-brand relative px-8 pb-6 pt-8 text-center text-white">
                 <button
                   onClick={handleDismiss}
-                  className="absolute top-4 right-4 rounded-full p-1 text-white/70 hover:text-white hover:bg-white/10 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"
+                  className="absolute right-4 top-4 rounded-full p-1 text-white/70 transition-colors hover:bg-white/10 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"
                   aria-label="Close offer"
                 >
                   <X className="h-4 w-4" aria-hidden="true" />
                 </button>
 
-                <div className="flex items-center justify-center mb-3">
-                  <span className="text-5xl" role="img" aria-label="Gift">🎁</span>
+                <div className="mb-3 flex items-center justify-center">
+                  <span className="text-5xl" role="img" aria-label="Gift">
+                    🎁
+                  </span>
                 </div>
-                <h2 id="exit-modal-title" className="font-display text-2xl font-bold mb-1">
+                <h2 id="exit-modal-title" className="mb-1 font-display text-2xl font-bold">
                   Wait! Before You Go
                 </h2>
-                <p className="text-blue-100 text-sm">
-                  Get 15% off your first eSIM plan
-                </p>
+                <p className="text-sm text-blue-100">Get 15% off your first eSIM plan</p>
               </div>
 
               {/* Body */}
               <div className="p-8 text-center">
-                <div className="rounded-xl bg-muted/50 border-2 border-dashed border-primary/30 p-4 mb-6">
-                  <p className="text-xs text-muted-foreground mb-1">Use code at checkout</p>
-                  <p className="font-display text-2xl font-bold text-primary tracking-wider select-all">
+                <div className="mb-6 rounded-xl border-2 border-dashed border-primary/30 bg-muted/50 p-4">
+                  <p className="mb-1 text-xs text-muted-foreground">Use code at checkout</p>
+                  <p className="select-all font-display text-2xl font-bold tracking-wider text-primary">
                     WELCOME15
                   </p>
-                  <p className="text-xs text-muted-foreground mt-1">Valid for 24 hours · New customers only</p>
+                  <p className="mt-1 text-xs text-muted-foreground">
+                    Valid for 24 hours · New customers only
+                  </p>
                 </div>
 
-                <p id="exit-modal-desc" className="text-sm text-muted-foreground mb-6">
-                  Stay connected in 190+ countries with instant eSIM activation.
-                  No physical SIM needed — start saving on roaming today.
+                <p id="exit-modal-desc" className="mb-6 text-sm text-muted-foreground">
+                  Stay connected in 190+ countries with instant eSIM activation. No physical SIM
+                  needed — start saving on roaming today.
                 </p>
 
                 <div className="flex flex-col gap-2">
@@ -136,7 +139,7 @@ export function ExitIntentModal() {
                   </Button>
                   <button
                     onClick={handleDismiss}
-                    className="text-xs text-muted-foreground hover:text-foreground transition-colors py-2"
+                    className="py-2 text-xs text-muted-foreground transition-colors hover:text-foreground"
                   >
                     No thanks, I'll pay full price
                   </button>
@@ -152,16 +155,16 @@ export function ExitIntentModal() {
 
 // ── Promotional Banner ────────────────────────────────────────
 interface PromoBannerProps {
-  id:       string;
-  message:  string;
-  cta?:     string;
+  id: string;
+  message: string;
+  cta?: string;
   ctaHref?: string;
-  type?:    'info' | 'success' | 'warning';
+  type?: 'info' | 'success' | 'warning';
 }
 
 export function PromoBanner({ id, message, cta, ctaHref, type = 'info' }: PromoBannerProps) {
   const { lastPromoShown, setPromoShown } = useMarketingStore();
-  const [dismissed, setDismissed]        = useState(lastPromoShown === id);
+  const [dismissed, setDismissed] = useState(lastPromoShown === id);
 
   const handleDismiss = () => {
     setDismissed(true);
@@ -169,7 +172,7 @@ export function PromoBanner({ id, message, cta, ctaHref, type = 'info' }: PromoB
   };
 
   const colorMap = {
-    info:    'bg-blue-600',
+    info: 'bg-blue-600',
     success: 'bg-green-600',
     warning: 'bg-orange-500',
   };
@@ -186,14 +189,14 @@ export function PromoBanner({ id, message, cta, ctaHref, type = 'info' }: PromoB
         role="banner"
         aria-label="Promotional announcement"
       >
-        <div className="container mx-auto px-4 py-2.5 flex items-center justify-between gap-3">
-          <div className="flex items-center gap-2 flex-1 justify-center">
+        <div className="container mx-auto flex items-center justify-between gap-3 px-4 py-2.5">
+          <div className="flex flex-1 items-center justify-center gap-2">
             <Bell className="h-3.5 w-3.5 flex-shrink-0" aria-hidden="true" />
-            <p className="text-xs sm:text-sm font-medium text-center">{message}</p>
+            <p className="text-center text-xs font-medium sm:text-sm">{message}</p>
             {cta && ctaHref && (
               <Link
                 href={ctaHref}
-                className="ml-2 underline underline-offset-2 text-xs sm:text-sm font-semibold hover:no-underline flex-shrink-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white rounded"
+                className="ml-2 flex-shrink-0 rounded text-xs font-semibold underline underline-offset-2 hover:no-underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white sm:text-sm"
               >
                 {cta} →
               </Link>
@@ -201,7 +204,7 @@ export function PromoBanner({ id, message, cta, ctaHref, type = 'info' }: PromoB
           </div>
           <button
             onClick={handleDismiss}
-            className="flex-shrink-0 text-white/80 hover:text-white transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white rounded"
+            className="flex-shrink-0 rounded text-white/80 transition-colors hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"
             aria-label="Dismiss announcement"
           >
             <X className="h-4 w-4" aria-hidden="true" />
@@ -213,9 +216,17 @@ export function PromoBanner({ id, message, cta, ctaHref, type = 'info' }: PromoB
 }
 
 // ── Coupon Banner (in dashboard) ──────────────────────────────
-export function CouponBanner({ code, discount, expiresAt }: { code: string; discount: number; expiresAt: string }) {
+export function CouponBanner({
+  code,
+  discount,
+  expiresAt,
+}: {
+  code: string;
+  discount: number;
+  expiresAt: string;
+}) {
   const [dismissed, setDismissed] = useState(false);
-  const [copied,    setCopied]    = useState(false);
+  const [copied, setCopied] = useState(false);
 
   const handleCopy = async () => {
     await navigator.clipboard.writeText(code);
@@ -228,27 +239,33 @@ export function CouponBanner({ code, discount, expiresAt }: { code: string; disc
   return (
     <motion.div
       initial={{ opacity: 0, y: -8 }}
-      animate={{ opacity: 1, y:  0 }}
-      className="rounded-xl border-2 border-primary/30 bg-primary/5 p-4 flex items-center gap-4"
+      animate={{ opacity: 1, y: 0 }}
+      className="flex items-center gap-4 rounded-xl border-2 border-primary/30 bg-primary/5 p-4"
       role="region"
       aria-label="Available coupon"
     >
       <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full bg-primary/10">
         <Tag className="h-5 w-5 text-primary" aria-hidden="true" />
       </div>
-      <div className="flex-1 min-w-0">
+      <div className="min-w-0 flex-1">
         <p className="text-sm font-semibold">You have a discount coupon!</p>
         <p className="text-xs text-muted-foreground">
-          Use <strong>{code}</strong> to get {discount}% off · Expires {new Date(expiresAt).toLocaleDateString()}
+          Use <strong>{code}</strong> to get {discount}% off · Expires{' '}
+          {new Date(expiresAt).toLocaleDateString()}
         </p>
       </div>
-      <div className="flex items-center gap-2 flex-shrink-0">
-        <Button size="sm" variant="outline" onClick={handleCopy} aria-label={copied ? 'Copied!' : `Copy coupon code ${code}`}>
+      <div className="flex flex-shrink-0 items-center gap-2">
+        <Button
+          size="sm"
+          variant="outline"
+          onClick={handleCopy}
+          aria-label={copied ? 'Copied!' : `Copy coupon code ${code}`}
+        >
           {copied ? '✓ Copied!' : 'Copy Code'}
         </Button>
         <button
           onClick={() => setDismissed(true)}
-          className="text-muted-foreground hover:text-foreground transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded"
+          className="rounded text-muted-foreground transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
           aria-label="Dismiss coupon banner"
         >
           <X className="h-4 w-4" aria-hidden="true" />

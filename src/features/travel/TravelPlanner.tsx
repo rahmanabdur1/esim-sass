@@ -3,10 +3,7 @@
 import React, { useState, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useRouter } from 'next/navigation';
-import {
-  Plane, Calendar, Clock, Wifi,
-  CheckCircle, ArrowRight, Star,
-} from 'lucide-react';
+import { Plane, Calendar, Clock, Wifi, CheckCircle, ArrowRight, Star } from 'lucide-react';
 import { Button } from '@/components/atoms/Button';
 import { useCountries, usePlans } from '@/hooks';
 import { useCartStore } from '@/store';
@@ -37,11 +34,11 @@ function getDurationDays(start: string, end: string): number {
 function getBestPlan(plans: Plan[], neededGB: number, days: number): Plan | null {
   if (!plans.length) return null;
   const valid = plans.filter((p) => p.data >= neededGB && p.validity >= days);
-  
+
   if (!valid.length) {
     return plans.reduce((max, current) => (current.data > max.data ? current : max))!;
   }
-  
+
   return valid.reduce((min, current) => (current.price < min.price ? current : min))!;
 }
 
@@ -76,9 +73,10 @@ export function TravelPlanner() {
 
   const valuePlan =
     step === 'result' && plans.length > 1
-      ? plans.reduce((best, current) =>
-          current.price / current.data < best.price / best.data ? current : best,
-          plans[0]!
+      ? plans.reduce(
+          (best, current) =>
+            current.price / current.data < best.price / best.data ? current : best,
+          plans[0]!,
         )
       : null;
 
@@ -107,15 +105,18 @@ export function TravelPlanner() {
     <div className="space-y-6">
       {/* Input Step */}
       <div className="rounded-2xl border bg-card p-6">
-        <h2 className="font-semibold flex items-center gap-2 mb-5">
+        <h2 className="mb-5 flex items-center gap-2 font-semibold">
           <Plane className="h-4 w-4 text-primary" aria-hidden="true" /> Travel Details
         </h2>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-5">
+        <div className="mb-5 grid grid-cols-1 gap-4 sm:grid-cols-2">
           {/* Country Selection */}
           <div className="sm:col-span-2">
-            <label htmlFor="tp-country" className="block text-sm font-medium mb-1.5">
-              Destination Country <span className="text-destructive" aria-hidden="true">*</span>
+            <label htmlFor="tp-country" className="mb-1.5 block text-sm font-medium">
+              Destination Country{' '}
+              <span className="text-destructive" aria-hidden="true">
+                *
+              </span>
             </label>
             <select
               id="tp-country"
@@ -135,11 +136,17 @@ export function TravelPlanner() {
 
           {/* Dates */}
           <div>
-            <label htmlFor="tp-start" className="block text-sm font-medium mb-1.5">
-              Departure Date <span className="text-destructive" aria-hidden="true">*</span>
+            <label htmlFor="tp-start" className="mb-1.5 block text-sm font-medium">
+              Departure Date{' '}
+              <span className="text-destructive" aria-hidden="true">
+                *
+              </span>
             </label>
             <div className="relative">
-              <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" aria-hidden="true" />
+              <Calendar
+                className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground"
+                aria-hidden="true"
+              />
               <input
                 id="tp-start"
                 type="date"
@@ -153,11 +160,17 @@ export function TravelPlanner() {
           </div>
 
           <div>
-            <label htmlFor="tp-end" className="block text-sm font-medium mb-1.5">
-              Return Date <span className="text-destructive" aria-hidden="true">*</span>
+            <label htmlFor="tp-end" className="mb-1.5 block text-sm font-medium">
+              Return Date{' '}
+              <span className="text-destructive" aria-hidden="true">
+                *
+              </span>
             </label>
             <div className="relative">
-              <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" aria-hidden="true" />
+              <Calendar
+                className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground"
+                aria-hidden="true"
+              />
               <input
                 id="tp-end"
                 type="date"
@@ -173,12 +186,12 @@ export function TravelPlanner() {
 
         {/* Usage Profiles */}
         <fieldset className="mb-5">
-          <legend className="block text-sm font-medium mb-2">Daily Data Usage</legend>
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+          <legend className="mb-2 block text-sm font-medium">Daily Data Usage</legend>
+          <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
             {USAGE_PROFILES.map((p) => (
               <label
                 key={p.label}
-                className={`flex flex-col gap-1 cursor-pointer rounded-lg border p-3 transition-all ${
+                className={`flex cursor-pointer flex-col gap-1 rounded-lg border p-3 transition-all ${
                   input.dailyUsageGB === p.gb
                     ? 'border-primary bg-primary/5 ring-1 ring-primary'
                     : 'hover:bg-muted/50'
@@ -193,7 +206,7 @@ export function TravelPlanner() {
                   className="sr-only"
                 />
                 <span className="text-sm font-semibold">{p.label}</span>
-                <span className="text-xs text-primary font-medium">{p.gb} GB/day</span>
+                <span className="text-xs font-medium text-primary">{p.gb} GB/day</span>
                 <span className="text-xs text-muted-foreground">{p.desc}</span>
               </label>
             ))}
@@ -201,12 +214,17 @@ export function TravelPlanner() {
         </fieldset>
 
         {days > 0 && (
-          <div className="rounded-lg bg-muted/50 p-3 flex flex-wrap gap-4 text-sm mb-5" aria-live="polite">
+          <div
+            className="mb-5 flex flex-wrap gap-4 rounded-lg bg-muted/50 p-3 text-sm"
+            aria-live="polite"
+          >
             <span className="flex items-center gap-1.5 text-muted-foreground">
-              <Clock className="h-4 w-4" aria-hidden="true" /> <strong className="text-foreground">{days}</strong> days
+              <Clock className="h-4 w-4" aria-hidden="true" />{' '}
+              <strong className="text-foreground">{days}</strong> days
             </span>
             <span className="flex items-center gap-1.5 text-muted-foreground">
-              <Wifi className="h-4 w-4" aria-hidden="true" /> Estimated: <strong className="text-foreground">{neededGB} GB</strong>
+              <Wifi className="h-4 w-4" aria-hidden="true" /> Estimated:{' '}
+              <strong className="text-foreground">{neededGB} GB</strong>
             </span>
           </div>
         )}
@@ -225,25 +243,34 @@ export function TravelPlanner() {
       {/* Result Step */}
       <AnimatePresence>
         {step === 'result' && (
-          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="space-y-4">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="space-y-4"
+          >
             {/* Trip Summary Header */}
-            <div className="rounded-2xl gradient-brand p-6 text-white">
-              <div className="flex items-center gap-3 mb-3">
+            <div className="gradient-brand rounded-2xl p-6 text-white">
+              <div className="mb-3 flex items-center gap-3">
                 <span className="text-4xl" role="img" aria-label={selectedCountry?.name}>
                   {selectedCountry?.flag}
                 </span>
                 <div>
                   <p className="text-sm text-blue-100">Trip to {selectedCountry?.name}</p>
-                  <p className="font-display text-xl font-bold">{days} days · ~{neededGB} GB needed</p>
+                  <p className="font-display text-xl font-bold">
+                    {days} days · ~{neededGB} GB needed
+                  </p>
                 </div>
               </div>
 
               {/* Travel Timeline */}
               <div className="relative mt-4" aria-label="Travel timeline">
-                <div className="h-1 bg-white/20 rounded-full relative">
-                  <div className="absolute inset-y-0 left-0 w-1/4 bg-white rounded-full" aria-hidden="true" />
+                <div className="relative h-1 rounded-full bg-white/20">
+                  <div
+                    className="absolute inset-y-0 left-0 w-1/4 rounded-full bg-white"
+                    aria-hidden="true"
+                  />
                 </div>
-                <div className="grid grid-cols-4 mt-2 text-xs text-blue-100">
+                <div className="mt-2 grid grid-cols-4 text-xs text-blue-100">
                   {['Purchase', 'Activate', 'Travel Start', 'Expiry'].map((label, i) => (
                     <div
                       key={label}
@@ -262,29 +289,36 @@ export function TravelPlanner() {
             {/* Recommended Plan */}
             {bestPlan && (
               <div className="rounded-xl border-2 border-primary bg-card p-5">
-                <div className="flex items-center gap-2 mb-3">
-                  <Star className="h-4 w-4 text-yellow-500 fill-yellow-500" aria-hidden="true" />
-                  <span className="text-sm font-semibold text-primary">Recommended for Your Trip</span>
+                <div className="mb-3 flex items-center gap-2">
+                  <Star className="h-4 w-4 fill-yellow-500 text-yellow-500" aria-hidden="true" />
+                  <span className="text-sm font-semibold text-primary">
+                    Recommended for Your Trip
+                  </span>
                 </div>
                 <div className="flex items-start justify-between">
                   <div>
-                    <p className="font-bold text-lg">{bestPlan.name}</p>
+                    <p className="text-lg font-bold">{bestPlan.name}</p>
                     <p className="text-sm text-muted-foreground">
-                      {formatDataGB(bestPlan.data)} · {bestPlan.validity} days validity · {bestPlan.network}
+                      {formatDataGB(bestPlan.data)} · {bestPlan.validity} days validity ·{' '}
+                      {bestPlan.network}
                     </p>
                     <ul className="mt-2 space-y-1">
                       {bestPlan.data >= neededGB && (
                         <li className="flex items-center gap-1.5 text-xs text-green-600">
-                          <CheckCircle className="h-3.5 w-3.5" aria-hidden="true" /> Covers your estimated {neededGB} GB
+                          <CheckCircle className="h-3.5 w-3.5" aria-hidden="true" /> Covers your
+                          estimated {neededGB} GB
                         </li>
                       )}
                       <li className="flex items-center gap-1.5 text-xs text-green-600">
-                        <CheckCircle className="h-3.5 w-3.5" aria-hidden="true" /> Valid for {bestPlan.validity} days (your trip is {days} days)
+                        <CheckCircle className="h-3.5 w-3.5" aria-hidden="true" /> Valid for{' '}
+                        {bestPlan.validity} days (your trip is {days} days)
                       </li>
                     </ul>
                   </div>
-                  <div className="text-right flex-shrink-0 ml-4">
-                    <p className="text-2xl font-bold">{formatCurrency(bestPlan.price, bestPlan.currency)}</p>
+                  <div className="ml-4 flex-shrink-0 text-right">
+                    <p className="text-2xl font-bold">
+                      {formatCurrency(bestPlan.price, bestPlan.currency)}
+                    </p>
                     <Button
                       size="sm"
                       variant="gradient"
@@ -301,20 +335,28 @@ export function TravelPlanner() {
 
             {/* Best Value Option */}
             {valuePlan && valuePlan.id !== bestPlan?.id && (
-              <div className="rounded-xl border border-blue-200 bg-blue-50/50 dark:bg-blue-950/20 dark:border-blue-900 p-4">
+              <div className="rounded-xl border border-blue-200 bg-blue-50/50 p-4 dark:border-blue-900 dark:bg-blue-950/20">
                 <div className="flex items-start justify-between">
                   <div>
-                    <span className="text-xs font-semibold text-blue-600 dark:text-blue-400 uppercase tracking-wider">
+                    <span className="text-xs font-semibold uppercase tracking-wider text-blue-600 dark:text-blue-400">
                       Best Value per GB
                     </span>
-                    <p className="font-bold text-md mt-0.5">{valuePlan.name}</p>
+                    <p className="text-md mt-0.5 font-bold">{valuePlan.name}</p>
                     <p className="text-xs text-muted-foreground">
-                      {formatDataGB(valuePlan.data)} · {valuePlan.validity} days · {valuePlan.network}
+                      {formatDataGB(valuePlan.data)} · {valuePlan.validity} days ·{' '}
+                      {valuePlan.network}
                     </p>
                   </div>
-                  <div className="text-right flex-shrink-0 ml-4">
-                    <p className="font-bold text-lg">{formatCurrency(valuePlan.price, valuePlan.currency)}</p>
-                    <Button size="sm" variant="outline" className="mt-1" onClick={() => handleSelect(valuePlan)}>
+                  <div className="ml-4 flex-shrink-0 text-right">
+                    <p className="text-lg font-bold">
+                      {formatCurrency(valuePlan.price, valuePlan.currency)}
+                    </p>
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      className="mt-1"
+                      onClick={() => handleSelect(valuePlan)}
+                    >
                       Select Value
                     </Button>
                   </div>
@@ -325,12 +367,14 @@ export function TravelPlanner() {
             {/* All Available Plans */}
             {plans.length > 1 && (
               <div>
-                <h3 className="font-semibold text-sm text-muted-foreground mb-3">All Available Plans</h3>
+                <h3 className="mb-3 text-sm font-semibold text-muted-foreground">
+                  All Available Plans
+                </h3>
                 <div className="space-y-2">
                   {plans.slice(0, 5).map((plan) => (
                     <div
                       key={plan.id}
-                      className="flex items-center justify-between rounded-lg border bg-card p-4 hover:shadow-sm transition-shadow"
+                      className="flex items-center justify-between rounded-lg border bg-card p-4 transition-shadow hover:shadow-sm"
                     >
                       <div>
                         <p className="text-sm font-medium">{plan.name}</p>
@@ -338,14 +382,19 @@ export function TravelPlanner() {
                           {formatDataGB(plan.data)} · {plan.validity} days · {plan.network}
                         </p>
                         {plan.data < neededGB && (
-                          <p className="text-xs text-yellow-600 mt-0.5">
+                          <p className="mt-0.5 text-xs text-yellow-600">
                             ⚠ May not cover full {neededGB} GB estimate
                           </p>
                         )}
                       </div>
-                      <div className="text-right ml-4">
+                      <div className="ml-4 text-right">
                         <p className="font-bold">{formatCurrency(plan.price, plan.currency)}</p>
-                        <Button size="sm" variant="outline" className="mt-1" onClick={() => handleSelect(plan)}>
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          className="mt-1"
+                          onClick={() => handleSelect(plan)}
+                        >
                           Select
                         </Button>
                       </div>

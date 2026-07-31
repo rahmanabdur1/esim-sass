@@ -8,7 +8,7 @@ import { DashboardSidebar } from '@/components/organisms/DashboardSidebar';
 import { getCurrentUserServer } from '@/lib/server/data';
 import { ProfileClient } from './ProfileClient';
 
-export const dynamic  = 'force-dynamic';
+export const dynamic = 'force-dynamic';
 export const metadata: Metadata = { title: 'Profile' };
 
 export default async function ProfilePage() {
@@ -18,8 +18,8 @@ export default async function ProfilePage() {
     <div className="flex h-screen overflow-hidden bg-background">
       <DashboardSidebar />
       <main id="main-content" className="flex-1 overflow-y-auto p-6 md:p-8">
-        <h1 className="font-display text-2xl font-bold mb-1">Profile</h1>
-        <p className="text-muted-foreground text-sm mb-8">Manage your personal information.</p>
+        <h1 className="mb-1 font-display text-2xl font-bold">Profile</h1>
+        <p className="mb-8 text-sm text-muted-foreground">Manage your personal information.</p>
         <ProfileClient initialUser={user} />
       </main>
     </div>

@@ -10,7 +10,8 @@ import AxeBuilder from '@axe-core/playwright';
 const AUTH_COOKIE = {
   name: 'esim_access_token',
   value: 'eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxMjMiLCJleHAiOjk5OTk5OTk5OTl9.test',
-  domain: 'localhost', path: '/',
+  domain: 'localhost',
+  path: '/',
 };
 
 // Helper: run axe and assert no violations
@@ -23,12 +24,10 @@ async function assertNoA11yViolations(page: any, context?: string) {
     .analyze();
 
   if (results.violations.length > 0) {
-    const summary = results.violations.map((v) =>
-      `[${v.id}] ${v.description} — ${v.nodes.length} node(s)`
-    ).join('\n');
-    throw new Error(
-      `Accessibility violations on ${context ?? page.url()}:\n${summary}`
-    );
+    const summary = results.violations
+      .map((v) => `[${v.id}] ${v.description} — ${v.nodes.length} node(s)`)
+      .join('\n');
+    throw new Error(`Accessibility violations on ${context ?? page.url()}:\n${summary}`);
   }
 }
 
@@ -99,22 +98,22 @@ test.describe('Accessibility — Auth Pages', () => {
     await page.goto('/auth/login');
     const inputs = await page.locator('input').all();
     for (const input of inputs) {
-      const id     = await input.getAttribute('id');
+      const id = await input.getAttribute('id');
       const ariaLabel = await input.getAttribute('aria-label');
       const ariaLabelledBy = await input.getAttribute('aria-labelledby');
-      const hasLabel = id
-        ? await page.locator(`label[for="${id}"]`).count() > 0
-        : false;
+      const hasLabel = id ? (await page.locator(`label[for="${id}"]`).count()) > 0 : false;
       expect(
         hasLabel || !!ariaLabel || !!ariaLabelledBy,
-        `Input ${id ?? '(no id)'} must have an accessible label`
+        `Input ${id ?? '(no id)'} must have an accessible label`,
       ).toBe(true);
     }
   });
 });
 
 test.describe('Accessibility — Dashboard Pages', () => {
-  test.beforeEach(async ({ context }) => { await context.addCookies([AUTH_COOKIE]); });
+  test.beforeEach(async ({ context }) => {
+    await context.addCookies([AUTH_COOKIE]);
+  });
 
   test('Dashboard home has no violations', async ({ page }) => {
     await page.goto('/dashboard');
@@ -195,7 +194,9 @@ test.describe('Accessibility — Keyboard Navigation', () => {
     if (await form.isVisible()) {
       await page.keyboard.press('Escape');
       // Form should close
-      await expect(form).not.toBeVisible({ timeout: 1000 }).catch(() => {});
+      await expect(form)
+        .not.toBeVisible({ timeout: 1000 })
+        .catch(() => {});
     }
   });
 

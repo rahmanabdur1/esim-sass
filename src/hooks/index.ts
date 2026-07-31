@@ -13,12 +13,12 @@ export * from './useNetworkStatus';
 
 // ── TanStack Query hooks (from main hooks file) ───────────────
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { authService }            from '@/services/auth.service';
-import { esimService }            from '@/services/esim.service';
+import { authService } from '@/services/auth.service';
+import { esimService } from '@/services/esim.service';
 import { plansService, countriesService } from '@/services/plans.service';
-import { ordersService }          from '@/services/orders.service';
-import { userService }            from '@/services/user.service';
-import { QUERY_KEYS }             from '@/constants';
+import { ordersService } from '@/services/orders.service';
+import { userService } from '@/services/user.service';
+import { QUERY_KEYS } from '@/constants';
 import type { LoginCredentials, RegisterCredentials, PlanFilters } from '@/types';
 
 // ── Auth ──────────────────────────────────────────────────────
@@ -35,7 +35,12 @@ export function useLogout() {
 }
 
 export function useCurrentUser() {
-  return useQuery({ queryKey: QUERY_KEYS.USER, queryFn: () => authService.getMe(), staleTime: 5 * 60 * 1000, retry: 1 });
+  return useQuery({
+    queryKey: QUERY_KEYS.USER,
+    queryFn: () => authService.getMe(),
+    staleTime: 5 * 60 * 1000,
+    retry: 1,
+  });
 }
 
 // ── ESIMs ─────────────────────────────────────────────────────
@@ -44,25 +49,46 @@ export function useESIMs() {
 }
 
 export function useESIM(id: string) {
-  return useQuery({ queryKey: [...QUERY_KEYS.ESIMS, id], queryFn: () => esimService.getById(id), enabled: !!id });
+  return useQuery({
+    queryKey: [...QUERY_KEYS.ESIMS, id],
+    queryFn: () => esimService.getById(id),
+    enabled: !!id,
+  });
 }
 
 // ── Plans ─────────────────────────────────────────────────────
 export function usePlans(filters?: PlanFilters) {
-  return useQuery({ queryKey: [...QUERY_KEYS.PLANS, filters], queryFn: () => plansService.getAll(filters), staleTime: 5 * 60 * 1000 });
+  return useQuery({
+    queryKey: [...QUERY_KEYS.PLANS, filters],
+    queryFn: () => plansService.getAll(filters),
+    staleTime: 5 * 60 * 1000,
+  });
 }
 
 export function usePlan(id: string) {
-  return useQuery({ queryKey: [...QUERY_KEYS.PLANS, id], queryFn: () => plansService.getById(id), enabled: !!id });
+  return useQuery({
+    queryKey: [...QUERY_KEYS.PLANS, id],
+    queryFn: () => plansService.getById(id),
+    enabled: !!id,
+  });
 }
 
 // ── Countries ─────────────────────────────────────────────────
 export function useCountries() {
-  return useQuery({ queryKey: QUERY_KEYS.COUNTRIES, queryFn: () => countriesService.getAll(), staleTime: 10 * 60 * 1000 });
+  return useQuery({
+    queryKey: QUERY_KEYS.COUNTRIES,
+    queryFn: () => countriesService.getAll(),
+    staleTime: 10 * 60 * 1000,
+  });
 }
 
 export function useCountry(id: string) {
-  return useQuery({ queryKey: [...QUERY_KEYS.COUNTRIES, id], queryFn: () => countriesService.getById(id), enabled: !!id, staleTime: 10 * 60 * 1000 });
+  return useQuery({
+    queryKey: [...QUERY_KEYS.COUNTRIES, id],
+    queryFn: () => countriesService.getById(id),
+    enabled: !!id,
+    staleTime: 10 * 60 * 1000,
+  });
 }
 
 // ── Orders ────────────────────────────────────────────────────
@@ -73,7 +99,8 @@ export function useOrders() {
 export function useCreateOrder() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: (payload: { planId: string; couponCode?: string; paymentMethodId: string }) => ordersService.create(payload),
+    mutationFn: (payload: { planId: string; couponCode?: string; paymentMethodId: string }) =>
+      ordersService.create(payload),
     onSettled: () => {
       queryClient.invalidateQueries({ queryKey: QUERY_KEYS.ORDERS });
       queryClient.invalidateQueries({ queryKey: QUERY_KEYS.ESIMS });
@@ -82,7 +109,10 @@ export function useCreateOrder() {
 }
 
 export function useApplyCoupon() {
-  return useMutation({ mutationFn: ({ couponCode, planId }: { couponCode: string; planId: string }) => ordersService.applyCoupon(couponCode, planId) });
+  return useMutation({
+    mutationFn: ({ couponCode, planId }: { couponCode: string; planId: string }) =>
+      ordersService.applyCoupon(couponCode, planId),
+  });
 }
 
 // ── User data ─────────────────────────────────────────────────
@@ -91,11 +121,18 @@ export function useAnalytics() {
 }
 
 export function useNotifications() {
-  return useQuery({ queryKey: QUERY_KEYS.NOTIFICATIONS, queryFn: () => userService.getNotifications(), refetchInterval: 60_000 });
+  return useQuery({
+    queryKey: QUERY_KEYS.NOTIFICATIONS,
+    queryFn: () => userService.getNotifications(),
+    refetchInterval: 60_000,
+  });
 }
 
 export function useSupportTickets() {
-  return useQuery({ queryKey: QUERY_KEYS.SUPPORT_TICKETS, queryFn: () => userService.getSupportTickets() });
+  return useQuery({
+    queryKey: QUERY_KEYS.SUPPORT_TICKETS,
+    queryFn: () => userService.getSupportTickets(),
+  });
 }
 
 export function useReferral() {
@@ -107,12 +144,18 @@ export function useRewards() {
 }
 
 export function usePaymentMethods() {
-  return useQuery({ queryKey: QUERY_KEYS.PAYMENT_METHODS, queryFn: () => userService.getPaymentMethods() });
+  return useQuery({
+    queryKey: QUERY_KEYS.PAYMENT_METHODS,
+    queryFn: () => userService.getPaymentMethods(),
+  });
 }
 
 export function useUpdateProfile() {
   const qc = useQueryClient();
-  return useMutation({ mutationFn: userService.updateProfile, onSettled: () => qc.invalidateQueries({ queryKey: QUERY_KEYS.USER }) });
+  return useMutation({
+    mutationFn: userService.updateProfile,
+    onSettled: () => qc.invalidateQueries({ queryKey: QUERY_KEYS.USER }),
+  });
 }
 
 export function useActivityLog() {
@@ -120,11 +163,17 @@ export function useActivityLog() {
 }
 
 export function useActiveSessions() {
-  return useQuery({ queryKey: ['active-sessions'], queryFn: () => userService.getActiveSessions() });
+  return useQuery({
+    queryKey: ['active-sessions'],
+    queryFn: () => userService.getActiveSessions(),
+  });
 }
 
 export function useChangePassword() {
-  return useMutation({ mutationFn: (p: { currentPassword: string; newPassword: string }) => userService.changePassword(p) });
+  return useMutation({
+    mutationFn: (p: { currentPassword: string; newPassword: string }) =>
+      userService.changePassword(p),
+  });
 }
 
 export function useDeleteAccount() {
@@ -137,12 +186,18 @@ export function useExportData() {
 
 export function useAddPaymentMethod() {
   const qc = useQueryClient();
-  return useMutation({ mutationFn: (p: { token: string; type: string }) => userService.addPaymentMethod(p), onSettled: () => qc.invalidateQueries({ queryKey: QUERY_KEYS.PAYMENT_METHODS }) });
+  return useMutation({
+    mutationFn: (p: { token: string; type: string }) => userService.addPaymentMethod(p),
+    onSettled: () => qc.invalidateQueries({ queryKey: QUERY_KEYS.PAYMENT_METHODS }),
+  });
 }
 
 export function useRemovePaymentMethod() {
   const qc = useQueryClient();
-  return useMutation({ mutationFn: (id: string) => userService.removePaymentMethod(id), onSettled: () => qc.invalidateQueries({ queryKey: QUERY_KEYS.PAYMENT_METHODS }) });
+  return useMutation({
+    mutationFn: (id: string) => userService.removePaymentMethod(id),
+    onSettled: () => qc.invalidateQueries({ queryKey: QUERY_KEYS.PAYMENT_METHODS }),
+  });
 }
 
 export function useSettings() {
@@ -151,9 +206,16 @@ export function useSettings() {
 
 export function useUpdateSettings() {
   const qc = useQueryClient();
-  return useMutation({ mutationFn: (p: Record<string, unknown>) => userService.updateSettings(p), onSettled: () => qc.invalidateQueries({ queryKey: ['user-settings'] }) });
+  return useMutation({
+    mutationFn: (p: Record<string, unknown>) => userService.updateSettings(p),
+    onSettled: () => qc.invalidateQueries({ queryKey: ['user-settings'] }),
+  });
 }
 
 export function useKnowledgeBaseArticles(_params?: { category?: string; search?: string }) {
-  return useQuery({ queryKey: ['kb-articles', _params], queryFn: () => import('@/lib/mock/data').then((m) => m.MOCK_ARTICLES), staleTime: 5 * 60 * 1000 });
+  return useQuery({
+    queryKey: ['kb-articles', _params],
+    queryFn: () => import('@/lib/mock/data').then((m) => m.MOCK_ARTICLES),
+    staleTime: 5 * 60 * 1000,
+  });
 }

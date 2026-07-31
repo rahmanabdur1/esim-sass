@@ -3,11 +3,14 @@ import { test, expect } from '@playwright/test';
 const AUTH_COOKIE = {
   name: 'esim_access_token',
   value: 'eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxMjMiLCJleHAiOjk5OTk5OTk5OTl9.test',
-  domain: 'localhost', path: '/',
+  domain: 'localhost',
+  path: '/',
 };
 
 test.describe('Settings Screen', () => {
-  test.beforeEach(async ({ context }) => { await context.addCookies([AUTH_COOKIE]); });
+  test.beforeEach(async ({ context }) => {
+    await context.addCookies([AUTH_COOKIE]);
+  });
 
   test('settings page renders all sections', async ({ page }) => {
     await page.goto('/dashboard/settings');
@@ -91,7 +94,10 @@ test.describe('Search & Filter Interactions', () => {
 
   test('sort dropdown changes plan order', async ({ page }) => {
     await page.goto('/plans');
-    const sortSelect = page.locator('select').filter({ hasText: /sort|default/i }).first();
+    const sortSelect = page
+      .locator('select')
+      .filter({ hasText: /sort|default/i })
+      .first();
     if (await sortSelect.isVisible()) {
       await sortSelect.selectOption({ value: 'price_asc' });
       await expect(page).not.toHaveURL(/error/);
@@ -167,7 +173,9 @@ test.describe('Search & Filter Interactions', () => {
 });
 
 test.describe('Dashboard Widgets UI', () => {
-  test.beforeEach(async ({ context }) => { await context.addCookies([AUTH_COOKIE]); });
+  test.beforeEach(async ({ context }) => {
+    await context.addCookies([AUTH_COOKIE]);
+  });
 
   test('dashboard shows all 4 KPI stat cards', async ({ page }) => {
     await page.goto('/dashboard');
@@ -179,7 +187,10 @@ test.describe('Dashboard Widgets UI', () => {
 
   test('buy plan CTA on dashboard navigates to buy-plan page', async ({ page }) => {
     await page.goto('/dashboard');
-    await page.getByRole('link', { name: /buy plan/i }).first().click();
+    await page
+      .getByRole('link', { name: /buy plan/i })
+      .first()
+      .click();
     await expect(page).toHaveURL(/\/dashboard\/buy-plan/);
   });
 
@@ -237,7 +248,10 @@ test.describe('Authentication Screens UI', () => {
     await page.goto('/auth/register');
     await page.getByLabel(/full name/i).fill('Test User');
     await page.getByLabel(/email/i).fill('test@example.com');
-    await page.getByLabel(/^password/i).first().fill('MyP@ss1!');
+    await page
+      .getByLabel(/^password/i)
+      .first()
+      .fill('MyP@ss1!');
     await page.getByLabel(/confirm/i).fill('DifferentPass1!');
     await page.getByRole('button', { name: /create account/i }).click();
     await expect(page.getByText(/passwords do not match/i)).toBeVisible();

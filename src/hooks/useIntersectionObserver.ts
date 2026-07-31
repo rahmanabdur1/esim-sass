@@ -22,62 +22,65 @@ interface Options extends IntersectionObserverInit {
 }
 
 interface Result<T extends Element> {
-  ref:             React.RefCallback<T>;
-  isIntersecting:  boolean;
-  hasIntersected:  boolean; // true once element has been seen (sticky)
-  entry:           IntersectionObserverEntry | null;
+  ref: React.RefCallback<T>;
+  isIntersecting: boolean;
+  hasIntersected: boolean; // true once element has been seen (sticky)
+  entry: IntersectionObserverEntry | null;
 }
 
 export function useIntersectionObserver<T extends Element = HTMLDivElement>(
   options: Options = {},
 ): Result<T> {
   const {
-    threshold    = 0,
-    root         = null,
-    rootMargin   = '0px',
-    triggerOnce  = false,
-    delay        = 0,
+    threshold = 0,
+    root = null,
+    rootMargin = '0px',
+    triggerOnce = false,
+    delay = 0,
   } = options;
 
-  const [entry,          setEntry]          = useState<IntersectionObserverEntry | null>(null);
+  const [entry, setEntry] = useState<IntersectionObserverEntry | null>(null);
   const [isIntersecting, setIsIntersecting] = useState(false);
   const [hasIntersected, setHasIntersected] = useState(false);
 
-  const elementRef   = useRef<T | null>(null);
-  const observerRef  = useRef<IntersectionObserver | null>(null);
-  const timerRef     = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
+  const elementRef = useRef<T | null>(null);
+  const observerRef = useRef<IntersectionObserver | null>(null);
+  const timerRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
 
-  const ref = useCallback((node: T | null) => {
-    if (observerRef.current) {
-      observerRef.current.disconnect();
-      observerRef.current = null;
-    }
-    elementRef.current = node;
-    if (!node || typeof IntersectionObserver === 'undefined') return;
+  const ref = useCallback(
+    (node: T | null) => {
+      if (observerRef.current) {
+        observerRef.current.disconnect();
+        observerRef.current = null;
+      }
+      elementRef.current = node;
+      if (!node || typeof IntersectionObserver === 'undefined') return;
 
-    observerRef.current = new IntersectionObserver(
-      ([e]) => {
-        if (!e) return;
-        const update = () => {
-          setEntry(e);
-          setIsIntersecting(e.isIntersecting);
-          if (e.isIntersecting) {
-            setHasIntersected(true);
-            if (triggerOnce) observerRef.current?.unobserve(node);
+      observerRef.current = new IntersectionObserver(
+        ([e]) => {
+          if (!e) return;
+          const update = () => {
+            setEntry(e);
+            setIsIntersecting(e.isIntersecting);
+            if (e.isIntersecting) {
+              setHasIntersected(true);
+              if (triggerOnce) observerRef.current?.unobserve(node);
+            }
+          };
+          if (delay > 0) {
+            clearTimeout(timerRef.current);
+            timerRef.current = setTimeout(update, delay);
+          } else {
+            update();
           }
-        };
-        if (delay > 0) {
-          clearTimeout(timerRef.current);
-          timerRef.current = setTimeout(update, delay);
-        } else {
-          update();
-        }
-      },
-      { threshold, root, rootMargin },
-    );
+        },
+        { threshold, root, rootMargin },
+      );
 
-    observerRef.current.observe(node);
-  }, [threshold, root, rootMargin, triggerOnce, delay]);
+      observerRef.current.observe(node);
+    },
+    [threshold, root, rootMargin, triggerOnce, delay],
+  );
 
   useEffect(() => {
     return () => {

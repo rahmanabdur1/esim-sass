@@ -8,15 +8,19 @@
 import 'server-only';
 import { cookies } from 'next/headers';
 import {
-  MOCK_PLANS, MOCK_COUNTRIES, MOCK_ESIMS,
-  MOCK_ORDERS, MOCK_NOTIFICATIONS, MOCK_USER,
-  MOCK_BLOG_POSTS, MOCK_ARTICLES,
+  MOCK_PLANS,
+  MOCK_COUNTRIES,
+  MOCK_ESIMS,
+  MOCK_ORDERS,
+  MOCK_NOTIFICATIONS,
+  MOCK_USER,
+  MOCK_BLOG_POSTS,
+  MOCK_ARTICLES,
 } from '@/lib/mock/data';
 import type { Plan, Country, ESIM, Order, User, BlogPost } from '@/types';
 
 const USE_MOCK =
-  process.env.NEXT_PUBLIC_USE_MOCK_API === 'true' ||
-  !process.env.NEXT_PUBLIC_API_URL;
+  process.env.NEXT_PUBLIC_USE_MOCK_API === 'true' || !process.env.NEXT_PUBLIC_API_URL;
 
 const API_BASE = process.env.NEXT_PUBLIC_API_URL ?? 'https://api.esimplatform.com/v1';
 
@@ -32,7 +36,7 @@ async function serverFetch<T>(
   opts: { cache?: RequestCache; revalidate?: number; tags?: string[] } = {},
 ): Promise<T> {
   const token = await getToken();
-  const res   = await fetch(`${API_BASE}${path}`, {
+  const res = await fetch(`${API_BASE}${path}`, {
     headers: {
       'Content-Type': 'application/json',
       ...(token ? { Authorization: `Bearer ${token}` } : {}),
@@ -61,16 +65,14 @@ export async function getPlansServer(filters?: {
       );
     }
     if (filters?.country) {
-      plans = plans.filter(
-        (p) => p.country.code.toLowerCase() === filters.country!.toLowerCase(),
-      );
+      plans = plans.filter((p) => p.country.code.toLowerCase() === filters.country!.toLowerCase());
     }
     return plans;
   }
   const qs = new URLSearchParams(filters as Record<string, string>).toString();
   return serverFetch<Plan[]>(`/plans${qs ? `?${qs}` : ''}`, {
     revalidate: 300,
-    tags:       ['plans'],
+    tags: ['plans'],
   });
 }
 
@@ -94,9 +96,11 @@ export async function getCountryServer(code: string): Promise<Country | null> {
   try {
     return await serverFetch<Country>(`/countries/${code}`, {
       revalidate: 600,
-      tags:       ['countries', `country-${code}`],
+      tags: ['countries', `country-${code}`],
     });
-  } catch { return null; }
+  } catch {
+    return null;
+  }
 }
 
 export async function getBlogPostsServer(): Promise<BlogPost[]> {
@@ -109,9 +113,11 @@ export async function getBlogPostServer(slug: string): Promise<BlogPost | null> 
   try {
     return await serverFetch<BlogPost>(`/blog/${slug}`, {
       revalidate: 600,
-      tags:       ['blog', `post-${slug}`],
+      tags: ['blog', `post-${slug}`],
     });
-  } catch { return null; }
+  } catch {
+    return null;
+  }
 }
 
 export async function getKBArticlesServer() {
@@ -125,8 +131,11 @@ export async function getCurrentUserServer(): Promise<User | null> {
   const token = await getToken();
   if (!token) return null;
   if (USE_MOCK) return MOCK_USER;
-  try { return await serverFetch<User>('/auth/me', { cache: 'no-store' }); }
-  catch { return null; }
+  try {
+    return await serverFetch<User>('/auth/me', { cache: 'no-store' });
+  } catch {
+    return null;
+  }
 }
 
 export async function getESIMsServer(): Promise<ESIM[]> {
@@ -140,8 +149,11 @@ export async function getESIMServer(id: string): Promise<ESIM | null> {
   const token = await getToken();
   if (!token) return null;
   if (USE_MOCK) return MOCK_ESIMS.find((e) => e.id === id) ?? null;
-  try { return await serverFetch<ESIM>(`/esims/${id}`, { cache: 'no-store' }); }
-  catch { return null; }
+  try {
+    return await serverFetch<ESIM>(`/esims/${id}`, { cache: 'no-store' });
+  } catch {
+    return null;
+  }
 }
 
 export async function getOrdersServer(): Promise<Order[]> {

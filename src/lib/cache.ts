@@ -10,9 +10,9 @@
  */
 
 interface CacheEntry<T> {
-  data:      T;
+  data: T;
   expiresAt: number;
-  hits:      number;
+  hits: number;
   createdAt: number;
 }
 
@@ -26,9 +26,9 @@ class ClientCache {
 
   /** Get cached value or fetch fresh data */
   async get<T>(
-    key:     string,
+    key: string,
     fetcher: () => Promise<T>,
-    ttl:     number = 5 * 60 * 1000, // 5 minutes default
+    ttl: number = 5 * 60 * 1000, // 5 minutes default
   ): Promise<T> {
     const cached = this.store.get(key) as CacheEntry<T> | undefined;
 
@@ -48,15 +48,16 @@ class ClientCache {
   set<T>(key: string, data: T, ttl = 5 * 60 * 1000): void {
     // Evict oldest entries if at capacity (LRU-style)
     if (this.store.size >= this.maxSize) {
-      const oldest = Array.from(this.store.entries())
-        .sort((a, b) => a[1].createdAt - b[1].createdAt)[0];
+      const oldest = Array.from(this.store.entries()).sort(
+        (a, b) => a[1].createdAt - b[1].createdAt,
+      )[0];
       if (oldest) this.store.delete(oldest[0]);
     }
 
     this.store.set(key, {
       data,
       expiresAt: Date.now() + ttl,
-      hits:      0,
+      hits: 0,
       createdAt: Date.now(),
     });
   }
@@ -93,10 +94,10 @@ class ClientCache {
   stats() {
     const entries = Array.from(this.store.values());
     return {
-      size:       this.store.size,
-      maxSize:    this.maxSize,
-      totalHits:  entries.reduce((sum, e) => sum + e.hits, 0),
-      expired:    entries.filter((e) => Date.now() > e.expiresAt).length,
+      size: this.store.size,
+      maxSize: this.maxSize,
+      totalHits: entries.reduce((sum, e) => sum + e.hits, 0),
+      expired: entries.filter((e) => Date.now() > e.expiresAt).length,
     };
   }
 }
@@ -106,16 +107,16 @@ export const cache = new ClientCache(100);
 
 // ── TTL constants ─────────────────────────────────────────────
 export const TTL = {
-  SHORT:   60 * 1000,          // 1 minute
-  MEDIUM:  5  * 60 * 1000,    // 5 minutes
-  LONG:    30 * 60 * 1000,    // 30 minutes
-  HOUR:    60 * 60 * 1000,    // 1 hour
-  DAY:     24 * 60 * 60 * 1000, // 24 hours
+  SHORT: 60 * 1000, // 1 minute
+  MEDIUM: 5 * 60 * 1000, // 5 minutes
+  LONG: 30 * 60 * 1000, // 30 minutes
+  HOUR: 60 * 60 * 1000, // 1 hour
+  DAY: 24 * 60 * 60 * 1000, // 24 hours
 } as const;
 
 // ── Memoize pure functions ─────────────────────────────────────
 export function memoize<TArgs extends unknown[], TReturn>(
-  fn:  (...args: TArgs) => TReturn,
+  fn: (...args: TArgs) => TReturn,
   keyFn?: (...args: TArgs) => string,
 ): (...args: TArgs) => TReturn {
   const map = new Map<string, TReturn>();
@@ -130,7 +131,7 @@ export function memoize<TArgs extends unknown[], TReturn>(
 
 // ── Debounce ──────────────────────────────────────────────────
 export function debounce<TArgs extends unknown[]>(
-  fn:    (...args: TArgs) => void,
+  fn: (...args: TArgs) => void,
   delay: number,
 ): (...args: TArgs) => void {
   let timer: ReturnType<typeof setTimeout>;
@@ -142,7 +143,7 @@ export function debounce<TArgs extends unknown[]>(
 
 // ── Throttle ──────────────────────────────────────────────────
 export function throttle<TArgs extends unknown[]>(
-  fn:    (...args: TArgs) => void,
+  fn: (...args: TArgs) => void,
   limit: number,
 ): (...args: TArgs) => void {
   let lastCall = 0;

@@ -11,10 +11,9 @@ import type {
 
 export const authService = {
   async login(credentials: LoginCredentials): Promise<{ user: User; token: string }> {
-    const { data } = await apiClient.post<ApiResponse<{ user: User; token: string; refreshToken: string }>>(
-      '/auth/login',
-      credentials
-    );
+    const { data } = await apiClient.post<
+      ApiResponse<{ user: User; token: string; refreshToken: string }>
+    >('/auth/login', credentials);
     const days = credentials.rememberMe ? 30 : 7;
     setCookie(TOKEN_KEY, data.data.token, days);
     setCookie(REFRESH_TOKEN_KEY, data.data.refreshToken, days);
@@ -24,10 +23,9 @@ export const authService = {
   async register(credentials: RegisterCredentials): Promise<{ user: User; token: string }> {
     // Strip confirmPassword — backend doesn't need it
     const { confirmPassword: _, ...payload } = credentials;
-    const { data } = await apiClient.post<ApiResponse<{ user: User; token: string; refreshToken: string }>>(
-      '/auth/register',
-      payload
-    );
+    const { data } = await apiClient.post<
+      ApiResponse<{ user: User; token: string; refreshToken: string }>
+    >('/auth/register', payload);
     setCookie(TOKEN_KEY, data.data.token);
     setCookie(REFRESH_TOKEN_KEY, data.data.refreshToken);
     return data.data;

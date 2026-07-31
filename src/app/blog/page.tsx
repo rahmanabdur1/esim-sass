@@ -14,34 +14,35 @@ import { Clock, User } from 'lucide-react';
 export const revalidate = 600;
 
 export const metadata: Metadata = {
-  title:       'Blog — eSIM & Travel Connectivity Tips',
-  description: 'Guides, tips, and news about eSIM technology and staying connected while travelling.',
+  title: 'Blog — eSIM & Travel Connectivity Tips',
+  description:
+    'Guides, tips, and news about eSIM technology and staying connected while travelling.',
 };
 
 export default async function BlogPage() {
   const posts = await getBlogPostsServer();
 
-  const tags   = ['All', ...Array.from(new Set(posts.flatMap((p) => p.tags)))];
+  const tags = ['All', ...Array.from(new Set(posts.flatMap((p) => p.tags)))];
 
   return (
     <>
       <Navbar />
-      <main id="main-content" className="pt-16 min-h-screen">
-        <div className="bg-muted/50 border-b py-16 text-center">
-          <h1 className="font-display text-4xl font-bold mb-3">Blog</h1>
-          <p className="text-muted-foreground max-w-lg mx-auto">
+      <main id="main-content" className="min-h-screen pt-16">
+        <div className="border-b bg-muted/50 py-16 text-center">
+          <h1 className="mb-3 font-display text-4xl font-bold">Blog</h1>
+          <p className="mx-auto max-w-lg text-muted-foreground">
             Guides, tips, and news about eSIM technology and global connectivity.
           </p>
         </div>
 
-        <div className="container mx-auto px-4 md:px-6 py-12 max-w-4xl">
+        <div className="container mx-auto max-w-4xl px-4 py-12 md:px-6">
           {/* Tag filters — server rendered, no JS needed for display */}
-          <div className="flex flex-wrap gap-2 mb-10" role="list" aria-label="Post categories">
+          <div className="mb-10 flex flex-wrap gap-2" role="list" aria-label="Post categories">
             {tags.map((tag) => (
               <span
                 key={tag}
                 role="listitem"
-                className="rounded-full border px-4 py-1.5 text-sm hover:bg-muted cursor-pointer transition-colors"
+                className="cursor-pointer rounded-full border px-4 py-1.5 text-sm transition-colors hover:bg-muted"
               >
                 {tag}
               </span>
@@ -49,25 +50,32 @@ export default async function BlogPage() {
           </div>
 
           {/* Posts grid — pure server HTML, no client JS */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+          <div className="grid grid-cols-1 gap-8 md:grid-cols-2">
             {posts.map((post) => (
               <article
                 key={post.id}
-                className="group rounded-xl border bg-card hover:shadow-md transition-shadow overflow-hidden"
+                className="group overflow-hidden rounded-xl border bg-card transition-shadow hover:shadow-md"
               >
-                <div className="flex items-center justify-center h-40 bg-muted/50 text-6xl" role="img" aria-label={post.title}>
+                <div
+                  className="flex h-40 items-center justify-center bg-muted/50 text-6xl"
+                  role="img"
+                  aria-label={post.title}
+                >
                   {post.coverImage}
                 </div>
                 <div className="p-6">
-                  <span className="inline-block rounded-full bg-primary/10 text-primary text-xs font-semibold px-3 py-1 mb-3">
+                  <span className="mb-3 inline-block rounded-full bg-primary/10 px-3 py-1 text-xs font-semibold text-primary">
                     {post.tags?.[0] ?? 'All'}
                   </span>
-                  <h2 className="font-semibold text-lg mb-2 group-hover:text-primary transition-colors line-clamp-2">
-                    <Link href={`/blog/${post.slug}`} className="focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded">
+                  <h2 className="mb-2 line-clamp-2 text-lg font-semibold transition-colors group-hover:text-primary">
+                    <Link
+                      href={`/blog/${post.slug}`}
+                      className="rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                    >
                       {post.title}
                     </Link>
                   </h2>
-                  <p className="text-muted-foreground text-sm mb-4 line-clamp-2">{post.excerpt}</p>
+                  <p className="mb-4 line-clamp-2 text-sm text-muted-foreground">{post.excerpt}</p>
                   <div className="flex items-center gap-4 text-xs text-muted-foreground">
                     <span className="flex items-center gap-1">
                       <User className="h-3 w-3" /> {post.author.name}
@@ -76,7 +84,11 @@ export default async function BlogPage() {
                       <Clock className="h-3 w-3" /> {post.readTime} min read
                     </span>
                     <time dateTime={post.publishedAt}>
-                      {new Date(post.publishedAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
+                      {new Date(post.publishedAt).toLocaleDateString('en-US', {
+                        month: 'short',
+                        day: 'numeric',
+                        year: 'numeric',
+                      })}
                     </time>
                   </div>
                 </div>

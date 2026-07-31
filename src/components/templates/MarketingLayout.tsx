@@ -11,10 +11,7 @@ export function MarketingLayout({ children, withHeroPadding = true }: MarketingL
   return (
     <>
       <Navbar />
-      <main
-        id="main-content"
-        className={withHeroPadding ? 'pt-16' : ''}
-      >
+      <main id="main-content" className={withHeroPadding ? 'pt-16' : ''}>
         {children}
       </main>
       <Footer />

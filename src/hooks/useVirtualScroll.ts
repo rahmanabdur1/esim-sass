@@ -22,18 +22,18 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 
 interface Options<T> {
-  items:      T[];
-  itemHeight: number;   // Fixed height per item (px)
-  overscan?:  number;   // Extra items to render above/below viewport
+  items: T[];
+  itemHeight: number; // Fixed height per item (px)
+  overscan?: number; // Extra items to render above/below viewport
   containerHeight?: number; // If known (else measured from DOM)
 }
 
 interface Result<T> {
-  containerRef:  React.RefObject<HTMLDivElement | null>;
-  visibleItems:  { item: T; index: number }[];
-  totalHeight:   number;
-  offsetY:       number;
-  scrollTo:      (index: number) => void;
+  containerRef: React.RefObject<HTMLDivElement | null>;
+  visibleItems: { item: T; index: number }[];
+  totalHeight: number;
+  offsetY: number;
+  scrollTo: (index: number) => void;
 }
 
 export function useVirtualScroll<T>({
@@ -42,8 +42,8 @@ export function useVirtualScroll<T>({
   overscan = 3,
   containerHeight: fixedHeight,
 }: Options<T>): Result<T> {
-  const containerRef       = useRef<HTMLDivElement | null>(null);
-  const [scrollTop,   setScrollTop]        = useState(0);
+  const containerRef = useRef<HTMLDivElement | null>(null);
+  const [scrollTop, setScrollTop] = useState(0);
   const [viewportHeight, setViewportHeight] = useState(fixedHeight ?? 600);
 
   // Measure container height
@@ -67,8 +67,8 @@ export function useVirtualScroll<T>({
 
   // Calculate visible range
   const totalHeight = items.length * itemHeight;
-  const startIndex  = Math.max(0, Math.floor(scrollTop / itemHeight) - overscan);
-  const endIndex    = Math.min(
+  const startIndex = Math.max(0, Math.floor(scrollTop / itemHeight) - overscan);
+  const endIndex = Math.min(
     items.length - 1,
     Math.ceil((scrollTop + viewportHeight) / itemHeight) + overscan,
   );
@@ -82,10 +82,13 @@ export function useVirtualScroll<T>({
 
   const offsetY = startIndex * itemHeight;
 
-  const scrollTo = useCallback((index: number) => {
-    if (!containerRef.current) return;
-    containerRef.current.scrollTop = index * itemHeight;
-  }, [itemHeight]);
+  const scrollTo = useCallback(
+    (index: number) => {
+      if (!containerRef.current) return;
+      containerRef.current.scrollTop = index * itemHeight;
+    },
+    [itemHeight],
+  );
 
   return { containerRef, visibleItems, totalHeight, offsetY, scrollTo };
 }

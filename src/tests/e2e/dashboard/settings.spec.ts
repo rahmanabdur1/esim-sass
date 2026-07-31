@@ -1,10 +1,10 @@
 import { test, expect } from '@playwright/test';
 
 const AUTH_COOKIE = {
-  name:   'esim_access_token',
-  value:  'eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxMjMiLCJleHAiOjk5OTk5OTk5OTl9.test',
+  name: 'esim_access_token',
+  value: 'eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxMjMiLCJleHAiOjk5OTk5OTk5OTl9.test',
   domain: 'localhost',
-  path:   '/',
+  path: '/',
 };
 
 test.describe('Settings Screen', () => {
@@ -22,7 +22,9 @@ test.describe('Settings Screen', () => {
 
   test('theme selector toggles aria-pressed state', async ({ page }) => {
     await page.goto('/dashboard/settings');
-    const darkOption = page.getByRole('radio', { name: /dark/i }).or(page.locator('label', { hasText: 'Dark' }));
+    const darkOption = page
+      .getByRole('radio', { name: /dark/i })
+      .or(page.locator('label', { hasText: 'Dark' }));
     await darkOption.first().click();
     // Theme store should reflect the choice (persisted to localStorage)
     const stored = await page.evaluate(() => localStorage.getItem('theme-store'));
@@ -38,7 +40,9 @@ test.describe('Settings Screen', () => {
     expect(after).not.toBe(initial);
   });
 
-  test('security toggle cannot be disabled (always-on alerts stay interactive but semantically important)', async ({ page }) => {
+  test('security toggle cannot be disabled (always-on alerts stay interactive but semantically important)', async ({
+    page,
+  }) => {
     await page.goto('/dashboard/settings');
     const securityToggle = page.getByRole('switch', { name: /security alerts/i });
     await expect(securityToggle).toBeVisible();

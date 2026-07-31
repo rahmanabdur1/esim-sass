@@ -14,11 +14,11 @@
 // Lightweight pub/sub for cross-MFE communication without coupling
 
 type MFEEventMap = {
-  'auth:login':      { userId: string; email: string };
-  'auth:logout':     Record<string, never>;
-  'cart:updated':    { itemCount: number };
-  'esim:activated':  { esimId: string; country: string };
-  'plan:selected':   { planId: string; planName: string };
+  'auth:login': { userId: string; email: string };
+  'auth:logout': Record<string, never>;
+  'cart:updated': { itemCount: number };
+  'esim:activated': { esimId: string; country: string };
+  'plan:selected': { planId: string; planName: string };
 };
 
 type MFEEventName = keyof MFEEventMap;

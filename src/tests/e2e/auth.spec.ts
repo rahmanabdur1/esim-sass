@@ -65,7 +65,10 @@ test.describe('Register Flow', () => {
 
   test('shows password strength meter', async ({ page }) => {
     await page.goto('/auth/register');
-    await page.getByLabel(/^password/i).first().fill('weak');
+    await page
+      .getByLabel(/^password/i)
+      .first()
+      .fill('weak');
     await expect(page.getByText(/strength:/i)).toBeVisible();
   });
 
@@ -73,7 +76,10 @@ test.describe('Register Flow', () => {
     await page.goto('/auth/register');
     await page.getByLabel(/full name/i).fill('Test User');
     await page.getByLabel(/email/i).fill('test@example.com');
-    await page.getByLabel(/^password/i).first().fill('MyPass123!');
+    await page
+      .getByLabel(/^password/i)
+      .first()
+      .fill('MyPass123!');
     await page.getByLabel(/confirm password/i).fill('DifferentPass1!');
     await page.getByRole('button', { name: /create account/i }).click();
     await expect(page.getByText(/passwords do not match/i)).toBeVisible();
@@ -83,7 +89,10 @@ test.describe('Register Flow', () => {
     await page.goto('/auth/register');
     await page.getByLabel(/full name/i).fill('New User');
     await page.getByLabel(/email/i).fill('newuser@example.com');
-    await page.getByLabel(/^password/i).first().fill('ValidPass123!');
+    await page
+      .getByLabel(/^password/i)
+      .first()
+      .fill('ValidPass123!');
     await page.getByLabel(/confirm password/i).fill('ValidPass123!');
     await page.getByRole('button', { name: /create account/i }).click();
     await expect(page).toHaveURL(/\/auth\/verify-email.*email=/, { timeout: 5000 });
@@ -105,7 +114,9 @@ test.describe('Verify Email Flow', () => {
 
   test('success state with valid token', async ({ page }) => {
     await page.goto('/auth/verify-email?token=mock_valid_token_123');
-    await expect(page.getByRole('heading', { name: /email verified/i })).toBeVisible({ timeout: 3000 });
+    await expect(page.getByRole('heading', { name: /email verified/i })).toBeVisible({
+      timeout: 3000,
+    });
     await expect(page.getByRole('link', { name: /go to dashboard/i })).toBeVisible();
   });
 });
@@ -145,7 +156,9 @@ test.describe('Session Guard', () => {
   });
 
   test('authenticated user redirected from login to dashboard', async ({ page, context }) => {
-    await context.addCookies([{ name: 'esim_access_token', value: 'mock_token_test', domain: 'localhost', path: '/' }]);
+    await context.addCookies([
+      { name: 'esim_access_token', value: 'mock_token_test', domain: 'localhost', path: '/' },
+    ]);
     await page.goto('/auth/login');
     await expect(page).toHaveURL(/\/dashboard/);
   });

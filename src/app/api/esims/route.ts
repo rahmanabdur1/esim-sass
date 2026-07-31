@@ -2,7 +2,8 @@ import { type NextRequest, NextResponse } from 'next/server';
 import { MOCK_ESIMS } from '@/lib/mock/data';
 
 const API_BASE = process.env.NEXT_PUBLIC_API_URL ?? 'https://api.esimplatform.com/v1';
-const USE_MOCK = process.env.NEXT_PUBLIC_USE_MOCK_API === 'true' || !process.env.NEXT_PUBLIC_API_URL;
+const USE_MOCK =
+  process.env.NEXT_PUBLIC_USE_MOCK_API === 'true' || !process.env.NEXT_PUBLIC_API_URL;
 
 export async function GET(request: NextRequest) {
   const token = request.cookies.get('esim_access_token')?.value;
@@ -17,7 +18,8 @@ export async function GET(request: NextRequest) {
       headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
       cache: 'no-store',
     });
-    if (!res.ok) return NextResponse.json({ error: 'Failed to fetch eSIMs' }, { status: res.status });
+    if (!res.ok)
+      return NextResponse.json({ error: 'Failed to fetch eSIMs' }, { status: res.status });
     return NextResponse.json(await res.json());
   } catch {
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });

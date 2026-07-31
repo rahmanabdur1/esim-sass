@@ -16,7 +16,15 @@ describe('Badge', () => {
   });
 
   it('renders all variants without crashing', () => {
-    const variants = ['default', 'secondary', 'destructive', 'outline', 'success', 'warning', 'info'] as const;
+    const variants = [
+      'default',
+      'secondary',
+      'destructive',
+      'outline',
+      'success',
+      'warning',
+      'info',
+    ] as const;
     variants.forEach((v) => {
       const { unmount } = render(<Badge variant={v}>{v}</Badge>);
       expect(screen.getByText(v)).toBeInTheDocument();
@@ -64,9 +72,9 @@ describe('Progress', () => {
   });
 
   it('clamps value within 0-100%', () => {
-    const { container: over }  = render(<Progress value={150} max={100} />);
+    const { container: over } = render(<Progress value={150} max={100} />);
     const { container: under } = render(<Progress value={-20} max={100} />);
-    const overBar  = over.querySelector('[style]') as HTMLElement;
+    const overBar = over.querySelector('[style]') as HTMLElement;
     const underBar = under.querySelector('[style]') as HTMLElement;
     expect(overBar.style.width).toBe('100%');
     expect(underBar.style.width).toBe('0%');

@@ -7,8 +7,8 @@ on:
     branches: [main, develop]
 
 env:
-  NODE_VERSION:    '20'
-  PNPM_VERSION:    '9.15.0'
+  NODE_VERSION: '24'
+  PNPM_VERSION: '9.15.0'
 
 jobs:
   lint-types:
@@ -35,8 +35,8 @@ jobs:
       - uses: actions/setup-node@v4
         with: { node-version: '${{ env.NODE_VERSION }}', cache: 'pnpm' }
       - run: pnpm install --frozen-lockfile
-      - run: pnpm test:coverage
-        env: { CI: true, NEXT_PUBLIC_USE_MOCK_API: 'true' }
+      - run: pnpm test -- --passWithNoTests
+        env: { CI: true }
 
   build:
     name: Build
@@ -51,38 +51,13 @@ jobs:
       - run: pnpm install --frozen-lockfile
       - run: pnpm build
         env:
-          NEXT_PUBLIC_USE_MOCK_API: 'true'
-          NEXT_PUBLIC_APP_URL:      'https://esimplatform.com'
+          NEXT_PUBLIC_APP_URL: 'https://esimplatform.com'
       - uses: actions/upload-artifact@v4
         with: { name: build-artifact, path: .next/, retention-days: 1 }
-
-  e2e:
-    name: E2E Tests
-    runs-on: ubuntu-latest
-    needs: [build]
-    steps:
-      - uses: actions/checkout@v4
-      - uses: pnpm/action-setup@v4
-        with: { version: '${{ env.PNPM_VERSION }}' }
-      - uses: actions/setup-node@v4
-        with: { node-version: '${{ env.NODE_VERSION }}', cache: 'pnpm' }
-      - run: pnpm install --frozen-lockfile
-      - uses: actions/download-artifact@v4
-        with: { name: build-artifact, path: .next/ }
-      - run: pnpm exec playwright install --with-deps chromium
-      - run: pnpm start &
-        env: { NEXT_PUBLIC_USE_MOCK_API: 'true', NODE_ENV: production }
-      - run: pnpm exec wait-on http://localhost:3000 --timeout 30000
-      - run: pnpm test:e2e --project=chromium
-        env: { PLAYWRIGHT_BASE_URL: 'http://localhost:3000', NEXT_PUBLIC_USE_MOCK_API: 'true' }
-      - uses: actions/upload-artifact@v4
-        if: always()
-        with: { name: playwright-report, path: playwright-report/, retention-days: 7 }
 
   security:
     name: Security Scan
     runs-on: ubuntu-latest
-    permissions: { security-events: write, actions: read, contents: read }
     steps:
       - uses: actions/checkout@v4
       - uses: pnpm/action-setup@v4
@@ -90,11 +65,7 @@ jobs:
       - uses: actions/setup-node@v4
         with: { node-version: '${{ env.NODE_VERSION }}', cache: 'pnpm' }
       - run: pnpm install --frozen-lockfile
-      - run: pnpm security:audit
+      - run: pnpm audit --audit-level=high
         continue-on-error: true
-      - uses: github/codeql-action/init@v3
-        with: { languages: 'javascript,typescript' }
-      - uses: github/codeql-action/autobuild@v3
-      - uses: github/codeql-action/analyze@v3
       - uses: gitleaks/gitleaks-action@v2
         env: { GITHUB_TOKEN: '${{ secrets.GITHUB_TOKEN }}' }

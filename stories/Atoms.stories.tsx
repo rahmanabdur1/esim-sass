@@ -1,16 +1,22 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import React from 'react';
-import { Input, Badge, Avatar, Spinner, Skeleton, Progress } from '@/components/atoms/index';
-import { SearchBar } from '@/components/molecules/SearchBar';
-import { Mail, Eye } from 'lucide-react';
+import { Input, Badge, Avatar, Spinner, Skeleton, Progress } from '../src/components/atoms/index';
+import { SearchBar } from '../src/components/molecules/SearchBar';
+import { Mail } from 'lucide-react';
 
 // ─── Input Stories ────────────────────────────────────────────
 const inputMeta: Meta<typeof Input> = {
-  title:      'Atoms/Input',
-  component:  Input,
+  title: 'Atoms/Input',
+  component: Input,
   parameters: { layout: 'centered' },
-  tags:       ['autodocs'],
-  decorators:[(Story) => <div className="w-80"><Story /></div>],
+  tags: ['autodocs'],
+  decorators: [
+    (Story) => (
+      <div className="w-80">
+        <Story />
+      </div>
+    ),
+  ],
 };
 export default inputMeta;
 type Story = StoryObj<typeof Input>;
@@ -20,15 +26,28 @@ export const Default: Story = {
 };
 
 export const WithLeftIcon: Story = {
-  args: { label: 'Email', placeholder: 'you@example.com', type: 'email', leftIcon: <Mail className="h-4 w-4" /> },
+  args: {
+    label: 'Email',
+    placeholder: 'you@example.com',
+    type: 'email',
+    leftIcon: <Mail className="h-4 w-4" />,
+  },
 };
 
 export const WithError: Story = {
-  args: { label: 'Email', placeholder: 'you@example.com', error: 'Please enter a valid email address.' },
+  args: {
+    label: 'Email',
+    placeholder: 'you@example.com',
+    error: 'Please enter a valid email address.',
+  },
 };
 
 export const WithHint: Story = {
-  args: { label: 'Password', type: 'password', hint: 'Must be at least 8 characters with uppercase and number.' },
+  args: {
+    label: 'Password',
+    type: 'password',
+    hint: 'Must be at least 8 characters with uppercase and number.',
+  },
 };
 
 export const Required: Story = {
@@ -43,8 +62,12 @@ export const Disabled: Story = {
 export const Badges: StoryObj = {
   render: () => (
     <div className="flex flex-wrap gap-3 p-4">
-      {(['default','secondary','destructive','outline','success','warning','info'] as const).map((v) => (
-        <Badge key={v} variant={v}>{v}</Badge>
+      {(
+        ['default', 'secondary', 'destructive', 'outline', 'success', 'warning', 'info'] as const
+      ).map((v) => (
+        <Badge key={v} variant={v}>
+          {v}
+        </Badge>
       ))}
     </div>
   ),
@@ -54,7 +77,7 @@ export const Badges: StoryObj = {
 export const Avatars: StoryObj = {
   render: () => (
     <div className="flex items-center gap-4 p-4">
-      {(['xs','sm','md','lg','xl'] as const).map((size) => (
+      {(['xs', 'sm', 'md', 'lg', 'xl'] as const).map((size) => (
         <div key={size} className="flex flex-col items-center gap-2">
           <Avatar alt="John Doe" name="John Doe" size={size} />
           <span className="text-xs text-muted-foreground">{size}</span>
@@ -81,7 +104,7 @@ export const ProgressBars: StoryObj = {
     <div className="w-72 space-y-4 p-4">
       {[10, 30, 50, 70, 90, 100].map((v) => (
         <div key={v}>
-          <p className="text-xs text-muted-foreground mb-1">{v}% used</p>
+          <p className="mb-1 text-xs text-muted-foreground">{v}% used</p>
           <Progress value={v} showLabel />
         </div>
       ))}
@@ -112,7 +135,7 @@ export const Skeletons: StoryObj = {
 export const Spinners: StoryObj = {
   render: () => (
     <div className="flex items-center gap-8 p-4">
-      {(['sm','md','lg'] as const).map((size) => (
+      {(['sm', 'md', 'lg'] as const).map((size) => (
         <div key={size} className="flex flex-col items-center gap-2">
           <Spinner size={size} />
           <span className="text-xs text-muted-foreground">{size}</span>
@@ -128,9 +151,25 @@ export const SearchBars: StoryObj = {
     const [value, setValue] = React.useState('');
     return (
       <div className="w-80 space-y-4 p-4">
-        <SearchBar value={value} onChange={setValue} placeholder="Search plans…" aria-label="Search plans" />
-        <SearchBar value="japan" onChange={() => {}} placeholder="With value" aria-label="Filled search" />
-        <SearchBar value="" onChange={() => {}} placeholder="Loading…" isLoading aria-label="Loading search" />
+        <SearchBar
+          value={value}
+          onChange={setValue}
+          placeholder="Search plans…"
+          aria-label="Search plans"
+        />
+        <SearchBar
+          value="japan"
+          onChange={() => {}}
+          placeholder="With value"
+          aria-label="Filled search"
+        />
+        <SearchBar
+          value=""
+          onChange={() => {}}
+          placeholder="Loading…"
+          isLoading
+          aria-label="Loading search"
+        />
       </div>
     );
   },

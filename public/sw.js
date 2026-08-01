@@ -14,7 +14,7 @@ const STATIC_ASSETS = [
   '/manifest.json',
 ];
 
-const API_ROUTES_TO_CACHE = [
+const _API_ROUTES_TO_CACHE = [
   '/api/countries',
   '/api/plans/featured',
 ];

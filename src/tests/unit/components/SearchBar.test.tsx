@@ -48,7 +48,6 @@ describe('SearchBar', () => {
   });
 
   it('autofocuses the input when autoFocus is true', () => {
-    // eslint-disable-next-line jsx-a11y/no-autofocus
     render(<SearchBar value="" onChange={() => {}} autoFocus aria-label="Search" />);
     expect(screen.getByRole('searchbox')).toHaveFocus();
   });

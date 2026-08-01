@@ -1,14 +1,14 @@
 import type { Meta, StoryObj } from '@storybook/react';
-import { Navbar } from '@/components/organisms/Navbar';
-import { Footer } from '@/components/organisms/Footer';
-import { DashboardSidebar } from '@/components/organisms/DashboardSidebar';
+import { Navbar } from '../src/components/organisms/Navbar';
+import { Footer } from '../src/components/organisms/Footer';
+import { DashboardSidebar } from '../src/components/organisms/DashboardSidebar';
 
 // ─── Navbar ────────────────────────────────────────────────────
 const navbarMeta: Meta<typeof Navbar> = {
-  title:      'Organisms/Navbar',
-  component:  Navbar,
+  title: 'Organisms/Navbar',
+  component: Navbar,
   parameters: { layout: 'fullscreen' },
-  tags:       ['autodocs'],
+  tags: ['autodocs'],
 };
 export default navbarMeta;
 
@@ -29,9 +29,9 @@ export const FooterDefault: StoryObj = {
 // ─── Dashboard Sidebar ─────────────────────────────────────────
 export const SidebarDefault: StoryObj = {
   render: () => (
-    <div className="h-screen flex">
+    <div className="flex h-screen">
       <DashboardSidebar />
-      <div className="flex-1 bg-muted/20 p-8 flex items-center justify-center text-muted-foreground text-sm">
+      <div className="flex flex-1 items-center justify-center bg-muted/20 p-8 text-sm text-muted-foreground">
         Dashboard content area
       </div>
     </div>

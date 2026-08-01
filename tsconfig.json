@@ -31,6 +31,16 @@
     },
     "noEmit": true
   },
-  "include": ["next-env.d.ts", "src/**/*.ts", "src/**/*.tsx", ".next/types/**/*.ts"],
+  "include": [
+    "next-env.d.ts",
+    "global.d.ts",
+    "src/**/*.ts",
+    "src/**/*.tsx",
+    "src/**/*.stories.ts",
+    "src/**/*.stories.tsx",
+    ".next/types/**/*.ts",
+    ".storybook/**/*.ts",
+    ".storybook/**/*.tsx"
+  ],
   "exclude": ["node_modules", ".next", "apps", "packages", "dist", "coverage", "storybook-static"]
 }

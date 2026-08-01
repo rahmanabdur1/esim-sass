@@ -4,7 +4,15 @@ import tsParser from "@typescript-eslint/parser";
 
 export default [
   {
-    ignores: [".next/*", "node_modules/*", "out/*", "build/*", "dist/*"],
+    // Global Ignores (Must use '**' for recursive subdirectories)
+    ignores: [
+      ".next/**",
+      "node_modules/**",
+      "out/**",
+      "build/**",
+      "dist/**",
+      "coverage/**",
+    ],
   },
   {
     files: ["**/*.{js,jsx,ts,tsx}"],
@@ -25,8 +33,12 @@ export default [
     rules: {
       ...nextPlugin.configs.recommended.rules,
       ...nextPlugin.configs["core-web-vitals"].rules,
-      "@typescript-eslint/no-unused-vars": "warn",
+      "@typescript-eslint/no-unused-vars": [
+        "warn",
+        { argsIgnorePattern: "^_", varsIgnorePattern: "^_" },
+      ],
       "@typescript-eslint/no-explicit-any": "off",
+      "@next/next/no-html-link-for-pages": "off",
     },
   },
 ];

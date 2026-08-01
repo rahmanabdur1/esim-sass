@@ -5,16 +5,7 @@
   "buildCommand": "pnpm build",
   "installCommand": "pnpm install",
   "devCommand": "pnpm dev",
-  "rewrites": [
-    {
-      "source": "/dashboard/:path*",
-      "destination": "https://esim-dashboard.vercel.app/dashboard/:path*"
-    },
-    {
-      "source": "/blog/:path*",
-      "destination": "https://esim-marketing.vercel.app/blog/:path*"
-    }
-  ],
+
   "headers": [
     {
       "source": "/(.*)",

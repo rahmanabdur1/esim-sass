@@ -1,15 +1,16 @@
 import type { Meta, StoryObj } from '@storybook/react';
-import { Button } from '@/components/atoms/Button';
+import { Button } from '../src/components/atoms/Button';
 import { Globe, ArrowRight, Trash2 } from 'lucide-react';
 
 const meta: Meta<typeof Button> = {
-  title:     'Atoms/Button',
+  title: 'Atoms/Button',
   component: Button,
   parameters: {
     layout: 'centered',
     docs: {
       description: {
-        component: 'The primary interactive element. Supports 7 variants, 5 sizes, loading state, left/right icons, and full accessibility (focus ring, disabled state).',
+        component:
+          'The primary interactive element. Supports 7 variants, 5 sizes, loading state, left/right icons, and full accessibility (focus ring, disabled state).',
       },
     },
   },
@@ -23,9 +24,9 @@ const meta: Meta<typeof Button> = {
       control: 'select',
       options: ['sm', 'default', 'lg', 'xl', 'icon'],
     },
-    isLoading:  { control: 'boolean' },
-    disabled:   { control: 'boolean' },
-    children:   { control: 'text'    },
+    isLoading: { control: 'boolean' },
+    disabled: { control: 'boolean' },
+    children: { control: 'text' },
   },
 };
 
@@ -45,14 +46,18 @@ export const Outline: Story = {
 };
 
 export const Destructive: Story = {
-  args: { children: 'Delete Account', variant: 'destructive', leftIcon: <Trash2 className="h-4 w-4" /> },
+  args: {
+    children: 'Delete Account',
+    variant: 'destructive',
+    leftIcon: <Trash2 className="h-4 w-4" />,
+  },
 };
 
 export const WithIcons: Story = {
   args: {
-    children:  'Browse Plans',
-    variant:   'gradient',
-    leftIcon:  <Globe      className="h-4 w-4" />,
+    children: 'Browse Plans',
+    variant: 'gradient',
+    leftIcon: <Globe className="h-4 w-4" />,
     rightIcon: <ArrowRight className="h-4 w-4" />,
   },
 };
@@ -68,8 +73,12 @@ export const Disabled: Story = {
 export const AllVariants: Story = {
   render: () => (
     <div className="flex flex-wrap gap-3 p-4">
-      {(['default','destructive','outline','secondary','ghost','link','gradient'] as const).map((v) => (
-        <Button key={v} variant={v}>{v}</Button>
+      {(
+        ['default', 'destructive', 'outline', 'secondary', 'ghost', 'link', 'gradient'] as const
+      ).map((v) => (
+        <Button key={v} variant={v}>
+          {v}
+        </Button>
       ))}
     </div>
   ),
@@ -77,9 +86,11 @@ export const AllVariants: Story = {
 
 export const AllSizes: Story = {
   render: () => (
-    <div className="flex items-center flex-wrap gap-3 p-4">
-      {(['sm','default','lg','xl'] as const).map((s) => (
-        <Button key={s} size={s} variant="gradient">{s}</Button>
+    <div className="flex flex-wrap items-center gap-3 p-4">
+      {(['sm', 'default', 'lg', 'xl'] as const).map((s) => (
+        <Button key={s} size={s} variant="gradient">
+          {s}
+        </Button>
       ))}
     </div>
   ),

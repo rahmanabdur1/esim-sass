@@ -162,7 +162,6 @@ export function Dropdown<T extends string = string>({
             className="absolute z-20 mt-1 max-h-60 w-full overflow-auto rounded-md border bg-popover py-1 shadow-lg"
           >
             {options.map((opt, idx) => (
-              /* eslint-disable-next-line jsx-a11y/click-events-have-key-events */
               <li
                 key={opt.value}
                 data-idx={idx}
@@ -175,7 +174,17 @@ export function Dropdown<T extends string = string>({
                     close();
                   }
                 }}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    if (!opt.disabled) {
+                      onChange(opt.value);
+                      close();
+                    }
+                  }
+                }}
                 onMouseEnter={() => setActive(idx)}
+                tabIndex={0}
                 className={cn(
                   'flex cursor-pointer items-center gap-2 px-3 py-2 text-sm transition-colors',
                   idx === activeIdx && 'bg-accent',
